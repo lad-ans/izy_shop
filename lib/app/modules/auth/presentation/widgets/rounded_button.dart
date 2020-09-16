@@ -13,6 +13,7 @@ class RoundedButton extends StatelessWidget {
   final double btnHeight;
   final double textSize;
   final Color textColor;
+  final double iconSize;
   const RoundedButton({
     Key key,
     this.icon,
@@ -25,6 +26,7 @@ class RoundedButton extends StatelessWidget {
     this.btnHeight,
     this.textSize,
     this.textColor,
+    this.iconSize,
   }) : super(key: key);
 
   @override
@@ -47,7 +49,8 @@ class RoundedButton extends StatelessWidget {
                     ? Colors.white
                     : hasCustomColor ? Colors.green : Colors.black45),
             child: Icon(icon,
-                color: !isSelected ? Colors.white : Colors.black, size: 50),
+                color: !isSelected ? Colors.white : Colors.black,
+                size: iconSize ?? 50),
           ),
         ),
         SizedBox(height: 5.0),

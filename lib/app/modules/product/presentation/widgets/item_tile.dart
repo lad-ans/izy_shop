@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 
 import '../../../../core/consts/img.dart';
+import 'cart_product_dialog.dart';
 import 'description_dialog.dart';
 import 'on_buy_dialog.dart';
 
@@ -11,8 +12,10 @@ class ItemTile extends StatelessWidget {
   final double hPadd;
   final bool showItemPrice;
   final String product;
-  final double height;
+  final double itemWidth;
+  final bool isOnBasket;
   final bool isOnCart;
+
   const ItemTile({
     Key key,
     this.color,
@@ -20,7 +23,8 @@ class ItemTile extends StatelessWidget {
     this.hPadd,
     this.showItemPrice = true,
     this.product,
-    this.height,
+    this.itemWidth,
+    this.isOnBasket = false,
     this.isOnCart = false,
   }) : super(key: key);
 
@@ -31,15 +35,16 @@ class ItemTile extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: !isOnCart
-                ? (context) => OnBuyDialog()
-                : (context) => DescriptionDialog(),
-          );
+              barrierDismissible: false,
+              context: context,
+              builder: isOnBasket
+                  ? (context) => DescriptionDialog()
+                  : isOnCart
+                      ? (context) => CartProductDialog()
+                      : (context) => OnBuyDialog());
         },
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: hPadd ?? 4.0),
+          // padding: EdgeInsets.symmetric(horizontal: hPadd ?? 4.0),
           child: Stack(
             children: [
               _buildImgTile(),
@@ -74,22 +79,26 @@ class ItemTile extends StatelessWidget {
     );
   }
 
-  Material _buildImgTile() {
-    return Material(
-      color: color ?? Colors.transparent,
-      elevation: elevation ?? 2.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5.0),
-      ),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1.0),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8.0),
+  Widget _buildImgTile() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Material(
+        color: color ?? Colors.transparent,
+        elevation: elevation ?? 4.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5.0),
         ),
-        child: ClipRRect(
+        child: Container(
+          width: itemWidth ?? 130,
+          padding: EdgeInsets.symmetric(vertical: 1.0),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8.0),
-            child: Image.asset(product ?? POTATOES)),
+          ),
+          child: ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: Image.asset(product ?? POTATOES)),
+        ),
       ),
     );
   }
@@ -98,9 +107,16 @@ class ItemTile extends StatelessWidget {
     return Visibility(
       visible: showItemPrice,
       child: InkWell(
-        child: Icon(
-          Ionicons.ios_add_circle,
-          color: Colors.green[200],
+        child: Material(
+          elevation: 6.0,
+          color: Colors.white60,
+          borderRadius: BorderRadius.circular(70.0),
+          child: Center(
+            child: Icon(
+              Ionicons.ios_add_circle,
+              color: Colors.green[200],
+            ),
+          ),
         ),
         onTap: () {},
       ),

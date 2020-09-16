@@ -5,32 +5,42 @@ import 'package:flutter_modular/flutter_modular.dart';
 import '../../configs/core_config.dart';
 import '../../consts/img.dart';
 
-class ShoppingAppBar extends StatelessWidget {
+class ShoppingAppBar extends StatefulWidget {
   final bool showNavText;
+  final bool isCartPage;
   const ShoppingAppBar({
     Key key,
     this.showNavText = true,
+    this.isCartPage = false,
   }) : super(key: key);
 
   @override
+  _ShoppingAppBarState createState() => _ShoppingAppBarState();
+}
+
+class _ShoppingAppBarState extends State<ShoppingAppBar> {
+  @override
   Widget build(BuildContext context) {
     return Container(
-      height: !showNavText ? 50.0 : 65,
+      height: !widget.showNavText ? 50.0 : 65,
       padding: EdgeInsets.symmetric(horizontal: 10.0),
       color: Colors.white,
       width: getWidth(context),
       child: Row(
         children: [
-          _buildRoundedButton(Icons.arrow_back,
-              label: 'Back', onTap: () => Modular.to.pop()),
+          _buildRoundedButton(Icons.arrow_back, label: 'Back', onTap: () {
+            Modular.to.pop();
+          }),
           SizedBox(width: 2.0),
-          Image.asset(LOGO, height: !showNavText ? 45.0 : 55.0),
+          Image.asset(LOGO, height: !widget.showNavText ? 45.0 : 55.0),
           SizedBox(width: 2.0),
           Visibility(
-              visible: showNavText,
-              child: Image.asset(SPAR, height: showNavText ? 30.0 : 55.0)),
+              visible: widget.showNavText,
+              child:
+                  Image.asset(SPAR, height: widget.showNavText ? 30.0 : 55.0)),
           SizedBox(width: 2.0),
-          Visibility(visible: showNavText, child: _buildNavigationText()),
+          Visibility(
+              visible: widget.showNavText, child: _buildNavigationText()),
           Expanded(child: SizedBox()),
           _buildRoundedButton(Icons.search, label: 'Search', onTap: () {}),
           _buildRoundedButton(AntDesign.filter, label: 'Filters', onTap: () {}),
@@ -75,7 +85,7 @@ class ShoppingAppBar extends StatelessWidget {
           'gold'.toUpperCase(),
           style: TextStyle(
             color: Colors.amber,
-            fontSize: !showNavText ? 18 : 25.0,
+            fontSize: !widget.showNavText ? 18 : 25.0,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -95,21 +105,22 @@ class ShoppingAppBar extends StatelessWidget {
   Icon _buildStar() {
     return Icon(
       Ionicons.ios_star,
-      size: !showNavText ? 10.0 : 14.0,
+      size: !widget.showNavText ? 10.0 : 14.0,
       color: Colors.amber,
     );
   }
 
   Widget _buildRoundedButtonLabel(String label) => Container(
-        width: !showNavText ? 30.0 : 45,
+        width: !widget.showNavText ? 30.0 : 45,
         child: Text(
           label ?? '',
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: !showNavText ? 8.0 : 12.0,
+            fontSize: !widget.showNavText ? 8.0 : 12.0,
           ),
         ),
       );
+
   Widget _buildRoundedButton(IconData icon,
       {VoidCallback onTap, String label}) {
     return InkWell(
@@ -120,14 +131,15 @@ class ShoppingAppBar extends StatelessWidget {
         child: Column(
           children: [
             Container(
-                height: !showNavText ? 40.0 : 45.0,
-                width: !showNavText ? 40.0 : 45.0,
+                height: !widget.showNavText ? 40.0 : 45.0,
+                width: !widget.showNavText ? 40.0 : 45.0,
                 decoration: BoxDecoration(
                     color: Colors.black45,
-                    borderRadius:
-                        BorderRadius.circular(showNavText ? 30.0 : 45.0)),
+                    borderRadius: BorderRadius.circular(
+                        widget.showNavText ? 30.0 : 45.0)),
                 child: Icon(icon,
-                    size: !showNavText ? 20 : 30.0, color: Colors.white)),
+                    size: !widget.showNavText ? 20 : 30.0,
+                    color: Colors.white)),
             _buildRoundedButtonLabel(label),
           ],
         ),

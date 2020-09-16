@@ -17,6 +17,7 @@ class DescriptionDialog extends StatelessWidget {
       overflow: Overflow.visible,
       children: [
         SimpleDialog(
+          backgroundColor: Colors.white.withOpacity(0.85),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
           ),

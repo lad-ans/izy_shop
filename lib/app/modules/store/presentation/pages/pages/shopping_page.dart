@@ -17,10 +17,7 @@ class ShoppingPage extends StatefulWidget {
 class _ShoppingPageState extends State<ShoppingPage> {
   @override
   void initState() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
+    setLandscapeOrientation();
     super.initState();
   }
 
@@ -65,7 +62,6 @@ class _ShoppingPageState extends State<ShoppingPage> {
 
   Container _buildBottomNavBar() {
     return Container(
-      // color: Colors.black12,
       width: getWidth(context),
       height: 60.0,
       child: Row(
@@ -82,50 +78,50 @@ class _ShoppingPageState extends State<ShoppingPage> {
         scrollDirection: Axis.horizontal,
         children: [
           ItemTile(
-              isOnCart: true,
-              height: 30,
+              itemWidth: 70.0,
+              isOnBasket: true,
               color: Theme.of(context).cardColor,
               product: PAPAYA,
               showItemPrice: false),
           ItemTile(
-              isOnCart: true,
-              height: 30,
+              itemWidth: 70.0,
+              isOnBasket: true,
               color: Theme.of(context).cardColor,
               product: RICE,
               showItemPrice: false),
           ItemTile(
-              isOnCart: true,
-              height: 30,
+              itemWidth: 70.0,
+              isOnBasket: true,
               color: Theme.of(context).cardColor,
               product: YOGURT,
               showItemPrice: false),
           ItemTile(
-              isOnCart: true,
-              height: 30,
+              itemWidth: 70.0,
+              isOnBasket: true,
               color: Theme.of(context).cardColor,
               product: BEANS,
               showItemPrice: false),
           ItemTile(
-              isOnCart: true,
-              height: 30,
+              itemWidth: 70.0,
+              isOnBasket: true,
               color: Theme.of(context).cardColor,
               product: MEAT,
               showItemPrice: false),
           ItemTile(
-              isOnCart: true,
-              height: 30,
+              itemWidth: 70.0,
+              isOnBasket: true,
               color: Theme.of(context).cardColor,
               product: POTATOES,
               showItemPrice: false),
           ItemTile(
-              isOnCart: true,
-              height: 30,
+              itemWidth: 70.0,
+              isOnBasket: true,
               color: Theme.of(context).cardColor,
               product: BEANS,
               showItemPrice: false),
           ItemTile(
-              isOnCart: true,
-              height: 30,
+              itemWidth: 70.0,
+              isOnBasket: true,
               color: Theme.of(context).cardColor,
               product: APPLES,
               showItemPrice: false),
@@ -134,15 +130,19 @@ class _ShoppingPageState extends State<ShoppingPage> {
 
   Widget _buildCartTile() {
     return InkWell(
-      onTap: () => Modular.to.pushNamed('/cart'),
+      onTap: () async {
+        setAllOrientations();
+        await Modular.to.pushNamed('/cart');
+        setLandscapeOrientation();
+      },
       child: Container(
         alignment: Alignment.bottomRight,
         decoration: BoxDecoration(
           color: Colors.green[200],
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(30.0)),
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(40.0)),
         ),
         height: 60.0,
-        width: 150.0,
+        width: 130.0,
         child: _buildCart(),
       ),
     );
@@ -154,13 +154,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Text(
-            'add'.toUpperCase(),
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          Text('add'.toUpperCase(), style: TextStyle(color: Colors.white)),
           Stack(
             overflow: Overflow.visible,
             children: [
@@ -199,12 +193,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
 
   @override
   void dispose() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
+    setAllOrientations();
     super.dispose();
   }
 }

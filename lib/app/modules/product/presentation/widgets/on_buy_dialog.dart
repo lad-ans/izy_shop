@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:izy_shop/app/core/configs/core_config.dart';
-import 'package:izy_shop/app/core/presentation/widgets/custom_rich_text.dart';
 
+import '../../../../core/configs/core_config.dart';
 import '../../../../core/consts/img.dart';
+import '../../../../core/presentation/widgets/custom_rich_text.dart';
 
 class OnBuyDialog extends StatelessWidget {
   final bool isSelected;
@@ -17,6 +17,7 @@ class OnBuyDialog extends StatelessWidget {
       overflow: Overflow.visible,
       children: [
         SimpleDialog(
+          backgroundColor: Colors.white.withOpacity(0.85),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
           ),
