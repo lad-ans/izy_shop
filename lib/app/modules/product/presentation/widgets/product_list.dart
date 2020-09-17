@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:izy_shop/app/core/consts/img.dart';
 
+import '../../../../core/domain/consts/img.dart';
 import 'item_tile.dart';
 
 class ProductList extends StatelessWidget {

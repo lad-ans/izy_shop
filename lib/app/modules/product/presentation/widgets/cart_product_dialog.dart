@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:izy_shop/app/core/consts/img.dart';
 
-import '../../../../core/configs/core_config.dart';
+import '../../../../core/domain/configs/core_config.dart';
+import '../../../../core/domain/consts/img.dart';
 
 class CartProductDialog extends StatelessWidget {
   final bool isSelected;

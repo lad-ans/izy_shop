@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/configs/core_config.dart';
+import '../../../../core/domain/configs/core_config.dart';
+
 
 class CustomText extends StatelessWidget {
   final double width;

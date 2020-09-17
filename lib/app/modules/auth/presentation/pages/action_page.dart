@@ -3,8 +3,8 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../../../core/configs/core_config.dart';
-import '../../../../core/consts/img.dart';
+import '../../../../core/domain/configs/core_config.dart';
+import '../../../../core/domain/consts/img.dart';
 import '../../../../core/presentation/widgets/rounded_button.dart';
 
 class ActionPage extends StatelessWidget {
@@ -39,16 +39,17 @@ class ActionPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             RoundedButton(
-              
                 icon: Ionicons.ios_log_in,
                 text: 'Login',
                 isSelected: true,
                 onTap: () => Modular.to.pushNamed('/auth/login')),
             RoundedButton(
+                iconColor: Colors.white,
                 icon: AntDesign.edit,
                 text: 'Register',
                 onTap: () => Modular.to.pushNamed('/auth/signup')),
             RoundedButton(
+              iconColor: Colors.white,
               icon: FontAwesomeIcons.users,
               text: 'Guest',
               onTap: () => Modular.to.pushReplacementNamed('/home/city'),

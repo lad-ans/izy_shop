@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 
-import '../../../../core/consts/img.dart';
+import '../../../../core/domain/consts/img.dart';
 import 'cart_product_dialog.dart';
 import 'description_dialog.dart';
 import 'on_buy_dialog.dart';

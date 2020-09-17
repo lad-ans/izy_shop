@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/configs/core_config.dart';
-import '../../../../core/consts/img.dart';
+import '../../../../core/domain/configs/core_config.dart';
+import '../../../../core/domain/consts/img.dart';
+
 
 class StoreTile extends StatelessWidget {
   final String img;

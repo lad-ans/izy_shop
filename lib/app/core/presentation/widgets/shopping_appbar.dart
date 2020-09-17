@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../configs/core_config.dart';
-import '../../consts/img.dart';
+import '../../domain/configs/core_config.dart';
+import '../../domain/consts/img.dart';
+import 'help_dialog.dart';
+
 
 class ShoppingAppBar extends StatefulWidget {
   final bool fullAppBar;
@@ -42,16 +44,31 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
           Visibility(visible: widget.fullAppBar, child: _buildNavigationText()),
           Expanded(child: SizedBox()),
           Visibility(
-              visible: widget.fullAppBar,
-              child: _buildRoundedButton(Icons.search,
-                  label: 'Search', onTap: () {})),
+            visible: widget.fullAppBar,
+            child: _buildRoundedButton(
+              Icons.search,
+              label: 'Search',
+              onTap: () async {
+                setAllOrientations();
+                await Modular.to.pushNamed('/search');
+                setLandscapeOrientation();
+              },
+            ),
+          ),
           SizedBox(width: 2.0),
           Visibility(
               visible: widget.fullAppBar,
               child: _buildRoundedButton(AntDesign.filter,
                   label: 'Filters', onTap: () {})),
           SizedBox(width: 2.0),
-          _buildRoundedButton(AntDesign.question, label: 'Help', onTap: () {}),
+          _buildRoundedButton(
+            AntDesign.question,
+            label: 'Help',
+            onTap: () => showDialog(
+              context: context,
+              builder: (_) => HelpDialog(),
+            ),
+          ),
           SizedBox(width: 2.0),
           _buildRoundedButton(
             AntDesign.user,

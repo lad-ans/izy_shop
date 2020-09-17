@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "306182797027",
+    "firebase_url": "https://izy-shop-1275e.firebaseio.com",
+    "project_id": "izy-shop-1275e",
+    "storage_bucket": "izy-shop-1275e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:306182797027:android:e5687c79e1ddb28ec6b7d6",
+        "android_client_info": {
+          "package_name": "com.example.izy_shop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "306182797027-nk5s0r6mom5onsm8fgd400oohbgg9pcn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlY9izv0lL5gvAdbZJiy9Uo91HOXhLf50"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "306182797027-nk5s0r6mom5onsm8fgd400oohbgg9pcn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

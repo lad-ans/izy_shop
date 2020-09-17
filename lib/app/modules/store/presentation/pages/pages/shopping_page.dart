@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../../core/configs/core_config.dart';
-import '../../../../../core/consts/img.dart';
+import '../../../../../core/domain/configs/core_config.dart';
+import '../../../../../core/domain/consts/img.dart';
 import '../../../../../core/presentation/widgets/custom_statusbar.dart';
 import '../../../../../core/presentation/widgets/shopping_appbar.dart';
 import '../../../../product/presentation/widgets/item_tile.dart';

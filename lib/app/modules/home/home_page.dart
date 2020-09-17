@@ -3,8 +3,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../core/configs/core_config.dart';
-import '../../core/consts/img.dart';
+import '../../core/domain/configs/core_config.dart';
+import '../../core/domain/consts/img.dart';
 import '../store/presentation/widgets/store_tile.dart';
 
 class HomePage extends StatelessWidget {

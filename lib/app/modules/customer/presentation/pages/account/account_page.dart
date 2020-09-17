@@ -3,10 +3,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:izy_shop/app/core/configs/core_config.dart';
-import 'package:izy_shop/app/core/consts/img.dart';
-import 'package:izy_shop/app/core/presentation/widgets/custom_appbar.dart';
 
+import '../../../../../core/domain/configs/core_config.dart';
+import '../../../../../core/domain/consts/img.dart';
+import '../../../../../core/presentation/widgets/custom_appbar.dart';
 import '../../../customer_controller.dart';
 
 class AccountPage extends StatefulWidget {
@@ -31,16 +31,19 @@ class _AccountPageState extends ModularState<AccountPage, CustomerController> {
       TextEditingController(text: '841234567');
 
   Widget _buildTrailingWidget() {
-    return RaisedButton(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      color: Theme.of(context).cardColor,
-      onPressed: () {},
-      child: Text(
-        'Guardar',
-        style: TextStyle(
-          color: Colors.red[300],
+    return Container(
+      // height: 60.0,
+      child: RaisedButton(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        color: Colors.white70,
+        onPressed: () {},
+        child: Text(
+          'Guardar',
+          style: TextStyle(
+            color: Colors.red[400],
+          ),
         ),
       ),
     );
@@ -59,7 +62,7 @@ class _AccountPageState extends ModularState<AccountPage, CustomerController> {
         obscureText: isPassword,
         style: TextStyle(
             fontFamily: 'SofiaPro',
-            color: Colors.red[200],
+            color: Colors.red[500],
             fontWeight: FontWeight.normal),
         decoration: InputDecoration(
           labelText: title,
@@ -88,7 +91,7 @@ class _AccountPageState extends ModularState<AccountPage, CustomerController> {
       width: 130,
       height: 130,
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
+        color: Colors.red[300],
         borderRadius: BorderRadius.circular(75.0),
         border: Border.all(color: Colors.red[200], width: 2),
         image: DecorationImage(
@@ -105,7 +108,7 @@ class _AccountPageState extends ModularState<AccountPage, CustomerController> {
               fontFamily: 'SofiaPro',
               fontSize: 52,
               fontWeight: FontWeight.bold,
-              color: Colors.red[300],
+              color: Colors.white70,
             ),
           ),
         ),
@@ -175,6 +178,8 @@ class _AccountPageState extends ModularState<AccountPage, CustomerController> {
 
   Card _buildCard() {
     return Card(
+
+      color: Colors.white70,
       elevation: 6,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30.0),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../configs/core_config.dart';
+import '../../domain/configs/core_config.dart';
+
 
 class CustomStatusBar extends StatelessWidget {
   final Color color;

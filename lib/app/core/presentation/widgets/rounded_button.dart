@@ -14,23 +14,24 @@ class RoundedButton extends StatelessWidget {
   final double textSize;
   final Color textColor;
   final double iconSize;
-  final Color color, borderColor;
-  const RoundedButton({
-    Key key,
-    this.icon,
-    this.text = '',
-    this.isSelected = false,
-    this.isGreenColor = false,
-    this.onTap,
-    this.width,
-    this.btnWidth,
-    this.btnHeight,
-    this.textSize,
-    this.textColor,
-    this.iconSize,
-    this.color,
-    this.borderColor,
-  }) : super(key: key);
+  final Color color, borderColor, iconColor;
+  const RoundedButton(
+      {Key key,
+      this.icon,
+      this.text = '',
+      this.isSelected = false,
+      this.isGreenColor = false,
+      this.onTap,
+      this.width,
+      this.btnWidth,
+      this.btnHeight,
+      this.textSize,
+      this.textColor,
+      this.iconSize,
+      this.color,
+      this.borderColor,
+      this.iconColor})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +57,7 @@ class RoundedButton extends StatelessWidget {
             child: Icon(icon,
                 color: isSelected
                     ? Colors.black
-                    : isGreenColor ? Colors.white : Colors.black,
+                    : isGreenColor ? Colors.white : iconColor ?? Colors.black,
                 size: iconSize ?? 50),
           ),
         ),

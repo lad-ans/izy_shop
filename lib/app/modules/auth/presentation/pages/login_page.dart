@@ -5,11 +5,11 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../../../core/configs/core_config.dart';
-import '../../../../core/consts/img.dart';
+import '../../../../core/domain/configs/core_config.dart';
+import '../../../../core/domain/consts/img.dart';
+import '../../../../core/presentation/widgets/rounded_button.dart';
 import '../widgets/custom_text.dart';
 import '../widgets/custom_textfield.dart';
-import '../../../../core/presentation/widgets/rounded_button.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -48,12 +48,17 @@ class LoginPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             RoundedButton(
+                iconColor: Colors.white,
                 icon: Zocial.facebook,
                 text: 'Login With Facebook',
                 onTap: () {}),
             SizedBox(width: 20.0),
             RoundedButton(
-                icon: Zocial.google, text: 'Login With Google', onTap: () {}),
+              iconColor: Colors.white,
+              icon: Zocial.google,
+              text: 'Login With Google',
+              onTap: () {},
+            ),
           ],
         ),
         SizedBox(height: 30.0),
@@ -77,6 +82,7 @@ class LoginPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             RoundedButton(
+              iconColor: Colors.white,
               icon: AntDesign.edit,
               text: 'Register',
               onTap: () => Modular.to.pushNamed('/auth/signup'),

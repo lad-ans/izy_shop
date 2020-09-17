@@ -5,10 +5,10 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../../../core/configs/core_config.dart';
-import '../../../../core/consts/img.dart';
-import '../widgets/custom_textfield.dart';
+import '../../../../core/domain/configs/core_config.dart';
+import '../../../../core/domain/consts/img.dart';
 import '../../../../core/presentation/widgets/rounded_button.dart';
+import '../widgets/custom_textfield.dart';
 
 class SignUpPage extends StatelessWidget {
   @override
@@ -44,12 +44,17 @@ class SignUpPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             RoundedButton(
+                iconColor: Colors.white,
                 icon: Zocial.facebook,
                 text: 'Login With Facebook',
                 onTap: () {}),
             SizedBox(width: 20.0),
             RoundedButton(
-                icon: Zocial.google, text: 'Login With Google', onTap: () {}),
+              iconColor: Colors.white,
+              icon: Zocial.google,
+              text: 'Login With Google',
+              onTap: () {},
+            ),
           ],
         ),
         SizedBox(height: 30.0),
@@ -184,11 +189,13 @@ class OnRegisterDetailsDialog extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             RoundedButton(
+              iconColor: Colors.white,
               icon: AntDesign.edit,
               onTap: () => Modular.to.pop(),
             ),
             SizedBox(width: 20.0),
             RoundedButton(
+              iconColor: Colors.white,
               icon: FontAwesomeIcons.check,
               onTap: () => Modular.to.pushReplacementNamed('/home/city'),
               isGreenColor: true,
