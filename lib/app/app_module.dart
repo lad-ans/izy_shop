@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:izy_shop/app/modules/auth/auth_module.dart';
 import 'package:izy_shop/app/modules/cart/cart_module.dart';
+import 'package:izy_shop/app/modules/checkout/checkout_module.dart';
 import 'package:izy_shop/app/modules/store/store_module.dart';
 
 import 'app_controller.dart';
@@ -19,6 +20,7 @@ class AppModule extends MainModule {
         ModularRouter('/home', module: HomeModule()),
         ModularRouter('/store', module: StoreModule()),
         ModularRouter('/cart', module: CartModule()),
+        ModularRouter('/checkout', module: CheckoutModule()),
       ];
 
   @override

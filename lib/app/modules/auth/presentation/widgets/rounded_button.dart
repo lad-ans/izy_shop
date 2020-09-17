@@ -6,7 +6,7 @@ class RoundedButton extends StatelessWidget {
   final IconData icon;
   final String text;
   final bool isSelected;
-  final bool hasCustomColor;
+  final bool isGreenColor;
   final VoidCallback onTap;
   final double width;
   final double btnWidth;
@@ -14,12 +14,13 @@ class RoundedButton extends StatelessWidget {
   final double textSize;
   final Color textColor;
   final double iconSize;
+  final Color color, borderColor;
   const RoundedButton({
     Key key,
     this.icon,
     this.text = '',
     this.isSelected = false,
-    this.hasCustomColor = false,
+    this.isGreenColor = false,
     this.onTap,
     this.width,
     this.btnWidth,
@@ -27,6 +28,8 @@ class RoundedButton extends StatelessWidget {
     this.textSize,
     this.textColor,
     this.iconSize,
+    this.color,
+    this.borderColor,
   }) : super(key: key);
 
   @override
@@ -42,14 +45,16 @@ class RoundedButton extends StatelessWidget {
             height: btnHeight ?? 90,
             decoration: BoxDecoration(
                 border: Border.all(
-                    color: hasCustomColor ? Colors.green : Colors.white,
+                    color: isGreenColor
+                        ? Colors.green
+                        : borderColor ?? Colors.white,
                     width: 0.7),
                 borderRadius: BorderRadius.circular(80),
                 color: isSelected
                     ? Colors.white
-                    : hasCustomColor ? Colors.green : Colors.black45),
+                    : isGreenColor ? Colors.green : color ?? Colors.black45),
             child: Icon(icon,
-                color: !isSelected ? Colors.white : Colors.black,
+                color: isSelected || isGreenColor ? Colors.white : Colors.black,
                 size: iconSize ?? 50),
           ),
         ),

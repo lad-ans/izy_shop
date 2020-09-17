@@ -84,7 +84,7 @@ class LoginPage extends StatelessWidget {
             RoundedButton(
               icon: FontAwesomeIcons.check,
               text: 'Confirm',
-              hasCustomColor: true,
+              isGreenColor: true,
               onTap: () => Modular.to.pushReplacementNamed('/home/city'),
             ),
           ],

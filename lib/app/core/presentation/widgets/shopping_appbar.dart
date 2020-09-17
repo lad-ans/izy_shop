@@ -32,7 +32,7 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
             Modular.to.pop();
           }),
           SizedBox(width: 2.0),
-          Image.asset(LOGO, height: !widget.showNavText ? 45.0 : 55.0),
+          _buildNavigatorLogo(),
           SizedBox(width: 2.0),
           Visibility(
               visible: widget.showNavText,
@@ -51,6 +51,13 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
       ),
     );
   }
+
+  Widget _buildNavigatorLogo() => InkWell(
+      onTap: () {
+        setAllOrientations();
+        Modular.to.pushReplacementNamed('/home');
+      },
+      child: Image.asset(LOGO, height: !widget.showNavText ? 45.0 : 55.0));
 
   Widget _buildNavigationText() {
     return RichText(

@@ -69,7 +69,7 @@ class CitySelectionPage extends StatelessWidget {
           child: RoundedButton(
             icon: FontAwesomeIcons.check,
             text: 'Confirm',
-            hasCustomColor: true,
+            isGreenColor: true,
             onTap: () => Modular.to.pushReplacementNamed('/home'),
           ),
         ),

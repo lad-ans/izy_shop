@@ -86,46 +86,46 @@ class SignUpPage extends StatelessWidget {
 
   Container _buildOnConfirm(BuildContext context) {
     return Container(
-        alignment: Alignment.centerRight,
-        child: RoundedButton(
-          icon: FontAwesomeIcons.check,
-          text: 'Confirm',
-          hasCustomColor: true,
-          onTap: () => showDialog(
-            context: context,
-            builder: (context) => OnRegisterDetailsDialog(
-              title: 'Please confirm your details below',
-              firstName: 'Carlos',
-              lastName: 'Bernardo',
-              email: 'carlos.b@gmail.com',
-            ),
+      alignment: Alignment.centerRight,
+      child: RoundedButton(
+        icon: FontAwesomeIcons.check,
+        text: 'Confirm',
+        isGreenColor: true,
+        onTap: () => showDialog(
+          context: context,
+          builder: (context) => OnRegisterDetailsDialog(
+            title: 'Please confirm your details below',
+            firstName: 'Carlos',
+            lastName: 'Bernardo',
+            email: 'carlos.b@gmail.com',
           ),
         ),
-      );
+      ),
+    );
   }
 
   Row _buildCustomerDetails() {
     return Row(
-        children: [
-          Expanded(
-            child: CustomTextField(
-              height: 55.0,
-              fillColor: Colors.white,
-              labelText: 'First Name',
-              filled: true,
-            ),
+      children: [
+        Expanded(
+          child: CustomTextField(
+            height: 55.0,
+            fillColor: Colors.white,
+            labelText: 'First Name',
+            filled: true,
           ),
-          SizedBox(width: 10.0),
-          Expanded(
-            child: CustomTextField(
-              height: 55.0,
-              fillColor: Colors.white,
-              labelText: 'Last Name',
-              filled: true,
-            ),
+        ),
+        SizedBox(width: 10.0),
+        Expanded(
+          child: CustomTextField(
+            height: 55.0,
+            fillColor: Colors.white,
+            labelText: 'Last Name',
+            filled: true,
           ),
-        ],
-      );
+        ),
+      ],
+    );
   }
 
   Row _buildOr(BuildContext context) {
@@ -191,7 +191,7 @@ class OnRegisterDetailsDialog extends StatelessWidget {
             RoundedButton(
               icon: FontAwesomeIcons.check,
               onTap: () => Modular.to.pushReplacementNamed('/home/city'),
-              hasCustomColor: true,
+              isGreenColor: true,
             ),
           ],
         ),

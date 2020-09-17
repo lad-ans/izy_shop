@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:izy_shop/app/modules/auth/presentation/widgets/custom_text.dart';
 
 import '../../core/configs/core_config.dart';
 import '../../core/consts/img.dart';
+import '../../core/presentation/widgets/amount_checkout_row.dart';
 import '../../core/presentation/widgets/custom_statusbar.dart';
 import '../../core/presentation/widgets/shopping_appbar.dart';
+import '../auth/presentation/widgets/custom_text.dart';
 import '../auth/presentation/widgets/rounded_button.dart';
 import '../product/presentation/widgets/item_tile.dart';
 import 'cart_controller.dart';
@@ -34,10 +35,13 @@ class _CartPageState extends ModularState<CartPage, CartController> {
       crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildAmountCheckOut(),
+        AmountCheckoutRow(title: 'SubTotal', amount: '23.000,00'),
+        AmountCheckoutRow(title: 'Delivery', amount: '350,00'),
+        AmountCheckoutRow(title: 'Total Amount', amount: '23.350,00'),
         Divider(color: Colors.green[200]),
         RoundedButton(
-          hasCustomColor: true,
+          onTap: () => Modular.to.pushNamed('/checkout'),
+          isGreenColor: true,
           icon: Icons.check,
           iconSize: 30.0,
           text: 'Confirm',
@@ -50,49 +54,6 @@ class _CartPageState extends ModularState<CartPage, CartController> {
       ],
     );
   }
-
-  Row _buildAmountCheckOut() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Container(
-          width: getWidth(context) / 2,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildCheckOutAmountTitle('SubTotal'),
-              _buildCheckOutAmountTitle('Delivery'),
-              _buildCheckOutAmountTitle('Total Amount'),
-            ],
-          ),
-        ),
-        Expanded(
-          child: Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                _buildColoredText('23.000,98 MT'),
-                _buildColoredText('345,00 MT'),
-                _buildColoredText('23.345,98 MT'),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Text _buildCheckOutAmountTitle(String title) {
-    return Text('$title:', style: TextStyle(fontWeight: FontWeight.bold));
-  }
-
-  Text _buildColoredText(String amount) => Text(
-        amount,
-        style: TextStyle(
-          color: Colors.red[300],
-        ),
-      );
 
   Widget _buildBody() {
     return Container(

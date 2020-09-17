@@ -84,7 +84,7 @@ class ItemTile extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Material(
         color: color ?? Colors.transparent,
-        elevation: elevation ?? 4.0,
+        elevation: elevation ?? 0.4,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),
         ),
