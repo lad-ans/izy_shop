@@ -5,7 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../core/configs/core_config.dart';
 import '../../../../core/consts/img.dart';
-import '../widgets/rounded_button.dart';
+import '../../../../core/presentation/widgets/rounded_button.dart';
 
 class ActionPage extends StatelessWidget {
   @override
@@ -39,6 +39,7 @@ class ActionPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             RoundedButton(
+              
                 icon: Ionicons.ios_log_in,
                 text: 'Login',
                 isSelected: true,

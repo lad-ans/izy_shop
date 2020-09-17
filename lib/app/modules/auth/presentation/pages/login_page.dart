@@ -9,7 +9,7 @@ import '../../../../core/configs/core_config.dart';
 import '../../../../core/consts/img.dart';
 import '../widgets/custom_text.dart';
 import '../widgets/custom_textfield.dart';
-import '../widgets/rounded_button.dart';
+import '../../../../core/presentation/widgets/rounded_button.dart';
 
 class LoginPage extends StatelessWidget {
   @override

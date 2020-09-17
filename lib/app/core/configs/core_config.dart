@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
@@ -12,7 +10,11 @@ double getHeight(BuildContext context) => MediaQuery.of(context).size.height;
 /// get statusbar
 double getStatusBar(BuildContext context) => MediaQuery.of(context).padding.top;
 
-/// set orientatio
+/// get orientation
+getDeviceOrientation(BuildContext context) =>
+    MediaQuery.of(context).orientation;
+
+/// set orientation
 Future<void> setAllOrientations() async {
   return await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

@@ -8,7 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/configs/core_config.dart';
 import '../../../../core/consts/img.dart';
 import '../widgets/custom_textfield.dart';
-import '../widgets/rounded_button.dart';
+import '../../../../core/presentation/widgets/rounded_button.dart';
 
 class SignUpPage extends StatelessWidget {
   @override

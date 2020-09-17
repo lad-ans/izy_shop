@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'custom_text.dart';
+import '../../../modules/auth/presentation/widgets/custom_text.dart';
 
 class RoundedButton extends StatelessWidget {
   final IconData icon;
@@ -54,7 +54,9 @@ class RoundedButton extends StatelessWidget {
                     ? Colors.white
                     : isGreenColor ? Colors.green : color ?? Colors.black45),
             child: Icon(icon,
-                color: isSelected || isGreenColor ? Colors.white : Colors.black,
+                color: isSelected
+                    ? Colors.black
+                    : isGreenColor ? Colors.white : Colors.black,
                 size: iconSize ?? 50),
           ),
         ),

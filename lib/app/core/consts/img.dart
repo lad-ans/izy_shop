@@ -27,3 +27,6 @@ const String YOGURT = 'assets/images/shared/products/yogurt.jpeg';
 const String MEAT = 'assets/images/shared/products/meat.png';
 const String PAPAYA = 'assets/images/shared/products/papaya.png';
 const String POTATOES = 'assets/images/shared/products/potatoes.png';
+
+/// customer
+const String CUSTOMER = 'assets/images/shared/deliver.png';

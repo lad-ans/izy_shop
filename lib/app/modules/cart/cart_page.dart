@@ -7,7 +7,7 @@ import '../../core/presentation/widgets/amount_checkout_row.dart';
 import '../../core/presentation/widgets/custom_statusbar.dart';
 import '../../core/presentation/widgets/shopping_appbar.dart';
 import '../auth/presentation/widgets/custom_text.dart';
-import '../auth/presentation/widgets/rounded_button.dart';
+import '../../core/presentation/widgets/rounded_button.dart';
 import '../product/presentation/widgets/item_tile.dart';
 import 'cart_controller.dart';
 
@@ -79,7 +79,7 @@ class _CartPageState extends ModularState<CartPage, CartController> {
           CustomStatusBar(color: Colors.white),
           Padding(
             padding: EdgeInsets.only(top: getStatusBar(context)),
-            child: ShoppingAppBar(showNavText: false, isCartPage: true),
+            child: ShoppingAppBar(fullAppBar: false, isCartPage: true),
           ),
         ],
       ),

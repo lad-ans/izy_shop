@@ -6,11 +6,11 @@ import '../../configs/core_config.dart';
 import '../../consts/img.dart';
 
 class ShoppingAppBar extends StatefulWidget {
-  final bool showNavText;
+  final bool fullAppBar;
   final bool isCartPage;
   const ShoppingAppBar({
     Key key,
-    this.showNavText = true,
+    this.fullAppBar = true,
     this.isCartPage = false,
   }) : super(key: key);
 
@@ -22,7 +22,7 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: !widget.showNavText ? 50.0 : 65,
+      height: !widget.fullAppBar ? 50.0 : 65,
       padding: EdgeInsets.symmetric(horizontal: 10.0),
       color: Colors.white,
       width: getWidth(context),
@@ -35,17 +35,34 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
           _buildNavigatorLogo(),
           SizedBox(width: 2.0),
           Visibility(
-              visible: widget.showNavText,
+              visible: widget.fullAppBar,
               child:
-                  Image.asset(SPAR, height: widget.showNavText ? 30.0 : 55.0)),
+                  Image.asset(SPAR, height: widget.fullAppBar ? 30.0 : 55.0)),
+          SizedBox(width: 2.0),
+          Visibility(visible: widget.fullAppBar, child: _buildNavigationText()),
+          Expanded(child: SizedBox()),
+          Visibility(
+              visible: widget.fullAppBar,
+              child: _buildRoundedButton(Icons.search,
+                  label: 'Search', onTap: () {})),
           SizedBox(width: 2.0),
           Visibility(
-              visible: widget.showNavText, child: _buildNavigationText()),
-          Expanded(child: SizedBox()),
-          _buildRoundedButton(Icons.search, label: 'Search', onTap: () {}),
-          _buildRoundedButton(AntDesign.filter, label: 'Filters', onTap: () {}),
+              visible: widget.fullAppBar,
+              child: _buildRoundedButton(AntDesign.filter,
+                  label: 'Filters', onTap: () {})),
+          SizedBox(width: 2.0),
           _buildRoundedButton(AntDesign.question, label: 'Help', onTap: () {}),
-          _buildRoundedButton(AntDesign.user, label: 'Profile', onTap: () {}),
+          SizedBox(width: 2.0),
+          _buildRoundedButton(
+            AntDesign.user,
+            label: 'Profile',
+            onTap: () async {
+              setAllOrientations();
+              await Modular.to.pushNamed('/customer');
+              setLandscapeOrientation();
+            },
+          ),
+          SizedBox(width: 5.0),
           _buildGold()
         ],
       ),
@@ -57,7 +74,7 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
         setAllOrientations();
         Modular.to.pushReplacementNamed('/home');
       },
-      child: Image.asset(LOGO, height: !widget.showNavText ? 45.0 : 55.0));
+      child: Image.asset(LOGO, height: !widget.fullAppBar ? 45.0 : 55.0));
 
   Widget _buildNavigationText() {
     return RichText(
@@ -92,7 +109,7 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
           'gold'.toUpperCase(),
           style: TextStyle(
             color: Colors.amber,
-            fontSize: !widget.showNavText ? 18 : 25.0,
+            fontSize: !widget.fullAppBar ? 18 : 25.0,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -112,18 +129,18 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
   Icon _buildStar() {
     return Icon(
       Ionicons.ios_star,
-      size: !widget.showNavText ? 10.0 : 14.0,
+      size: !widget.fullAppBar ? 10.0 : 14.0,
       color: Colors.amber,
     );
   }
 
   Widget _buildRoundedButtonLabel(String label) => Container(
-        width: !widget.showNavText ? 30.0 : 45,
+        width: !widget.fullAppBar ? 30.0 : 45,
         child: Text(
           label ?? '',
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: !widget.showNavText ? 8.0 : 12.0,
+            fontSize: !widget.fullAppBar ? 8.0 : 12.0,
           ),
         ),
       );
@@ -138,15 +155,14 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
         child: Column(
           children: [
             Container(
-                height: !widget.showNavText ? 40.0 : 45.0,
-                width: !widget.showNavText ? 40.0 : 45.0,
+                height: !widget.fullAppBar ? 40.0 : 45.0,
+                width: !widget.fullAppBar ? 40.0 : 45.0,
                 decoration: BoxDecoration(
                     color: Colors.black45,
-                    borderRadius: BorderRadius.circular(
-                        widget.showNavText ? 30.0 : 45.0)),
+                    borderRadius:
+                        BorderRadius.circular(widget.fullAppBar ? 30.0 : 45.0)),
                 child: Icon(icon,
-                    size: !widget.showNavText ? 20 : 30.0,
-                    color: Colors.white)),
+                    size: !widget.fullAppBar ? 20 : 30.0, color: Colors.white)),
             _buildRoundedButtonLabel(label),
           ],
         ),
