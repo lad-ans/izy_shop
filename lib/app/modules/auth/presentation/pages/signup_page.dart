@@ -50,11 +50,9 @@ class SignUpPage extends StatelessWidget {
               icon: Zocial.facebook,
               text: 'Login With Facebook',
               onTap: () async {
-                _controller.select(0);
-                // await Modular.to.pushReplacementNamed('/home/city');
-                // _controller.select(100);
+                _controller.select(10);
               },
-              index: 0,
+              index: 10,
             ),
             SizedBox(width: 20.0),
             RoundedButton(
@@ -62,11 +60,9 @@ class SignUpPage extends StatelessWidget {
               icon: Zocial.google,
               text: 'Login With Google',
               onTap: () async {
-                _controller.select(1);
-                // await Modular.to.pushReplacementNamed('/home/city');
-                // _controller.select(100);
+                _controller.select(11);
               },
-              index: 1,
+              index: 11,
             ),
           ],
         ),
