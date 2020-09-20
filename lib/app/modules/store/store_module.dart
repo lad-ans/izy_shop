@@ -1,4 +1,5 @@
 import 'package:izy_shop/app/modules/store/presentation/pages/pages/shopping_page.dart';
+import 'package:izy_shop/app/modules/store/presentation/stores/get_market_store.dart';
 
 import 'store_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';

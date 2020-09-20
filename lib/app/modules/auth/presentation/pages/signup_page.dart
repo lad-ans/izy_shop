@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:izy_shop/app/app_controller.dart';
 
 import '../../../../core/domain/configs/core_config.dart';
 import '../../../../core/domain/consts/img.dart';
@@ -35,6 +36,7 @@ class SignUpPage extends StatelessWidget {
     );
   }
 
+  final AppController _controller = Modular.get<AppController>();
   Widget _buildListView(BuildContext context) {
     return ListView(
       children: [
@@ -44,16 +46,27 @@ class SignUpPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             RoundedButton(
-                iconColor: Colors.white,
-                icon: Zocial.facebook,
-                text: 'Login With Facebook',
-                onTap: () {}),
+              iconColor: Colors.white,
+              icon: Zocial.facebook,
+              text: 'Login With Facebook',
+              onTap: () async {
+                _controller.select(0);
+                // await Modular.to.pushReplacementNamed('/home/city');
+                // _controller.select(100);
+              },
+              index: 0,
+            ),
             SizedBox(width: 20.0),
             RoundedButton(
               iconColor: Colors.white,
               icon: Zocial.google,
               text: 'Login With Google',
-              onTap: () {},
+              onTap: () async {
+                _controller.select(1);
+                // await Modular.to.pushReplacementNamed('/home/city');
+                // _controller.select(100);
+              },
+              index: 1,
             ),
           ],
         ),

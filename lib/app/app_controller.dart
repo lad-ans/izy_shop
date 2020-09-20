@@ -8,10 +8,10 @@ class AppController = _AppControllerBase with _$AppController;
 
 abstract class _AppControllerBase with Store {
   @observable
-  int value = 0;
+  int selectedIndex;
 
   @action
-  void increment() {
-    value++;
+  select(int index) {
+    this.selectedIndex = index;
   }
 }

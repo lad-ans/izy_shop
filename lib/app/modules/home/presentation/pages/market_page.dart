@@ -2,13 +2,25 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../../../app_controller.dart';
 import '../../../../core/domain/configs/core_config.dart';
 import '../../../../core/domain/consts/img.dart';
+import '../../../../core/domain/entities/route_entity.dart';
+import '../../../store/data/models/store_model.dart';
+import '../../../store/presentation/stores/get_store_by_market_store.dart';
 import '../../../store/presentation/widgets/store_tile.dart';
 
 class MarketPage extends StatelessWidget {
+  final RouteEntity _routeEntity;
+  final GetStoreByMarketStore getStoreByMarketStore =
+      Modular.get<GetStoreByMarketStore>();
+  MarketPage(this._routeEntity) {
+    getStoreByMarketStore.execute(_routeEntity.marketName);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,6 +62,7 @@ class MarketPage extends StatelessWidget {
     );
   }
 
+  final AppController _controller = Modular.get<AppController>();
   Widget _buildContainerContent(BuildContext context) {
     return Container(
       child: Column(
@@ -57,19 +70,31 @@ class MarketPage extends StatelessWidget {
           SizedBox(height: 30.0),
           Image.asset(LOGO_NAMED_WHITE, width: 90, height: 90),
           Expanded(
-            child: ListView(
-              children: [
-                StoreTile(
-                    img: SPAR,
-                    onTap: () => Modular.to.pushNamed('/store/shopping')),
-                StoreTile(
-                    img: GAME,
-                    onTap: () => Modular.to.pushNamed('/store/shopping')),
-                StoreTile(
-                    img: WOOLWORTHS,
-                    onTap: () => Modular.to.pushNamed('/store/shopping')),
-              ],
-            ),
+            child: Observer(builder: (_) {
+              List<StoreModel> storeList = getStoreByMarketStore.storeList.data;
+              if (getStoreByMarketStore.storeList.hasError) {
+                return Center(child: Text('Ocorreu um erro'));
+              }
+              if (getStoreByMarketStore.storeList.data == null) {
+                return Center(child: CircularProgressIndicator());
+              }
+              return ListView.builder(
+                itemCount: storeList.length,
+                itemBuilder: (context, index) {
+                  StoreModel store = storeList[index];
+                  return StoreTile(
+                    img: store.logo,
+                    label: store.name,
+                    onTap: () async {
+                      _controller.select(index);
+                      await Modular.to.pushNamed('/store/shopping');
+                      _controller.selectedIndex = 100;
+                    },
+                    index: index,
+                  );
+                },
+              );
+            }),
           ),
         ],
       ),

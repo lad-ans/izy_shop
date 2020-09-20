@@ -1,3 +1,5 @@
+import 'package:izy_shop/app/modules/store/presentation/stores/get_market_store.dart';
+
 import 'product_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 

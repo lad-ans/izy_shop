@@ -5,6 +5,7 @@ import 'package:izy_shop/app/modules/auth/auth_module.dart';
 import 'package:izy_shop/app/modules/cart/cart_module.dart';
 import 'package:izy_shop/app/modules/checkout/checkout_module.dart';
 import 'package:izy_shop/app/modules/customer/customer_module.dart';
+import 'package:izy_shop/app/modules/store/presentation/stores/get_market_store.dart';
 import 'package:izy_shop/app/modules/store/store_module.dart';
 
 import 'app_controller.dart';

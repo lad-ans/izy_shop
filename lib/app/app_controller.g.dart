@@ -19,18 +19,18 @@ final $AppController = BindInject(
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$AppController on _AppControllerBase, Store {
-  final _$valueAtom = Atom(name: '_AppControllerBase.value');
+  final _$selectedIndexAtom = Atom(name: '_AppControllerBase.selectedIndex');
 
   @override
-  int get value {
-    _$valueAtom.reportRead();
-    return super.value;
+  int get selectedIndex {
+    _$selectedIndexAtom.reportRead();
+    return super.selectedIndex;
   }
 
   @override
-  set value(int value) {
-    _$valueAtom.reportWrite(value, super.value, () {
-      super.value = value;
+  set selectedIndex(int value) {
+    _$selectedIndexAtom.reportWrite(value, super.selectedIndex, () {
+      super.selectedIndex = value;
     });
   }
 
@@ -38,11 +38,11 @@ mixin _$AppController on _AppControllerBase, Store {
       ActionController(name: '_AppControllerBase');
 
   @override
-  void increment() {
+  dynamic select(int index) {
     final _$actionInfo = _$_AppControllerBaseActionController.startAction(
-        name: '_AppControllerBase.increment');
+        name: '_AppControllerBase.select');
     try {
-      return super.increment();
+      return super.select(index);
     } finally {
       _$_AppControllerBaseActionController.endAction(_$actionInfo);
     }
@@ -51,7 +51,7 @@ mixin _$AppController on _AppControllerBase, Store {
   @override
   String toString() {
     return '''
-value: ${value}
+selectedIndex: ${selectedIndex}
     ''';
   }
 }

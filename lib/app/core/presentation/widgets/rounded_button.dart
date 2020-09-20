@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:izy_shop/app/app_controller.dart';
 
 import '../../../modules/auth/presentation/widgets/custom_text.dart';
 
 class RoundedButton extends StatelessWidget {
   final IconData icon;
   final String text;
-  final bool isSelected;
+  bool isSelected;
+  final int index;
   final bool isGreenColor;
   final VoidCallback onTap;
   final double width;
@@ -15,24 +19,26 @@ class RoundedButton extends StatelessWidget {
   final Color textColor;
   final double iconSize;
   final Color color, borderColor, iconColor;
-  const RoundedButton(
-      {Key key,
-      this.icon,
-      this.text = '',
-      this.isSelected = false,
-      this.isGreenColor = false,
-      this.onTap,
-      this.width,
-      this.btnWidth,
-      this.btnHeight,
-      this.textSize,
-      this.textColor,
-      this.iconSize,
-      this.color,
-      this.borderColor,
-      this.iconColor})
-      : super(key: key);
+  RoundedButton({
+    Key key,
+    this.icon,
+    this.text = '',
+    this.isSelected = false,
+    this.isGreenColor = false,
+    this.onTap,
+    this.width,
+    this.btnWidth,
+    this.btnHeight,
+    this.textSize,
+    this.textColor,
+    this.iconSize,
+    this.color,
+    this.borderColor,
+    this.index,
+    this.iconColor,
+  }) : super(key: key);
 
+  final AppController _controller = Modular.get<AppController>();
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -41,25 +47,28 @@ class RoundedButton extends StatelessWidget {
       children: [
         InkWell(
           onTap: onTap,
-          child: Container(
-            width: btnWidth ?? 90,
-            height: btnHeight ?? 90,
-            decoration: BoxDecoration(
-                border: Border.all(
-                    color: isGreenColor
-                        ? Colors.green
-                        : borderColor ?? Colors.white,
-                    width: 0.7),
-                borderRadius: BorderRadius.circular(80),
-                color: isSelected
-                    ? Colors.white
-                    : isGreenColor ? Colors.green : color ?? Colors.black45),
-            child: Icon(icon,
-                color: isSelected
-                    ? Colors.black
-                    : isGreenColor ? Colors.white : iconColor ?? Colors.black,
-                size: iconSize ?? 50),
-          ),
+          child: Observer(builder: (_) {
+            isSelected = _controller.selectedIndex == index;
+            return Container(
+              width: btnWidth ?? 90,
+              height: btnHeight ?? 90,
+              decoration: BoxDecoration(
+                  border: Border.all(
+                      color: isGreenColor
+                          ? Colors.green
+                          : borderColor ?? Colors.white,
+                      width: 0.7),
+                  borderRadius: BorderRadius.circular(80),
+                  color: isSelected
+                      ? Colors.white
+                      : isGreenColor ? Colors.green : color ?? Colors.black45),
+              child: Icon(icon,
+                  color: isSelected
+                      ? Colors.black
+                      : isGreenColor ? Colors.white : iconColor ?? Colors.black,
+                  size: iconSize ?? 50),
+            );
+          }),
         ),
         SizedBox(height: 5.0),
         CustomText(

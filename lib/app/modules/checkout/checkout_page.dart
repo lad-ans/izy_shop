@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:izy_shop/app/app_controller.dart';
 
 import '../../core/domain/configs/core_config.dart';
 import '../../core/presentation/widgets/amount_checkout_row.dart';
@@ -17,6 +18,7 @@ class CheckoutPage extends StatefulWidget {
 
 class _CheckoutPageState
     extends ModularState<CheckoutPage, CheckoutController> {
+  final AppController _controller = Modular.get<AppController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -145,7 +147,7 @@ class _CheckoutPageState
                     Expanded(child: SizedBox()),
                     Switch(
                       activeColor: Colors.green[200],
-                      value: true,
+                      value: false,
                       onChanged: (value) {},
                     )
                   ],
@@ -201,6 +203,10 @@ class _CheckoutPageState
           btnHeight: 70.0,
           width: 70.0,
           iconSize: 35,
+          onTap: () async {
+            _controller.select(4);
+          },
+          index: 4,
         ),
         Expanded(
             child: Padding(
@@ -223,64 +229,89 @@ class _CheckoutPageState
         scrollDirection: Axis.horizontal,
         children: [
           RoundedButton(
-              color: Colors.black12,
-              borderColor: Colors.black87,
-              icon: Ionicons.ios_card,
-              text: 'Pay\nOnline',
-              textColor: Colors.black,
-              textSize: 13.0,
-              btnWidth: 70.0,
-              btnHeight: 70.0,
-              width: 70.0,
-              iconSize: 35),
+            color: Colors.black12,
+            borderColor: Colors.black87,
+            icon: Ionicons.ios_card,
+            text: 'Pay\nOnline',
+            textColor: Colors.black,
+            textSize: 13.0,
+            btnWidth: 70.0,
+            btnHeight: 70.0,
+            width: 70.0,
+            iconSize: 35,
+            onTap: () async {
+              _controller.select(0);
+            },
+            index: 0,
+          ),
           SizedBox(width: 7.0),
           RoundedButton(
-              color: Colors.black12,
-              borderColor: Colors.black87,
-              icon: Icons.monetization_on,
-              text: 'Bank\nTransfer',
-              textColor: Colors.black,
-              textSize: 13.0,
-              btnWidth: 70.0,
-              btnHeight: 70.0,
-              width: 70.0,
-              iconSize: 35),
+            color: Colors.black12,
+            borderColor: Colors.black87,
+            icon: Icons.monetization_on,
+            text: 'Bank\nTransfer',
+            textColor: Colors.black,
+            textSize: 13.0,
+            btnWidth: 70.0,
+            btnHeight: 70.0,
+            width: 70.0,
+            iconSize: 35,
+            onTap: () async {
+              _controller.select(1);
+            },
+            index: 1,
+          ),
           SizedBox(width: 7.0),
           RoundedButton(
-              color: Colors.black12,
-              borderColor: Colors.black87,
-              icon: Icons.phone_android,
-              text: 'Payment of\nServices',
-              textColor: Colors.black,
-              textSize: 13.0,
-              btnWidth: 70.0,
-              btnHeight: 70.0,
-              width: 70.0,
-              iconSize: 35),
+            color: Colors.black12,
+            borderColor: Colors.black87,
+            icon: Icons.phone_android,
+            text: 'Payment of\nServices',
+            textColor: Colors.black,
+            textSize: 13.0,
+            btnWidth: 70.0,
+            btnHeight: 70.0,
+            width: 70.0,
+            iconSize: 35,
+            onTap: () async {
+              _controller.select(2);
+            },
+            index: 2,
+          ),
           SizedBox(width: 7.0),
           RoundedButton(
-              color: Colors.black12,
-              borderColor: Colors.black87,
-              icon: Icons.mobile_screen_share,
-              text: 'POS\n',
-              textColor: Colors.black,
-              textSize: 13.0,
-              btnWidth: 70.0,
-              btnHeight: 70.0,
-              width: 70.0,
-              iconSize: 35),
+            color: Colors.black12,
+            borderColor: Colors.black87,
+            icon: Icons.mobile_screen_share,
+            text: 'POS\n',
+            textColor: Colors.black,
+            textSize: 13.0,
+            btnWidth: 70.0,
+            btnHeight: 70.0,
+            width: 70.0,
+            iconSize: 35,
+            onTap: () async {
+              _controller.select(3);
+            },
+            index: 3,
+          ),
           SizedBox(width: 7.0),
           RoundedButton(
-              color: Colors.black12,
-              borderColor: Colors.black87,
-              icon: FontAwesomeIcons.moneyBillAlt,
-              text: 'Cash\n(on delivery)',
-              textColor: Colors.black,
-              textSize: 13.0,
-              btnWidth: 70.0,
-              btnHeight: 70.0,
-              width: 70.0,
-              iconSize: 35),
+            color: Colors.black12,
+            borderColor: Colors.black87,
+            icon: FontAwesomeIcons.moneyBillAlt,
+            text: 'Cash\n(on delivery)',
+            textColor: Colors.black,
+            textSize: 13.0,
+            btnWidth: 70.0,
+            btnHeight: 70.0,
+            width: 70.0,
+            iconSize: 35,
+            onTap: () async {
+              _controller.select(4);
+            },
+            index: 4,
+          ),
         ],
       ),
     );

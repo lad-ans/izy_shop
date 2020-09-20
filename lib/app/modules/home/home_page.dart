@@ -1,10 +1,15 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:izy_shop/app/app_controller.dart';
+import 'package:izy_shop/app/core/domain/entities/route_entity.dart';
 
 import '../../core/domain/configs/core_config.dart';
 import '../../core/domain/consts/img.dart';
+import '../store/data/models/market_model.dart';
+import '../store/presentation/stores/get_market_store.dart';
 import '../store/presentation/widgets/store_tile.dart';
 
 class HomePage extends StatelessWidget {
@@ -34,6 +39,8 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  final marketStore = Modular.get<GetMarketStore>();
+  final AppController _controller = Modular.get<AppController>();
   Widget _buildContainerContent(BuildContext context) {
     return Container(
       child: Column(
@@ -41,25 +48,33 @@ class HomePage extends StatelessWidget {
           SizedBox(height: 30.0),
           Image.asset(LOGO_NAMED_WHITE, width: 90, height: 90),
           Expanded(
-            child: ListView(
-              children: [
-                StoreTile(
-                  img: SUPERMARKET,
-                  label: 'Supermarket',
-                  onTap: () => Modular.to.pushNamed('/home/market'),
-                ),
-                StoreTile(
-                  img: FARMER_PRODUCT,
-                  label: 'Farmers Market',
-                  onTap: () => Modular.to.pushNamed('/home/market'),
-                ),
-                StoreTile(
-                  img: RESTAURANT,
-                  label: 'Restaurants',
-                  onTap: () => Modular.to.pushNamed('/home/market'),
-                ),
-              ],
-            ),
+            child: Observer(builder: (_) {
+              List<MarketModel> marketList = marketStore.marketList.data;
+              if (marketStore.marketList.hasError) {
+                return Center(child: Text('Ocorreu um erro'));
+              }
+              if (marketStore.marketList.data == null) {
+                return Center(child: CircularProgressIndicator());
+              }
+              return ListView.builder(
+                  itemCount: marketList.length,
+                  itemBuilder: (context, index) {
+                    MarketModel market = marketList[index];
+                    return StoreTile(
+                      img: market?.logo,
+                      label: market?.name,
+                      onTap: () async {
+                        _controller.select(index);
+                        await Modular.to.pushNamed(
+                          '/home/market',
+                          arguments: RouteEntity(marketName: market.name),
+                        );
+                        _controller.selectedIndex = 100;
+                      },
+                      index: index,
+                    );
+                  });
+            }),
           ),
         ],
       ),
