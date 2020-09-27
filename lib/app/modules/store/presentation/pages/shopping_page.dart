@@ -54,9 +54,6 @@ class _ShoppingPageState extends State<ShoppingPage> {
                   children: widget.routeEntity.productCategories
                           .map((productCategory) {
                         return ProductList(
-                          onAddToCart: (data) {
-                            this.product = data;
-                          },
                           routeEntity: widget.routeEntity,
                           listTitle: productCategory,
                         );
@@ -121,10 +118,9 @@ class _ShoppingPageState extends State<ShoppingPage> {
         },
       );
 
-  ProductModel product;
   Widget _buildCartTile(BuildContext context) {
-    return DragTarget(
-      builder: (context, List<ProductModel> candidate, rejected) {
+    return DragTarget<ProductModel>(
+      builder: (context, incoming, rejected) {
         return InkWell(
           onTap: () async {
             setAllOrientations();
@@ -144,11 +140,16 @@ class _ShoppingPageState extends State<ShoppingPage> {
           ),
         );
       },
-      onWillAccept: (value) {
+      onWillAccept: (ProductModel productModel) {
+        Modular.get<AddToCartStore>().setDragFeedbackColor(Colors.red);
         return true;
       },
-      onAccept: (value) async {
-        await Modular.get<AddToCartStore>().execute(product);
+      onAccept: (ProductModel productModel) async {
+        Modular.get<AddToCartStore>().setDragFeedbackColor(Colors.transparent);
+        await Modular.get<AddToCartStore>().execute(productModel);
+      },
+      onLeave: (productModel) {
+        Modular.get<AddToCartStore>().setDragFeedbackColor(Colors.transparent);
       },
     );
   }

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_modular/flutter_modular_annotations.dart';
 import 'package:mobx/mobx.dart';
@@ -18,5 +19,13 @@ abstract class _AddToCartStoreBase with Store {
 
   Future<void> execute(ProductModel productModel) async {
     await _addToCart.call(productModel);
+  }
+
+  @observable
+  Color dragFeedbackColor = Colors.transparent;
+
+  @action
+  setDragFeedbackColor(Color color) {
+    this.dragFeedbackColor = color;
   }
 }

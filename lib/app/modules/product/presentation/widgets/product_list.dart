@@ -1,9 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../../../core/domain/consts/img.dart';
 import '../../../../core/domain/entities/route_entity.dart';
 import '../../data/models/product_model.dart';
+import '../stores/add_to_cart_store.dart';
 import '../stores/get_product_by_category_store.dart';
 import 'item_tile.dart';
 
@@ -12,7 +15,6 @@ class ProductList extends StatefulWidget {
   final String listTitle;
   final bool showListTitle;
   final RouteEntity routeEntity;
-  final Function(ProductModel) onAddToCart;
 
   ProductList({
     Key key,
@@ -20,7 +22,6 @@ class ProductList extends StatefulWidget {
     this.listTitle,
     this.showListTitle = true,
     this.routeEntity,
-    this.onAddToCart,
   }) : super(key: key);
 
   @override
@@ -67,21 +68,51 @@ class _ProductListState extends State<ProductList> {
                   .toList()
                   .length,
               itemBuilder: (context, index) {
-                ProductModel product = productList
+                ProductModel productModel = productList
                     .where((el) =>
                         el.category.toLowerCase() ==
                         widget.listTitle.toLowerCase())
                     .toList()[index];
-                widget.onAddToCart(product);
-                return ItemTile(
-                  productModel: product,
-                  color: Theme.of(context).cardColor,
+                return LongPressDraggable(
+                  data: productModel,
+                  maxSimultaneousDrags: 1,
+                  feedback: _buildDraggableFeedback(productModel),
+                  child: ItemTile(
+                    productModel: productModel,
+                    color: Theme.of(context).cardColor,
+                  ),
                 );
               },
             );
           }),
         ),
       ],
+    );
+  }
+
+  Widget _buildDraggableFeedback(ProductModel productModel) {
+    return Opacity(
+      opacity: 0.9,
+      child: Material(
+        child: Observer(builder: (_) {
+          final currentColor = Modular.get<AddToCartStore>().dragFeedbackColor;
+          return Container(
+            height: 50.0,
+            width: 50.0,
+            decoration: BoxDecoration(
+              color: currentColor,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: CachedNetworkImage(
+                imageUrl: productModel?.img ?? IMG_DEFAULT,
+                fit: BoxFit.contain,
+              ),
+            ),
+          );
+        }),
+      ),
     );
   }
 

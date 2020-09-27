@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../core/domain/consts/img.dart';
 import '../../data/models/product_model.dart';
 import '../stores/add_to_cart_store.dart';
 import 'cart_product_dialog.dart';
@@ -36,59 +35,38 @@ class ItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LongPressDraggable(
-      feedback: _buildDraggableFeedback(),
-      child: GestureDetector(
-        onTap: () {
-          showDialog(
-              barrierDismissible: false,
-              context: context,
-              builder: isOnBasket
-                  ? (context) => DescriptionDialog(
-                        productModel: productModel,
-                      )
-                  : isOnCart
-                      ? (context) => CartProductDialog(
-                            productModel: productModel,
-                          )
-                      : (context) => OnBuyDialog(
-                            productModel: productModel,
-                          ));
-        },
-        child: Container(
-          child: Stack(
-            children: [
-              _buildImgTile(),
-              Positioned(
-                top: 5.0,
-                right: 5.0,
-                child: _buildItemPrice(),
-              ),
-              Positioned(
-                bottom: 5.0,
-                right: 5.0,
-                child: _buildAddToCartButton(),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Container _buildDraggableFeedback() {
-    return Container(
-      height: 50.0,
-      width: 50.0,
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8.0),
-        child: CachedNetworkImage(
-          imageUrl: productModel?.img ?? IMG_DEFAULT,
-          fit: BoxFit.contain,
+    return GestureDetector(
+      onTap: () {
+        showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: isOnBasket
+                ? (context) => DescriptionDialog(
+                      productModel: productModel,
+                    )
+                : isOnCart
+                    ? (context) => CartProductDialog(
+                          productModel: productModel,
+                        )
+                    : (context) => OnBuyDialog(
+                          productModel: productModel,
+                        ));
+      },
+      child: Container(
+        child: Stack(
+          children: [
+            _buildImgTile(),
+            Positioned(
+              top: 5.0,
+              right: 5.0,
+              child: _buildItemPrice(),
+            ),
+            Positioned(
+              bottom: 5.0,
+              right: 5.0,
+              child: _buildAddToCartButton(),
+            ),
+          ],
         ),
       ),
     );
