@@ -87,7 +87,15 @@ class MarketPage extends StatelessWidget {
                     label: store.name,
                     onTap: () async {
                       _controller.select(index);
-                      await Modular.to.pushNamed('/store/shopping');
+                      print(store.reference.path);
+                      await Modular.to.pushNamed(
+                        '/store/shopping',
+                        arguments: RouteEntity(
+                            productCategories: store.category,
+                            storeImg: store.logo,
+                            marketName: _routeEntity.marketName,
+                            storeRef: store.reference),
+                      );
                       _controller.selectedIndex = 100;
                     },
                     index: index,

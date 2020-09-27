@@ -11,7 +11,8 @@ class CheckoutModule extends ChildModule {
 
   @override
   List<ModularRouter> get routers => [
-        ModularRouter(Modular.initialRoute, child: (_, args) => CheckoutPage()),
+        ModularRouter(Modular.initialRoute,
+            child: (_, args) => CheckoutPage(routeEntity: args.data)),
       ];
 
   static Inject get to => Inject<CheckoutModule>.of();

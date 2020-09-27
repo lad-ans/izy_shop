@@ -33,14 +33,15 @@ class LoginPage extends StatelessWidget {
           ),
         ),
         child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
-            child: _buildColumn(context)),
+          filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+          child: _buildContentList(context),
+        ),
       ),
     );
   }
 
   final AppController _controller = Modular.get<AppController>();
-  Widget _buildColumn(BuildContext context) {
+  Widget _buildContentList(BuildContext context) {
     return ListView(
       children: [
         SizedBox(height: 10.0),
@@ -119,7 +120,8 @@ class LoginPage extends StatelessWidget {
           ],
         ),
         Expanded(child: SizedBox(height: 30)),
-        CustomText(text: 'New to izyshop? Register for an account.')
+        CustomText(text: 'New to izyshop? Register for an account.'),
+        SizedBox(height: 20)
       ],
     );
   }

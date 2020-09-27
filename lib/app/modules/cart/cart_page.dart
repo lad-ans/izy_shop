@@ -1,22 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../core/domain/configs/core_config.dart';
-import '../../core/domain/consts/img.dart';
+import '../../core/domain/entities/route_entity.dart';
 import '../../core/presentation/widgets/amount_checkout_row.dart';
 import '../../core/presentation/widgets/custom_statusbar.dart';
 import '../../core/presentation/widgets/rounded_button.dart';
 import '../../core/presentation/widgets/shopping_appbar.dart';
 import '../auth/presentation/widgets/custom_text.dart';
+import '../product/data/models/product_model.dart';
 import '../product/presentation/widgets/item_tile.dart';
 import 'cart_controller.dart';
+import 'presentation/stores/get_customer_cart_store.dart';
 
 class CartPage extends StatefulWidget {
+  final RouteEntity routeEntity;
+  const CartPage({
+    Key key,
+    this.routeEntity,
+  }) : super(key: key);
   @override
   _CartPageState createState() => _CartPageState();
 }
 
 class _CartPageState extends ModularState<CartPage, CartController> {
+  final getCustomerCartStore = Modular.get<GetCustomerCartStore>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,29 +40,49 @@ class _CartPageState extends ModularState<CartPage, CartController> {
     );
   }
 
-  Column _buidBottomNavBar() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        AmountCheckoutRow(title: 'SubTotal', amount: '23.000,00'),
-        AmountCheckoutRow(title: 'Delivery', amount: '350,00'),
-        AmountCheckoutRow(title: 'Total Amount', amount: '23.350,00'),
-        Divider(color: Colors.green[200]),
-        RoundedButton(
-          onTap: () => Modular.to.pushNamed('/checkout'),
-          isGreenColor: true,
-          icon: Icons.check,
-          iconSize: 30.0,
-          text: 'Confirm',
-          btnWidth: 50.0,
-          btnHeight: 50.0,
-          width: 70.0,
-          textColor: Colors.black87,
-          textSize: 14.0,
-        )
-      ],
-    );
+  Widget _buidBottomNavBar() {
+    return Observer(builder: (_) {
+      List<ProductModel> productList = getCustomerCartStore.cartList.data;
+      if (getCustomerCartStore.cartList.hasError) {
+        return Center(
+          child: Text('Error Occured'),
+        );
+      }
+      if (getCustomerCartStore.cartList.data == null) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+      var subTotal = 0;
+      for (var item in productList) {
+        subTotal += item.price;
+      }
+      return Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AmountCheckoutRow(title: 'SubTotal', amount: subTotal.toString()),
+            AmountCheckoutRow(title: 'Delivery', amount: '350,00'),
+            AmountCheckoutRow(
+                title: 'Total Amount', amount: (subTotal + 350).toString()),
+            Divider(color: Colors.green[200]),
+            RoundedButton(
+              onTap: () => Modular.to.pushNamed('/checkout',
+                  arguments: RouteEntity(
+                      storeImg: widget.routeEntity.storeImg,
+                      marketName: widget.routeEntity.marketName)),
+              isGreenColor: true,
+              icon: Icons.check,
+              iconSize: 30.0,
+              text: 'Confirm',
+              btnWidth: 50.0,
+              btnHeight: 50.0,
+              width: 70.0,
+              textColor: Colors.black87,
+              textSize: 14.0,
+            )
+          ]);
+    });
   }
 
   Widget _buildBody() {
@@ -61,25 +91,45 @@ class _CartPageState extends ModularState<CartPage, CartController> {
       child: Stack(
         children: [
           SizedBox(height: getStatusBar(context)),
-          SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: 75 + getStatusBar(context)),
-                _buildBodyContent(POTATOES, 'National potatoes', '(fresh)'),
-                _buildBodyContent(RICE, 'Basmati rice', ''),
-                _buildBodyContent(PAPAYA, 'Papaya', '(from epoc)'),
-                _buildBodyContent(APPLES, 'Red Apples', '(unit)'),
-                _buildBodyContent(MEAT, 'Meat', ''),
-                _buildBodyContent(YOGURT, 'Nutriday Yogurt', ''),
-                _buildBodyContent(BEANS, 'Beans', ''),
-              ],
+          Padding(
+            padding: EdgeInsets.only(top: 75),
+            child: SingleChildScrollView(
+              child: Observer(builder: (_) {
+                List<ProductModel> productList =
+                    getCustomerCartStore.cartList.data;
+                if (getCustomerCartStore.cartList.hasError) {
+                  return Center(
+                    child: Text('Error Occured'),
+                  );
+                }
+                if (getCustomerCartStore.cartList.data == null) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: productList.map((productModel) {
+                    return _buildBodyContent(
+                      productModel.img,
+                      productModel.name,
+                      productModel.description ?? 'No description!',
+                      productModel.price,
+                      productModel,
+                    );
+                  }).toList(),
+                );
+              }),
             ),
           ),
           CustomStatusBar(color: Colors.white),
           Padding(
             padding: EdgeInsets.only(top: getStatusBar(context)),
-            child: ShoppingAppBar(fullAppBar: false, isCartPage: true),
+            child: ShoppingAppBar(
+              routeEntity: widget.routeEntity,
+              fullAppBar: false,
+              isCartPage: true,
+            ),
           ),
         ],
       ),
@@ -87,7 +137,12 @@ class _CartPageState extends ModularState<CartPage, CartController> {
   }
 
   Container _buildBodyContent(
-      String product, String itemDesc, String itemDescDetail) {
+    String product,
+    String itemDesc,
+    String itemDescDetail,
+    num price,
+    ProductModel productModel,
+  ) {
     return Container(
       height: 70.0,
       padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -98,15 +153,16 @@ class _CartPageState extends ModularState<CartPage, CartController> {
             children: [
               Expanded(
                 child: ItemTile(
-                    itemWidth: 60,
+                    productModel: productModel,
+                    itemWidth: 70,
                     isOnCart: true,
                     elevation: 0.0,
                     hPadd: 0.0,
-                    product: product,
+                    productImg: product,
                     showItemPrice: false),
               ),
-              Text('(12.000,00 MT)',
-                  style: TextStyle(fontSize: 10.0, color: Colors.red[300]))
+              Text('$price MT',
+                  style: TextStyle(fontSize: 11.0, color: Colors.red[300]))
             ],
           ),
           _buildItemDesc(itemDesc, itemDescDetail),
@@ -122,6 +178,7 @@ class _CartPageState extends ModularState<CartPage, CartController> {
       children: [
         CustomText(
           text: itemDesc,
+          bold: true,
           fontSize: 12.0,
           width: 100.0,
           textColor: Colors.black,
@@ -156,11 +213,13 @@ class _CartPageState extends ModularState<CartPage, CartController> {
         children: [
           InkWell(child: Icon(Icons.remove, size: 15), onTap: () {}),
           SizedBox(width: 10.0),
-          Text(' 7 ',
-              style: TextStyle(
-                  color: Colors.redAccent,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14)),
+          Text(
+            ' 7 ',
+            style: TextStyle(
+                color: Colors.redAccent,
+                fontWeight: FontWeight.bold,
+                fontSize: 14),
+          ),
           SizedBox(width: 10.0),
           InkWell(child: Icon(Icons.add, size: 15), onTap: () {}),
         ],

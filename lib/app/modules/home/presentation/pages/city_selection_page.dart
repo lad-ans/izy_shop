@@ -49,19 +49,17 @@ class CitySelectionPage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Image.asset(LOGO_NAMED_WHITE, width: 120, height: 120),
-        Container(
-          child: Column(
-            children: [
-              _selectACity,
-              SizedBox(height: 20.0),
-              CustomTextField(
-                height: 55.0,
-                fillColor: Colors.white,
-                labelText: 'City',
-                filled: true,
-              ),
-            ],
-          ),
+        Column(
+          children: [
+            _selectACity,
+            SizedBox(height: 20.0),
+            CustomTextField(
+              height: 55.0,
+              fillColor: Colors.white,
+              labelText: 'City',
+              filled: true,
+            ),
+          ],
         ),
         SizedBox(height: 20.0),
         Container(

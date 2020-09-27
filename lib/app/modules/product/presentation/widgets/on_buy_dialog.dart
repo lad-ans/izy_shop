@@ -1,52 +1,65 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../core/domain/configs/core_config.dart';
 import '../../../../core/domain/consts/img.dart';
 import '../../../../core/presentation/widgets/custom_rich_text.dart';
+import '../../data/models/product_model.dart';
 
 class OnBuyDialog extends StatelessWidget {
   final bool isSelected;
+  final ProductModel productModel;
   const OnBuyDialog({
     Key key,
     this.isSelected = false,
+    this.productModel,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      overflow: Overflow.visible,
+    return SimpleDialog(
+      contentPadding: EdgeInsets.all(0.0),
+      backgroundColor: Colors.white.withOpacity(0.85),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+      ),
       children: [
-        SimpleDialog(
-          backgroundColor: Colors.white.withOpacity(0.85),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
-          ),
+        Stack(
+          overflow: Overflow.visible,
           children: [
-            _buildContentRow(),
-          ],
-        ),
-        Positioned(
-          top: getHeight(context) / 9.5,
-          left: getWidth(context) / 6,
-          child: _buildDialogButton(
-            height: 50.0,
-            width: 50.0,
-            color: Colors.black38,
-            icon: Icons.close,
-          ),
-        ),
-        Positioned(
-          bottom: getHeight(context) / 12,
-          right: getWidth(context) / 6,
-          child: GestureDetector(
-            onTap: () => Modular.to.pop(),
-            child: _buildDialogButton(
-              height: 70.0,
-              width: 70.0,
-              color: Colors.green,
-              icon: Icons.check,
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: _buildContentRow(),
             ),
-          ),
+            Positioned(
+              top: 0.0,
+              right: 0.0,
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: _buildDialogButton(
+                  height: 40.0,
+                  width: 40.0,
+                  color: Colors.black38,
+                  icon: Icons.close,
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 0.0,
+              right: 0.0,
+              child: GestureDetector(
+                onTap: () => Modular.to.pop(),
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: _buildDialogButton(
+                    height: 50.0,
+                    width: 50.0,
+                    color: Colors.green,
+                    icon: Icons.check,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -76,7 +89,10 @@ class OnBuyDialog extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _buildColumnLeft(),
-        _buildColumnRight(),
+        Padding(
+          padding: const EdgeInsets.only(left: 20.0, right: 30.0),
+          child: _buildColumnRight(),
+        ),
       ],
     );
   }
@@ -84,19 +100,19 @@ class OnBuyDialog extends StatelessWidget {
   Column _buildColumnRight() {
     return Column(
       children: [
-        CustomRichText(labelOne: 'Price: ', labelTwo: '160,00 MT / kg'),
-        CustomRichText(labelOne: 'Amount: ', labelTwo: '845,00 MT'),
+        CustomRichText(
+            labelOne: 'Price: ', labelTwo: '${productModel?.price} MT'),
+        SizedBox(height: 8.0),
         ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
-          child: Image.asset(
-            APPLES,
-            width: 200,
+          child: CachedNetworkImage(
+            imageUrl: productModel.img,
+            height: 150,
           ),
         ),
         Divider(),
-        Text('Red Apples',
+        Text(productModel.name,
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        Text('(Imported)', style: TextStyle(fontSize: 14)),
       ],
     );
   }
@@ -105,6 +121,7 @@ class OnBuyDialog extends StatelessWidget {
     return Column(
       children: [
         Text('Select Size'),
+        SizedBox(height: 4.0),
         Row(
           children: [
             _buildItemSize(imgItem: APPLES, size: 'small'),
@@ -167,8 +184,8 @@ class OnBuyDialog extends StatelessWidget {
           ),
           child: ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
-              child: Image.asset(
-                imgItem,
+              child: CachedNetworkImage(
+                imageUrl: productModel.img,
                 width: 100.0,
                 height: 100.0,
                 fit: BoxFit.cover,

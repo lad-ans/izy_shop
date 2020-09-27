@@ -1,3 +1,7 @@
+/// default
+const String IMG_DEFAULT =
+    'https://scontent.fmpm4-1.fna.fbcdn.net/v/t31.0-8/p960x960/17880766_433838540290657_7415782008331810918_o.png?_nc_cat=103&_nc_sid=dd9801&_nc_ohc=F3hgBzbEpG4AX_PiI37&_nc_oc=AQk8SgBj-xjCy2Y0lVk5Pw49hCW0eHyAIqcU9_berj-XmySYZ8Y5vWvhC7RyMiFx_kc&_nc_ht=scontent.fmpm4-1.fna&oh=7319a1ac5a9d98f27287fbdba8919f8c&oe=5F95A33D';
+
 /// logo
 const String LOGO_NAMED = 'assets/images/shared/logoNamed.png';
 const String LOGO_NAMED_WHITE = 'assets/images/shared/logoWhite.png';

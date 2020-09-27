@@ -1,9 +1,7 @@
-import 'package:izy_shop/app/modules/customer/presentation/pages/account/account_page.dart';
-
-import 'customer_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import 'customer_page.dart';
+import 'customer_controller.dart';
+import 'presentation/pages/account/account_page.dart';
 
 class CustomerModule extends ChildModule {
   @override

@@ -27,7 +27,6 @@ class StoreRepositoryImpl implements StoreRepository {
 
   @override
   Stream<List<StoreModel>> getStoreByMarket(String collPath) {
-    print(collPath);
     return firestore
         .collection('market')
         .document('5OX5YOeZJAnflZlewMzA')

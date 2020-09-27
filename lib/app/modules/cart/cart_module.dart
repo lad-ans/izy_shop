@@ -11,7 +11,8 @@ class CartModule extends ChildModule {
 
   @override
   List<ModularRouter> get routers => [
-        ModularRouter(Modular.initialRoute, child: (_, args) => CartPage()),
+        ModularRouter(Modular.initialRoute,
+            child: (_, args) => CartPage(routeEntity: args.data)),
       ];
 
   static Inject get to => Inject<CartModule>.of();

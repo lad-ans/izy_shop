@@ -1,32 +1,38 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../core/domain/consts/img.dart';
+import '../../data/models/product_model.dart';
+import '../stores/add_to_cart_store.dart';
 import 'cart_product_dialog.dart';
 import 'description_dialog.dart';
 import 'on_buy_dialog.dart';
 
 class ItemTile extends StatelessWidget {
+  final ProductModel productModel;
   final Color color;
   final double elevation;
   final double hPadd;
   final bool showItemPrice;
-  final String product;
+  final String productImg;
   final double itemWidth;
   final bool isOnBasket;
   final bool isOnCart;
 
-  const ItemTile({
-    Key key,
-    this.color,
-    this.elevation,
-    this.hPadd,
-    this.showItemPrice = true,
-    this.product,
-    this.itemWidth,
-    this.isOnBasket = false,
-    this.isOnCart = false,
-  }) : super(key: key);
+  ItemTile(
+      {Key key,
+      this.color,
+      this.elevation,
+      this.hPadd,
+      this.showItemPrice = true,
+      this.productImg,
+      this.itemWidth,
+      this.isOnBasket = false,
+      this.isOnCart = false,
+      this.productModel})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +44,18 @@ class ItemTile extends StatelessWidget {
               barrierDismissible: false,
               context: context,
               builder: isOnBasket
-                  ? (context) => DescriptionDialog()
+                  ? (context) => DescriptionDialog(
+                        productModel: productModel,
+                      )
                   : isOnCart
-                      ? (context) => CartProductDialog()
-                      : (context) => OnBuyDialog());
+                      ? (context) => CartProductDialog(
+                            productModel: productModel,
+                          )
+                      : (context) => OnBuyDialog(
+                            productModel: productModel,
+                          ));
         },
         child: Container(
-          // padding: EdgeInsets.symmetric(horizontal: hPadd ?? 4.0),
           child: Stack(
             children: [
               _buildImgTile(),
@@ -74,8 +85,12 @@ class ItemTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: ClipRRect(
-          borderRadius: BorderRadius.circular(8.0),
-          child: Image.asset(product, fit: BoxFit.contain)),
+        borderRadius: BorderRadius.circular(8.0),
+        child: CachedNetworkImage(
+          imageUrl: productModel?.img ?? IMG_DEFAULT,
+          fit: BoxFit.contain,
+        ),
+      ),
     );
   }
 
@@ -89,7 +104,7 @@ class ItemTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(5.0),
         ),
         child: Container(
-          width: itemWidth ?? 130,
+          width: itemWidth ?? 90,
           padding: EdgeInsets.symmetric(vertical: 1.0),
           alignment: Alignment.center,
           decoration: BoxDecoration(
@@ -97,12 +112,15 @@ class ItemTile extends StatelessWidget {
           ),
           child: ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
-              child: Image.asset(product ?? POTATOES)),
+              child: CachedNetworkImage(
+                  imageUrl: isOnCart ? productImg : productModel?.img,
+                  fit: BoxFit.contain)),
         ),
       ),
     );
   }
 
+  final _addToCart = Modular.get<AddToCartStore>();
   Widget _buildAddToCartButton() {
     return Visibility(
       visible: showItemPrice,
@@ -118,7 +136,9 @@ class ItemTile extends StatelessWidget {
             ),
           ),
         ),
-        onTap: () {},
+        onTap: () async {
+          await _addToCart.execute(productModel);
+        },
       ),
     );
   }
@@ -134,7 +154,7 @@ class ItemTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              '123,45 MT (unit)',
+              '${productModel?.price} MT',
               style: TextStyle(
                 color: Colors.red[200],
                 fontSize: 10.0,

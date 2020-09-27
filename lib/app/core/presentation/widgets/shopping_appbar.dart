@@ -1,19 +1,22 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:izy_shop/app/core/domain/entities/route_entity.dart';
 
 import '../../domain/configs/core_config.dart';
 import '../../domain/consts/img.dart';
 import 'help_dialog.dart';
 
-
 class ShoppingAppBar extends StatefulWidget {
   final bool fullAppBar;
   final bool isCartPage;
+  final RouteEntity routeEntity;
   const ShoppingAppBar({
     Key key,
     this.fullAppBar = true,
     this.isCartPage = false,
+    this.routeEntity,
   }) : super(key: key);
 
   @override
@@ -38,8 +41,12 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
           SizedBox(width: 2.0),
           Visibility(
               visible: widget.fullAppBar,
-              child:
-                  Image.asset(SPAR, height: widget.fullAppBar ? 30.0 : 55.0)),
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: CachedNetworkImage(
+                          imageUrl: widget.routeEntity.storeImg,
+                          height: widget.fullAppBar ? 30.0 : 55.0) ??
+                      Image.asset(APPLES))),
           SizedBox(width: 2.0),
           Visibility(visible: widget.fullAppBar, child: _buildNavigationText()),
           Expanded(child: SizedBox()),
@@ -79,8 +86,8 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
               setLandscapeOrientation();
             },
           ),
-          SizedBox(width: 5.0),
-          _buildGold()
+          // SizedBox(width: 5.0),
+          // _buildGold()
         ],
       ),
     );
@@ -98,7 +105,7 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
       text: TextSpan(
         children: [
           TextSpan(
-            text: 'Supermarkets / Departaments / ',
+            text: ' ${widget.routeEntity.marketName} / Departaments / ',
             style: TextStyle(
               color: Colors.grey,
               fontSize: 10,
@@ -118,38 +125,38 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
     );
   }
 
-  Column _buildGold() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          'gold'.toUpperCase(),
-          style: TextStyle(
-            color: Colors.amber,
-            fontSize: !widget.fullAppBar ? 18 : 25.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Row(
-          children: [
-            _buildStar(),
-            _buildStar(),
-            _buildStar(),
-            _buildStar(),
-            _buildStar(),
-          ],
-        )
-      ],
-    );
-  }
+  // Column _buildGold() {
+  //   return Column(
+  //     mainAxisAlignment: MainAxisAlignment.center,
+  //     children: [
+  //       Text(
+  //         'gold'.toUpperCase(),
+  //         style: TextStyle(
+  //           color: Colors.amber,
+  //           fontSize: !widget.fullAppBar ? 18 : 25.0,
+  //           fontWeight: FontWeight.bold,
+  //         ),
+  //       ),
+  //       Row(
+  //         children: [
+  //           _buildStar(),
+  //           _buildStar(),
+  //           _buildStar(),
+  //           _buildStar(),
+  //           _buildStar(),
+  //         ],
+  //       )
+  //     ],
+  //   );
+  // }
 
-  Icon _buildStar() {
-    return Icon(
-      Ionicons.ios_star,
-      size: !widget.fullAppBar ? 10.0 : 14.0,
-      color: Colors.amber,
-    );
-  }
+  // Icon _buildStar() {
+  //   return Icon(
+  //     Ionicons.ios_star,
+  //     size: !widget.fullAppBar ? 10.0 : 14.0,
+  //     color: Colors.amber,
+  //   );
+  // }
 
   Widget _buildRoundedButtonLabel(String label) => Container(
         width: !widget.fullAppBar ? 30.0 : 45,

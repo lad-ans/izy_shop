@@ -3,6 +3,7 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:izy_shop/app/app_controller.dart';
+import 'package:izy_shop/app/core/domain/entities/route_entity.dart';
 
 import '../../core/domain/configs/core_config.dart';
 import '../../core/presentation/widgets/amount_checkout_row.dart';
@@ -12,6 +13,9 @@ import '../../core/presentation/widgets/shopping_appbar.dart';
 import 'checkout_controller.dart';
 
 class CheckoutPage extends StatefulWidget {
+  final RouteEntity routeEntity;
+
+  const CheckoutPage({Key key, this.routeEntity}) : super(key: key);
   @override
   _CheckoutPageState createState() => _CheckoutPageState();
 }
@@ -82,7 +86,10 @@ class _CheckoutPageState
           CustomStatusBar(color: Colors.white),
           Padding(
             padding: EdgeInsets.only(top: getStatusBar(context)),
-            child: ShoppingAppBar(fullAppBar: false),
+            child: ShoppingAppBar(
+              routeEntity: widget.routeEntity,
+              fullAppBar: false,
+            ),
           ),
         ],
       ),
