@@ -14,8 +14,8 @@ class ProductRepositoryImpl implements ProductRepository {
   });
 
   @override
-  Stream<List<ProductModel>> getProductByCategory(
-      DocumentReference reference, String category) {
+  Stream<List<ProductModel>> getProduct(
+      DocumentReference reference) {
     return reference.collection('products').snapshots().map((snap) {
       return snap.documents.map((doc) {
         return ProductModel.fromDocument(doc);

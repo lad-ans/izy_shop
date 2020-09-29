@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'get_product_by_category.dart';
+part of 'get_product.dart';
 
 // **************************************************************************
 // InjectionGenerator
 // **************************************************************************
 
-final $GetProductByCategoryImpl = BindInject(
-  (i) => GetProductByCategoryImpl(i<ProductRepository>()),
+final $GetProductImpl = BindInject(
+  (i) => GetProductImpl(i<ProductRepository>()),
   singleton: true,
   lazy: true,
 );

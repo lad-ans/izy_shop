@@ -1,6 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:izy_shop/app/core/domain/entities/route_entity.dart';
+import 'package:izy_shop/app/modules/product/presentation/stores/add_to_cart_store.dart';
+import 'package:izy_shop/app/modules/product/presentation/widgets/description_dialog.dart';
 
 import '../../../../core/domain/consts/img.dart';
 import '../../../../core/presentation/widgets/custom_rich_text.dart';
@@ -9,11 +13,13 @@ import '../../data/models/product_model.dart';
 class OnBuyDialog extends StatelessWidget {
   final bool isSelected;
   final ProductModel productModel;
-  const OnBuyDialog({
+  OnBuyDialog({
     Key key,
     this.isSelected = false,
     this.productModel,
   }) : super(key: key);
+
+  final adToCartStore = Modular.get<AddToCartStore>();
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
@@ -31,6 +37,29 @@ class OnBuyDialog extends StatelessWidget {
               child: _buildContentRow(),
             ),
             Positioned(
+              bottom: 0.0,
+              left: 0.0,
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: _buildDialogButton(
+                  height: 40.0,
+                  width: 40.0,
+                  color: Colors.red[200],
+                  icon: AntDesign.info,
+                  onTap: () {
+                    Modular.to.pop();
+                    showDialog(
+                      context: context,
+                      builder: (context) => DescriptionDialog(
+                        shoRemovalButton: false,
+                        productModel: productModel,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            Positioned(
               top: 0.0,
               right: 0.0,
               child: Padding(
@@ -40,6 +69,7 @@ class OnBuyDialog extends StatelessWidget {
                   width: 40.0,
                   color: Colors.black38,
                   icon: Icons.close,
+                  onTap: () => Modular.to.pop(),
                 ),
               ),
             ),
@@ -54,7 +84,11 @@ class OnBuyDialog extends StatelessWidget {
                     height: 50.0,
                     width: 50.0,
                     color: Colors.green,
-                    icon: Icons.check,
+                    icon: Icons.add,
+                    onTap: () async {
+                      await adToCartStore.execute(productModel);
+                      Modular.to.pop();
+                    },
                   ),
                 ),
               ),
@@ -65,20 +99,26 @@ class OnBuyDialog extends StatelessWidget {
     );
   }
 
-  GestureDetector _buildDialogButton({
-    double height,
-    double width,
-    Color color,
-    IconData icon,
-  }) {
+  GestureDetector _buildDialogButton(
+      {double height,
+      double width,
+      Color color,
+      IconData icon,
+      VoidCallback onTap}) {
     return GestureDetector(
-      onTap: () => Modular.to.pop(),
-      child: Container(
-        height: height,
-        width: width,
-        decoration: BoxDecoration(
-            color: color, borderRadius: BorderRadius.circular(50.0)),
-        child: Icon(icon, color: Colors.white, size: 30),
+      onTap: onTap,
+      child: Material(
+        elevation: 5.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50.0),
+        ),
+        child: Container(
+          height: height,
+          width: width,
+          decoration: BoxDecoration(
+              color: color, borderRadius: BorderRadius.circular(50.0)),
+          child: Icon(icon, color: Colors.white70, size: 30),
+        ),
       ),
     );
   }
@@ -105,9 +145,15 @@ class OnBuyDialog extends StatelessWidget {
         SizedBox(height: 8.0),
         ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
-          child: CachedNetworkImage(
-            imageUrl: productModel.img,
-            height: 150,
+          child: InkWell(
+            onTap: () => Modular.to.pushNamed(
+              'photo-view',
+              arguments: RouteEntity(productModel: productModel),
+            ),
+            child: CachedNetworkImage(
+              imageUrl: productModel.img,
+              height: 150,
+            ),
           ),
         ),
         Divider(),

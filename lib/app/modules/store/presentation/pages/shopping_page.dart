@@ -9,7 +9,6 @@ import '../../../../core/presentation/widgets/shopping_appbar.dart';
 import '../../../cart/presentation/stores/get_customer_cart_store.dart';
 import '../../../product/data/models/product_model.dart';
 import '../../../product/presentation/stores/add_to_cart_store.dart';
-import '../../../product/presentation/stores/get_product_by_category_store.dart';
 import '../../../product/presentation/widgets/item_tile.dart';
 import '../../../product/presentation/widgets/product_list.dart';
 
@@ -29,9 +28,6 @@ class _ShoppingPageState extends State<ShoppingPage> {
     getCustomerCartStore.execute('uuid');
     super.initState();
   }
-
-  final GetProductByCategoryStore getProductByCategoryStore =
-      Modular.get<GetProductByCategoryStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +137,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
         );
       },
       onWillAccept: (ProductModel productModel) {
-        Modular.get<AddToCartStore>().setDragFeedbackColor(Colors.red);
+        Modular.get<AddToCartStore>().setDragFeedbackColor(Colors.red[300]);
         return true;
       },
       onAccept: (ProductModel productModel) async {

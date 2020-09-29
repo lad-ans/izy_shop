@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../../../core/domain/entities/route_entity.dart';
 import '../../data/models/product_model.dart';
 
 class CartProductDialog extends StatelessWidget {
@@ -22,7 +23,25 @@ class CartProductDialog extends StatelessWidget {
         Stack(
           overflow: Overflow.visible,
           children: [
-            _buildContentRow(context),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: _buildContentRow(context),
+            ),
+            Positioned(
+              bottom: 0.0,
+              left: 0.0,
+              child: GestureDetector(
+                onTap: () => Modular.to.pop(),
+                child: Container(
+                  child: _buildRemovalButton(
+                    onPressed: () async {
+                      await productModel.reference.delete();
+                      Modular.to.pop();
+                    },
+                  ),
+                ),
+              ),
+            ),
             Positioned(
               top: 0.0,
               right: 0.0,
@@ -39,6 +58,27 @@ class CartProductDialog extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+
+  FlatButton _buildRemovalButton({VoidCallback onPressed}) {
+    return FlatButton.icon(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      onPressed: onPressed,
+      icon: Icon(
+        Icons.delete,
+        color: Colors.red[300],
+        size: 20.0,
+      ),
+      label: Text(
+        'Remove',
+        style: TextStyle(
+          color: Colors.red[200],
+          fontSize: 10.0,
+        ),
+      ),
     );
   }
 
@@ -66,22 +106,34 @@ class CartProductDialog extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildContentLeft(),
+          Container(
+            width: 200.0,
+            padding: EdgeInsets.only(bottom: 15.0),
+            child: _buildContentLeft(),
+          ),
+          SizedBox(width: 20.0),
           Expanded(
-            child: Container(
-              padding: EdgeInsets.only(left: 10.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
+            child: InkWell(
+              onTap: () => Modular.to.pushNamed(
+                'photo-view',
+                arguments: RouteEntity(productModel: productModel),
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10.0),
-                child: CachedNetworkImage(
-                  imageUrl: productModel.img,
-                  height: 70.0,
+              child: Container(
+                height: 70.0,
+                width: 70,
+                padding: EdgeInsets.only(left: 10.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0),
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: CachedNetworkImageProvider(
+                      productModel.img,
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
+          )
         ],
       ),
     );

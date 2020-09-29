@@ -1,13 +1,29 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+
+import 'package:izy_shop/app/core/domain/entities/route_entity.dart';
+import 'package:izy_shop/app/modules/product/data/models/product_model.dart';
+import 'package:izy_shop/app/modules/product/presentation/stores/get_product_store.dart';
+import 'package:izy_shop/app/modules/product/presentation/widgets/on_buy_dialog.dart';
 
 import '../../domain/configs/core_config.dart';
 import '../../domain/consts/img.dart';
 
 class SearchPage extends StatelessWidget {
+  final RouteEntity _routeEntity;
+  SearchPage(
+    this._routeEntity,
+  ) {
+    getProductStore.execute(_routeEntity.storeRef);
+  }
+
+  String searchParam = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,6 +31,7 @@ class SearchPage extends StatelessWidget {
     );
   }
 
+  final getProductStore = Modular.get<GetProductStore>();
   Widget _buildBody(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(20.0, getStatusBar(context), 20.0, 20.0),
@@ -43,16 +60,37 @@ class SearchPage extends StatelessWidget {
   }
 
   Widget _buildItemTile(
-      {String product, String title, String price, String vendor}) {
+      {BuildContext context,
+      String product,
+      String title,
+      String price,
+      String vendor,
+      ProductModel productModel}) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10.0),
       child: ListTile(
-        leading: ClipRRect(
-            borderRadius: BorderRadius.circular(12.0),
-            child: Image.asset(product, width: 100.0)),
+        leading: InkWell(
+          onTap: () => showDialog(
+            context: context,
+            builder: (context) {
+              return OnBuyDialog(
+                productModel: productModel,
+              );
+            },
+          ),
+          child: Container(
+            width: 100,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12.0),
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: CachedNetworkImageProvider(product),
+              ),
+            ),
+          ),
+        ),
         title: Text(
           title,
-          // overflow: TextOverflow.ellipsis,
           style: TextStyle(color: Colors.white70),
         ),
         subtitle: Text(
@@ -61,7 +99,7 @@ class SearchPage extends StatelessWidget {
         ),
         trailing: ClipRRect(
             borderRadius: BorderRadius.circular(12.0),
-            child: Image.asset(vendor, width: 100.0)),
+            child: CachedNetworkImage(imageUrl: vendor, width: 100.0)),
       ),
     );
   }
@@ -72,69 +110,50 @@ class SearchPage extends StatelessWidget {
         color: Colors.white12,
         borderRadius: BorderRadius.circular(10.0),
       ),
-      child: ListView(
-        children: [
-          _buildItemTile(
-            product: MEAT,
-            title: 'Carnes e Peixes',
-            price: '234,00',
-            vendor: WOOLWORTHS,
-          ),
-          _buildItemTile(
-            product: BEANS,
-            title: 'Feijão Manteiga',
-            price: '57,00',
-            vendor: GAME,
-          ),
-          _buildItemTile(
-            product: YOGURT,
-            title: 'Yogurt Natural',
-            price: '154,00',
-            vendor: SPAR,
-          ),
-          _buildItemTile(
-            product: MEAT,
-            title: 'Carnes e Peixes',
-            price: '234,00',
-            vendor: WOOLWORTHS,
-          ),
-          _buildItemTile(
-            product: BEANS,
-            title: 'Feijão Manteiga',
-            price: '57,00',
-            vendor: GAME,
-          ),
-          _buildItemTile(
-            product: YOGURT,
-            title: 'Yogurt Natural',
-            price: '154,00',
-            vendor: SPAR,
-          ),_buildItemTile(
-            product: MEAT,
-            title: 'Carnes e Peixes',
-            price: '234,00',
-            vendor: WOOLWORTHS,
-          ),
-          _buildItemTile(
-            product: BEANS,
-            title: 'Feijão Manteiga',
-            price: '57,00',
-            vendor: GAME,
-          ),
-          _buildItemTile(
-            product: YOGURT,
-            title: 'Yogurt Natural',
-            price: '154,00',
-            vendor: SPAR,
-          ),
-        ],
-      ),
+      child: Observer(builder: (_) {
+        List<ProductModel> productList = getProductStore.products.data;
+        if (getProductStore.products.hasError) {
+          print('Error Occured');
+        }
+        if (getProductStore.products.data == null) {
+          return Container(
+              alignment: Alignment.center,
+              height: 20.0,
+              child: CircularProgressIndicator());
+        }
+        return ListView.builder(
+          itemCount: productList
+              .where((item) => item.name.toLowerCase().contains(
+                    searchParam.toLowerCase(),
+                  ))
+              .toList()
+              .length,
+          itemBuilder: (context, index) {
+            ProductModel productModel = productList
+                .where((item) => item.name.toLowerCase().contains(
+                      searchParam.toLowerCase(),
+                    ))
+                .toList()[index];
+            return _buildItemTile(
+              context: context,
+              productModel: productModel,
+              product: productModel.img,
+              title: productModel.name,
+              price: productModel.price.toString(),
+              vendor: _routeEntity.storeImg,
+            );
+          },
+        );
+      }),
     );
   }
 
   TextField _buildTextField() {
     return TextField(
       style: TextStyle(color: Colors.black54, fontSize: 18.0),
+      onChanged: (value) {
+        this.searchParam = value;
+      },
       decoration: InputDecoration(
         hintText: 'Search...',
         hintStyle: TextStyle(color: Colors.black54, fontSize: 18.0),

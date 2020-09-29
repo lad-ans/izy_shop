@@ -7,6 +7,7 @@ class ProductModel {
   String description;
   num price;
   String size;
+  int qty;
   DocumentReference reference;
   ProductModel({
     this.name,
@@ -15,17 +16,21 @@ class ProductModel {
     this.description,
     this.price,
     this.size,
+    this.qty,
     this.reference,
   });
 
   factory ProductModel.fromDocument(DocumentSnapshot doc) {
     return ProductModel(
-        name: doc['name'],
-        img: doc['logo'],
-        description: doc['description'],
-        price: doc['price'],
-        size: doc['size'],
-        category: doc['category']);
+      name: doc['name'],
+      img: doc['logo'],
+      description: doc['description'],
+      price: doc['price'],
+      size: doc['size'],
+      category: doc['category'],
+      qty: doc['qty'],
+      reference: doc.reference,
+    );
   }
 
   Map<String, dynamic> toMap() {
@@ -35,7 +40,8 @@ class ProductModel {
       "description": this.description,
       "logo": this.img,
       "price": this.price,
-      "size": this.size
+      "size": this.size,
+      'qty': this.qty
     };
   }
 

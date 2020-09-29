@@ -55,10 +55,14 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
             child: _buildRoundedButton(
               Icons.search,
               label: 'Search',
-              onTap: () async {
-                setAllOrientations();
-                await Modular.to.pushNamed('/search');
-                setLandscapeOrientation();
+              onTap: () {
+                Modular.to.pushNamed(
+                  '/search',
+                  arguments: RouteEntity(
+                    storeImg: widget.routeEntity.storeImg,
+                    storeRef: widget.routeEntity.storeRef
+                  ),
+                );
               },
             ),
           ),

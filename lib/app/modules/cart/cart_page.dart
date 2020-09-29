@@ -1,6 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:izy_shop/app/modules/cart/presentation/stores/cart_store.dart';
+import 'package:izy_shop/app/modules/product/product_module.dart';
 
 import '../../core/domain/configs/core_config.dart';
 import '../../core/domain/entities/route_entity.dart';
@@ -107,17 +111,34 @@ class _CartPageState extends ModularState<CartPage, CartController> {
                     child: CircularProgressIndicator(),
                   );
                 }
+                if (productList.length == 0) {
+                  return Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.only(top: 20.0),
+                    child: Text(
+                      'No items yet!',
+                      style: TextStyle(color: Colors.red[300]),
+                    ),
+                  );
+                }
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: productList.map((productModel) {
-                    return _buildBodyContent(
-                      productModel.img,
-                      productModel.name,
-                      productModel.description ?? 'No description!',
-                      productModel.price,
-                      productModel,
-                    );
-                  }).toList(),
+                  children: [
+                    _buildHeader(),
+                    Divider(),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: productList.map((productModel) {
+                        return _buildBodyContent(
+                          productModel.img,
+                          productModel.name,
+                          productModel.description ?? 'No description!',
+                          productModel.price,
+                          productModel,
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 );
               }),
             ),
@@ -131,6 +152,20 @@ class _CartPageState extends ModularState<CartPage, CartController> {
               isCartPage: true,
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Container _buildHeader() {
+    return Container(
+      padding: EdgeInsets.only(top: 10.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Text('Product', style: TextStyle(color: Colors.red[300])),
+          Text('Desc', style: TextStyle(color: Colors.red[300])),
+          Text('Qty', style: TextStyle(color: Colors.red[300])),
         ],
       ),
     );
@@ -166,7 +201,7 @@ class _CartPageState extends ModularState<CartPage, CartController> {
             ],
           ),
           _buildItemDesc(itemDesc, itemDescDetail),
-          _buildItemInc(),
+          _buildItemInc(productModel),
         ],
       ),
     );
@@ -193,35 +228,65 @@ class _CartPageState extends ModularState<CartPage, CartController> {
     );
   }
 
-  Container _buildItemInc() {
+  Container _buildItemInc(ProductModel productModel) {
     return Container(
       alignment: Alignment.center,
-      height: 30.0,
-      padding: EdgeInsets.all(8.0),
+      height: 40.0,
+      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(40.0),
-          boxShadow: [
-            BoxShadow(
-              offset: Offset(2.0, 0.0),
-              blurRadius: 3.0,
-              color: Colors.black.withOpacity(0.36),
-            ),
-          ],
-          color: Colors.yellow),
+          border: Border.all(color: Colors.yellow[200], width: 1.0),
+          borderRadius: BorderRadius.circular(40.0)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          InkWell(child: Icon(Icons.remove, size: 15), onTap: () {}),
-          SizedBox(width: 10.0),
+          InkWell(
+            borderRadius: BorderRadius.circular(40.0),
+            child: Material(
+                color: Colors.yellow,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(40.0),
+                ),
+                elevation: 5.0,
+                child: Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child:
+                        Icon(Icons.remove, size: 20, color: Colors.black87))),
+            onTap: () {
+              if (productModel.qty > 1) {
+                productModel.qty--;
+              }
+              productModel.reference.updateData({'qty': productModel.qty});
+            },
+          ),
+          SizedBox(width: 15.0),
           Text(
-            ' 7 ',
+            productModel.qty.toString() ?? '1',
             style: TextStyle(
                 color: Colors.redAccent,
                 fontWeight: FontWeight.bold,
                 fontSize: 14),
           ),
-          SizedBox(width: 10.0),
-          InkWell(child: Icon(Icons.add, size: 15), onTap: () {}),
+          SizedBox(width: 15.0),
+          InkWell(
+            borderRadius: BorderRadius.circular(40.0),
+            child: Material(
+              color: Colors.yellow,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(40.0),
+              ),
+              elevation: 5.0,
+              child: Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Icon(Icons.add, size: 20, color: Colors.black87),
+              ),
+            ),
+            onTap: () {
+              if (productModel.qty >= 1) {
+                productModel.qty++;
+              }
+              productModel.reference.updateData({'qty': productModel.qty});
+            },
+          ),
         ],
       ),
     );

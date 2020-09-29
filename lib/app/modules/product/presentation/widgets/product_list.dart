@@ -7,7 +7,7 @@ import '../../../../core/domain/consts/img.dart';
 import '../../../../core/domain/entities/route_entity.dart';
 import '../../data/models/product_model.dart';
 import '../stores/add_to_cart_store.dart';
-import '../stores/get_product_by_category_store.dart';
+import '../stores/get_product_store.dart';
 import 'item_tile.dart';
 
 class ProductList extends StatefulWidget {
@@ -31,13 +31,11 @@ class ProductList extends StatefulWidget {
 class _ProductListState extends State<ProductList> {
   @override
   void initState() {
-    getProductByCategoryStore.execute(
-        widget.routeEntity.storeRef, widget.routeEntity.productCategories);
+    getProductStore.execute(widget.routeEntity.storeRef);
     super.initState();
   }
 
-  final GetProductByCategoryStore getProductByCategoryStore =
-      Modular.get<GetProductByCategoryStore>();
+  final GetProductStore getProductStore = Modular.get<GetProductStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -48,12 +46,11 @@ class _ProductListState extends State<ProductList> {
         Container(
           height: widget.height ?? 90.0,
           child: Observer(builder: (_) {
-            List<ProductModel> productList =
-                getProductByCategoryStore.products.data;
-            if (getProductByCategoryStore.products.hasError) {
+            List<ProductModel> productList = getProductStore.products.data;
+            if (getProductStore.products.hasError) {
               print('Error Occured');
             }
-            if (getProductByCategoryStore.products.data == null) {
+            if (getProductStore.products.data == null) {
               return Container(
                   alignment: Alignment.center,
                   height: 20.0,
@@ -94,6 +91,9 @@ class _ProductListState extends State<ProductList> {
     return Opacity(
       opacity: 0.9,
       child: Material(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
         child: Observer(builder: (_) {
           final currentColor = Modular.get<AddToCartStore>().dragFeedbackColor;
           return Container(
@@ -102,12 +102,11 @@ class _ProductListState extends State<ProductList> {
             decoration: BoxDecoration(
               color: currentColor,
               borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
-              child: CachedNetworkImage(
-                imageUrl: productModel?.img ?? IMG_DEFAULT,
-                fit: BoxFit.contain,
+              image: DecorationImage(
+                image: CachedNetworkImageProvider(
+                    productModel?.img ?? IMG_DEFAULT),
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(currentColor, BlendMode.color),
               ),
             ),
           );
