@@ -14,9 +14,7 @@ import '../../../product/presentation/widgets/product_list.dart';
 
 class ShoppingPage extends StatefulWidget {
   final RouteEntity routeEntity;
-  const ShoppingPage(
-    this.routeEntity,
-  );
+  const ShoppingPage(this.routeEntity);
   @override
   _ShoppingPageState createState() => _ShoppingPageState();
 }
@@ -47,13 +45,13 @@ class _ShoppingPageState extends State<ShoppingPage> {
             child: Padding(
               padding: EdgeInsets.only(top: 75 + getStatusBar(context)),
               child: Column(
-                  children: widget.routeEntity.productCategories
-                          .map((productCategory) {
+                  children: widget?.routeEntity?.productCategories
+                          ?.map((productCategory) {
                         return ProductList(
                           routeEntity: widget.routeEntity,
                           listTitle: productCategory,
                         );
-                      }).toList() ??
+                      })?.toList() ??
                       <Widget>[Center(child: Text('No Items!'))]),
             ),
           ),
@@ -61,6 +59,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
           Padding(
               padding: EdgeInsets.only(top: getStatusBar(context)),
               child: ShoppingAppBar(
+                isShopping: true,
                 routeEntity: widget.routeEntity,
               )),
           Positioned(bottom: 0.0, child: _buildBottomNavBar(context))
@@ -101,12 +100,12 @@ class _ShoppingPageState extends State<ShoppingPage> {
             scrollDirection: Axis.horizontal,
             itemCount: cartList.length,
             itemBuilder: (context, index) {
-              ProductModel product = cartList[index];
+              ProductModel cartProductModel = cartList[index];
               return ItemTile(
                 itemWidth: 60.0,
                 isOnBasket: true,
                 color: Theme.of(context).cardColor,
-                productModel: product,
+                productModel: cartProductModel,
                 showItemPrice: false,
               );
             },

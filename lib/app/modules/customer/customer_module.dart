@@ -1,13 +1,10 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
-import 'customer_controller.dart';
 import 'presentation/pages/account/account_page.dart';
 
 class CustomerModule extends ChildModule {
   @override
-  List<Bind> get binds => [
-        $CustomerController,
-      ];
+  List<Bind> get binds => [];
 
   @override
   List<ModularRouter> get routers => [

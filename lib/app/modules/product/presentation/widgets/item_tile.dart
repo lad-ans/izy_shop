@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:izy_shop/app/core/domain/utils/number_formatter.dart';
 
 import '../../data/models/product_model.dart';
 import '../stores/add_to_cart_store.dart';
@@ -132,7 +133,7 @@ class ItemTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              '${productModel?.price} MT',
+              '${NumberFormatter.instance.numToString(productModel?.price)} MT',
               style: TextStyle(
                 color: Colors.red[200],
                 fontSize: 10.0,

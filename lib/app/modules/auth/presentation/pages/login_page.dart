@@ -119,7 +119,7 @@ class LoginPage extends StatelessWidget {
             ),
           ],
         ),
-        Expanded(child: SizedBox(height: 30)),
+        SizedBox(height: 30),
         CustomText(text: 'New to izyshop? Register for an account.'),
         SizedBox(height: 20)
       ],

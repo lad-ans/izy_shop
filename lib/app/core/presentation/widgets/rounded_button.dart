@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:izy_shop/app/app_controller.dart';
 
+import '../../../app_controller.dart';
 import '../../../modules/auth/presentation/widgets/custom_text.dart';
 
 class RoundedButton extends StatelessWidget {
@@ -19,11 +19,15 @@ class RoundedButton extends StatelessWidget {
   final Color textColor;
   final double iconSize;
   final Color color, borderColor, iconColor;
+  final String paymentMethod;
+  final bool isCustomized;
+  final bool isNull;
   RoundedButton({
     Key key,
     this.icon,
     this.text = '',
     this.isSelected = false,
+    this.index,
     this.isGreenColor = false,
     this.onTap,
     this.width,
@@ -32,10 +36,12 @@ class RoundedButton extends StatelessWidget {
     this.textSize,
     this.textColor,
     this.iconSize,
-    this.color,
-    this.borderColor,
-    this.index,
     this.iconColor,
+    this.borderColor,
+    this.color,
+    this.paymentMethod,
+    this.isCustomized = false,
+    this.isNull = false,
   }) : super(key: key);
 
   final AppController _controller = Modular.get<AppController>();
@@ -46,7 +52,12 @@ class RoundedButton extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         InkWell(
-          onTap: onTap,
+          borderRadius: BorderRadius.circular(80),
+          onTap: isNull
+              ? null
+              : () {
+                  onTap();
+                },
           child: Observer(builder: (_) {
             isSelected = _controller.selectedIndex == index;
             return Container(
@@ -54,18 +65,26 @@ class RoundedButton extends StatelessWidget {
               height: btnHeight ?? 90,
               decoration: BoxDecoration(
                   border: Border.all(
-                      color: isGreenColor
-                          ? Colors.green
-                          : borderColor ?? Colors.white,
+                      color: (isSelected && isCustomized)
+                          ? Colors.red[300]
+                          : isSelected
+                              ? Colors.black
+                              : isGreenColor
+                                  ? Colors.green
+                                  : borderColor ?? Colors.white,
                       width: 0.7),
                   borderRadius: BorderRadius.circular(80),
                   color: isSelected
                       ? Colors.white
                       : isGreenColor ? Colors.green : color ?? Colors.black45),
               child: Icon(icon,
-                  color: isSelected
-                      ? Colors.black
-                      : isGreenColor ? Colors.white : iconColor ?? Colors.black,
+                  color: (isCustomized && isSelected)
+                      ? Colors.red[300]
+                      : isSelected
+                          ? Colors.black
+                          : isGreenColor
+                              ? Colors.white
+                              : iconColor ?? Colors.black,
                   size: iconSize ?? 50),
             );
           }),

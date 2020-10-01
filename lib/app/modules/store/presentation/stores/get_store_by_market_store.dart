@@ -3,19 +3,19 @@ import 'package:flutter_modular/flutter_modular_annotations.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../data/models/store_model.dart';
-import '../../domain/usecases/get_store_by_market.dart';
+import '../../domain/usecases/get_store_by_category.dart';
 
 part 'get_store_by_market_store.g.dart';
 
 @Injectable()
-class GetStoreByMarketStore = _GetStoreByMarketStoreBase
-    with _$GetStoreByMarketStore;
+class GetStoreByCategoryStore = _GetStoreByCategoryStoreBase
+    with _$GetStoreByCategoryStore;
 
-abstract class _GetStoreByMarketStoreBase with Store {
-  final GetStoreByMarket getStoreByMarket;
+abstract class _GetStoreByCategoryStoreBase with Store {
+  final GetStoreByCategory getStoreByCategory;
 
-  _GetStoreByMarketStoreBase({
-    this.getStoreByMarket,
+  _GetStoreByCategoryStoreBase({
+    this.getStoreByCategory,
   });
 
   @observable
@@ -23,6 +23,6 @@ abstract class _GetStoreByMarketStoreBase with Store {
 
   @action
   execute(String market) {
-    this.storeList = getStoreByMarket(market).asObservable();
+    this.storeList = getStoreByCategory(market).asObservable();
   }
 }

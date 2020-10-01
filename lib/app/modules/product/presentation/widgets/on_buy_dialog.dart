@@ -2,13 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:izy_shop/app/core/domain/entities/route_entity.dart';
-import 'package:izy_shop/app/modules/product/presentation/stores/add_to_cart_store.dart';
-import 'package:izy_shop/app/modules/product/presentation/widgets/description_dialog.dart';
+import 'package:izy_shop/app/core/domain/utils/number_formatter.dart';
 
 import '../../../../core/domain/consts/img.dart';
+import '../../../../core/domain/entities/route_entity.dart';
 import '../../../../core/presentation/widgets/custom_rich_text.dart';
 import '../../data/models/product_model.dart';
+import '../stores/add_to_cart_store.dart';
+import 'description_dialog.dart';
 
 class OnBuyDialog extends StatelessWidget {
   final bool isSelected;
@@ -141,7 +142,9 @@ class OnBuyDialog extends StatelessWidget {
     return Column(
       children: [
         CustomRichText(
-            labelOne: 'Price: ', labelTwo: '${productModel?.price} MT'),
+            labelOne: 'Price: ',
+            labelTwo:
+                '${NumberFormatter.instance.numToString(productModel?.price)} MT'),
         SizedBox(height: 8.0),
         ClipRRect(
           borderRadius: BorderRadius.circular(8.0),

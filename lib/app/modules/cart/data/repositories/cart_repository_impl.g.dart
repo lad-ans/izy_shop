@@ -7,7 +7,7 @@ part of 'cart_repository_impl.dart';
 // **************************************************************************
 
 final $CartRepositoryImpl = BindInject(
-  (i) => CartRepositoryImpl(firestore: i<Firestore>()),
+  (i) => CartRepositoryImpl(flutterFire: i<FirebaseFirestore>()),
   singleton: true,
   lazy: true,
 );

@@ -7,7 +7,7 @@ part of 'product_repository_impl.dart';
 // **************************************************************************
 
 final $ProductRepositoryImpl = BindInject(
-  (i) => ProductRepositoryImpl(firestore: i<Firestore>()),
+  (i) => ProductRepositoryImpl(flutterFire: i<FirebaseFirestore>()),
   singleton: true,
   lazy: true,
 );

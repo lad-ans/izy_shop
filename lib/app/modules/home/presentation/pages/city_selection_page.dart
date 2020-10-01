@@ -28,12 +28,7 @@ class CitySelectionPage extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
         child: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 20.0),
-            height: getHeight(context),
-            width: getWidth(context),
-            child: _buildColumn(context),
-          ),
+          child: _buildColumn(context),
         ),
       ),
     );
@@ -44,34 +39,41 @@ class CitySelectionPage extends StatelessWidget {
     style: TextStyle(color: Colors.white),
   );
 
-  Column _buildColumn(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Image.asset(LOGO_NAMED_WHITE, width: 120, height: 120),
-        Column(
-          children: [
-            _selectACity,
-            SizedBox(height: 20.0),
-            CustomTextField(
-              height: 55.0,
-              fillColor: Colors.white,
-              labelText: 'City',
-              filled: true,
+  Widget _buildColumn(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 20.0),
+      height: getHeight(context),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Image.asset(LOGO_NAMED_WHITE, width: 120, height: 120),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _selectACity,
+                SizedBox(height: 20.0),
+                CustomTextField(
+                  height: 55.0,
+                  fillColor: Colors.white,
+                  labelText: 'City',
+                  filled: true,
+                ),
+              ],
             ),
-          ],
-        ),
-        SizedBox(height: 20.0),
-        Container(
-          alignment: Alignment.centerRight,
-          child: RoundedButton(
-            icon: FontAwesomeIcons.check,
-            text: 'Confirm',
-            isGreenColor: true,
-            onTap: () => Modular.to.pushReplacementNamed('/home'),
           ),
-        ),
-      ],
+          SizedBox(height: 20.0),
+          Container(
+            alignment: Alignment.centerRight,
+            child: RoundedButton(
+              icon: FontAwesomeIcons.check,
+              text: 'Confirm',
+              isGreenColor: true,
+              onTap: () => Modular.to.pushReplacementNamed('/home'),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

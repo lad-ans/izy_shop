@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:izy_shop/app/core/domain/entities/route_entity.dart';
+import 'package:izy_shop/app/modules/cart/presentation/stores/get_customer_cart_store.dart';
+import 'package:izy_shop/app/modules/product/data/models/product_model.dart';
 
 import '../../domain/configs/core_config.dart';
 import '../../domain/consts/img.dart';
@@ -12,11 +14,13 @@ class ShoppingAppBar extends StatefulWidget {
   final bool fullAppBar;
   final bool isCartPage;
   final RouteEntity routeEntity;
+  final bool isShopping;
   const ShoppingAppBar({
     Key key,
     this.fullAppBar = true,
     this.isCartPage = false,
     this.routeEntity,
+    this.isShopping = false,
   }) : super(key: key);
 
   @override
@@ -24,6 +28,14 @@ class ShoppingAppBar extends StatefulWidget {
 }
 
 class _ShoppingAppBarState extends State<ShoppingAppBar> {
+  final _getCustomerCartStore = Modular.get<GetCustomerCartStore>();
+
+  @override
+  void initState() {
+    _getCustomerCartStore.execute('uuid');
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -34,6 +46,12 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
       child: Row(
         children: [
           _buildRoundedButton(Icons.arrow_back, label: 'Back', onTap: () {
+            if (widget.isShopping) {
+              List<ProductModel> cartList = _getCustomerCartStore.cartList.data;
+              cartList.forEach((item) {
+                return item.reference.delete();
+              });
+            }
             Modular.to.pop();
           }),
           SizedBox(width: 2.0),
@@ -59,9 +77,8 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
                 Modular.to.pushNamed(
                   '/search',
                   arguments: RouteEntity(
-                    storeImg: widget.routeEntity.storeImg,
-                    storeRef: widget.routeEntity.storeRef
-                  ),
+                      storeImg: widget.routeEntity.storeImg,
+                      storeRef: widget.routeEntity.storeRef),
                 );
               },
             ),
@@ -109,7 +126,7 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
       text: TextSpan(
         children: [
           TextSpan(
-            text: ' ${widget.routeEntity.marketName} / Departaments / ',
+            text: ' ${widget.routeEntity.storeName} / Departaments / ',
             style: TextStyle(
               color: Colors.grey,
               fontSize: 10,

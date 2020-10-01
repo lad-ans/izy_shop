@@ -1,12 +1,11 @@
-import 'cart_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import 'cart_page.dart';
+import 'presentation/pages/cart_page.dart';
+
 
 class CartModule extends ChildModule {
   @override
   List<Bind> get binds => [
-        $CartController,
       ];
 
   @override

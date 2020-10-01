@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:izy_shop/app/core/domain/entities/route_entity.dart';
+import 'package:izy_shop/app/core/domain/utils/number_formatter.dart';
 
 import '../../../../core/presentation/widgets/custom_rich_text.dart';
 import '../../data/models/product_model.dart';
@@ -151,7 +152,9 @@ class DescriptionDialog extends StatelessWidget {
     return Column(
       children: [
         CustomRichText(
-            labelOne: 'Price: ', labelTwo: '${productModel.price} MT'),
+            labelOne: 'Price: ',
+            labelTwo:
+                '${NumberFormatter.instance.numToString(productModel.price)} MT'),
         SizedBox(height: 8.0),
         ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
@@ -162,7 +165,7 @@ class DescriptionDialog extends StatelessWidget {
             ),
             child: CachedNetworkImage(
               imageUrl: productModel.img,
-              height: 150,
+              width: 200.0,
             ),
           ),
         ),

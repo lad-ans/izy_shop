@@ -39,7 +39,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  final marketStore = Modular.get<GetMarketStore>();
+  final marketStore = Modular.get<GetStoreStore>();
   final AppController _controller = Modular.get<AppController>();
   Widget _buildContainerContent(BuildContext context) {
     return Container(
@@ -54,7 +54,10 @@ class HomePage extends StatelessWidget {
                 return Center(child: Text('Ocorreu um erro'));
               }
               if (marketStore.marketList.data == null) {
-                return Center(child: CircularProgressIndicator());
+                return Center(
+                    child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation(Colors.red[300]),
+                ));
               }
               return ListView.builder(
                   itemCount: marketList.length,
@@ -66,8 +69,8 @@ class HomePage extends StatelessWidget {
                       onTap: () async {
                         _controller.select(index);
                         await Modular.to.pushNamed(
-                          '/home/market',
-                          arguments: RouteEntity(marketName: market.name),
+                          '/store',
+                          arguments: RouteEntity(storeName: market.name),
                         );
                         _controller.selectedIndex = 100;
                       },

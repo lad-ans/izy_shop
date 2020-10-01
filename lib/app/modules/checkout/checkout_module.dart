@@ -1,13 +1,19 @@
-import 'checkout_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import 'checkout_page.dart';
+import 'data/repositories/checkout_repository_impl.dart';
+import 'domain/usecases/set_order.dart';
+import 'presentation/pages/checkout_page.dart';
+import 'presentation/stores/set_order_store.dart';
 
 class CheckoutModule extends ChildModule {
   @override
   List<Bind> get binds => [
-        $CheckoutController,
-      ];
+    Bind((i) => FirebaseFirestore.instance),
+    $SetOrderImpl,
+    $CheckoutRepositoryImpl,
+    $SetOrderStore
+  ];
 
   @override
   List<ModularRouter> get routers => [

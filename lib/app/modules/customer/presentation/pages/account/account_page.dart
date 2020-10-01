@@ -7,7 +7,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import '../../../../../core/domain/configs/core_config.dart';
 import '../../../../../core/domain/consts/img.dart';
 import '../../../../../core/presentation/widgets/custom_appbar.dart';
-import '../../../customer_controller.dart';
 
 class AccountPage extends StatefulWidget {
   final String title;
@@ -20,7 +19,7 @@ class AccountPage extends StatefulWidget {
   _AccountPageState createState() => _AccountPageState();
 }
 
-class _AccountPageState extends ModularState<AccountPage, CustomerController> {
+class _AccountPageState extends State<AccountPage> {
   TextEditingController _nameController =
       TextEditingController(text: 'Carlos Pedro Chirinza');
   TextEditingController _emailController =
@@ -178,7 +177,6 @@ class _AccountPageState extends ModularState<AccountPage, CustomerController> {
 
   Card _buildCard() {
     return Card(
-
       color: Colors.white70,
       elevation: 6,
       shape: RoundedRectangleBorder(

@@ -14,15 +14,8 @@ class MarketModel {
 
   factory MarketModel.fromDocument(DocumentSnapshot doc) {
     return MarketModel(
-      name: doc['name'],
-      logo: doc['logo'],
+      name: doc.data()['name'],
+      logo: doc.data()['logo'],
     );
-  }
-
-  Future save() async {
-    Firestore.instance
-        .collection('list')
-        .document(docId)
-        .collection(collection);
   }
 }

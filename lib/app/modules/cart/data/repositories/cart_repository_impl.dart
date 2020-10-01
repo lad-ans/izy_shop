@@ -9,19 +9,19 @@ part 'cart_repository_impl.g.dart';
 
 @Injectable()
 class CartRepositoryImpl implements CartRepository {
-  Firestore firestore;
+  FirebaseFirestore flutterFire;
   CartRepositoryImpl({
-    this.firestore,
+    this.flutterFire,
   });
   @override
   Stream<List<ProductModel>> getCustomerCart(String uuid) {
-    return firestore
+    return flutterFire
         .collection('customers')
-        .document('n020rrAhbe6AoaURdrza')
+        .doc('n020rrAhbe6AoaURdrza')
         .collection('cart')
         .snapshots()
         .map((snap) {
-      return snap.documents.map((doc) {
+      return snap.docs.map((doc) {
         return ProductModel.fromDocument(doc);
       }).toList();
     });

@@ -7,7 +7,7 @@ part of 'store_repository_impl.dart';
 // **************************************************************************
 
 final $StoreRepositoryImpl = BindInject(
-  (i) => StoreRepositoryImpl(i<Firestore>()),
+  (i) => StoreRepositoryImpl(i<FirebaseFirestore>()),
   singleton: true,
   lazy: true,
 );

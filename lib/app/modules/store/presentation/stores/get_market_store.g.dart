@@ -6,8 +6,8 @@ part of 'get_market_store.dart';
 // InjectionGenerator
 // **************************************************************************
 
-final $GetMarketStore = BindInject(
-  (i) => GetMarketStore(getStore: i<GetMarket>()),
+final $GetStoreStore = BindInject(
+  (i) => GetStoreStore(getStore: i<GetStore>()),
   singleton: true,
   lazy: true,
 );
@@ -18,8 +18,8 @@ final $GetMarketStore = BindInject(
 
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
-mixin _$GetMarketStore on _GetMarketStoreBase, Store {
-  final _$marketListAtom = Atom(name: '_GetMarketStoreBase.marketList');
+mixin _$GetStoreStore on _GetStoreStoreBase, Store {
+  final _$marketListAtom = Atom(name: '_GetStoreStoreBase.marketList');
 
   @override
   ObservableStream<List<MarketModel>> get marketList {
@@ -34,17 +34,17 @@ mixin _$GetMarketStore on _GetMarketStoreBase, Store {
     });
   }
 
-  final _$_GetMarketStoreBaseActionController =
-      ActionController(name: '_GetMarketStoreBase');
+  final _$_GetStoreStoreBaseActionController =
+      ActionController(name: '_GetStoreStoreBase');
 
   @override
   dynamic execute() {
-    final _$actionInfo = _$_GetMarketStoreBaseActionController.startAction(
-        name: '_GetMarketStoreBase.execute');
+    final _$actionInfo = _$_GetStoreStoreBaseActionController.startAction(
+        name: '_GetStoreStoreBase.execute');
     try {
       return super.execute();
     } finally {
-      _$_GetMarketStoreBaseActionController.endAction(_$actionInfo);
+      _$_GetStoreStoreBaseActionController.endAction(_$actionInfo);
     }
   }
 

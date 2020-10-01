@@ -7,6 +7,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import 'package:izy_shop/app/core/domain/entities/route_entity.dart';
+import 'package:izy_shop/app/core/domain/utils/number_formatter.dart';
 import 'package:izy_shop/app/modules/product/data/models/product_model.dart';
 import 'package:izy_shop/app/modules/product/presentation/stores/get_product_store.dart';
 import 'package:izy_shop/app/modules/product/presentation/widgets/on_buy_dialog.dart';
@@ -63,7 +64,7 @@ class SearchPage extends StatelessWidget {
       {BuildContext context,
       String product,
       String title,
-      String price,
+      num price,
       String vendor,
       ProductModel productModel}) {
     return Container(
@@ -91,10 +92,13 @@ class SearchPage extends StatelessWidget {
         ),
         title: Text(
           title,
-          style: TextStyle(color: Colors.white70),
+          style: TextStyle(
+            color: Colors.white70,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         subtitle: Text(
-          '$price MT',
+          '${NumberFormatter.instance.numToString(price)} MT',
           style: TextStyle(color: Colors.white60),
         ),
         trailing: ClipRRect(
@@ -139,7 +143,7 @@ class SearchPage extends StatelessWidget {
               productModel: productModel,
               product: productModel.img,
               title: productModel.name,
-              price: productModel.price.toString(),
+              price: productModel.price,
               vendor: _routeEntity.storeImg,
             );
           },

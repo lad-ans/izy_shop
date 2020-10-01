@@ -10,13 +10,13 @@ part 'store_repository_impl.g.dart';
 
 @Injectable()
 class StoreRepositoryImpl implements StoreRepository {
-  final Firestore firestore;
-  StoreRepositoryImpl(this.firestore);
+  final FirebaseFirestore flutterFire;
+  StoreRepositoryImpl(this.flutterFire);
   @override
-  Stream<List<MarketModel>> getMarkets() {
-    return firestore.collection('list').snapshots().map((event) {
+  Stream<List<MarketModel>> getStores() {
+    return flutterFire.collection('storeCategories').snapshots().map((event) {
       try {
-        return event.documents.map((doc) {
+        return event.docs.map((doc) {
           return MarketModel.fromDocument(doc);
         }).toList();
       } catch (error) {
@@ -26,15 +26,15 @@ class StoreRepositoryImpl implements StoreRepository {
   }
 
   @override
-  Stream<List<StoreModel>> getStoreByMarket(String collPath) {
-    return firestore
-        .collection('market')
-        .document('5OX5YOeZJAnflZlewMzA')
+  Stream<List<StoreModel>> getStoreByCategory(String collPath) {
+    return flutterFire
+        .collection('stores')
+        .doc('5OX5YOeZJAnflZlewMzA')
         .collection(collPath.toLowerCase())
         .snapshots()
         .map((event) {
       try {
-        return event.documents.map((doc) {
+        return event.docs.map((doc) {
           return StoreModel.fromDocument(doc);
         }).toList();
       } catch (error) {

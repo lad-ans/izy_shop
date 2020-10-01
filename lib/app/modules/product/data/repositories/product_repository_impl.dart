@@ -8,16 +8,15 @@ part 'product_repository_impl.g.dart';
 
 @Injectable()
 class ProductRepositoryImpl implements ProductRepository {
-  final Firestore firestore;
+  final FirebaseFirestore flutterFire;
   ProductRepositoryImpl({
-    this.firestore,
+    this.flutterFire,
   });
 
   @override
-  Stream<List<ProductModel>> getProduct(
-      DocumentReference reference) {
+  Stream<List<ProductModel>> getProduct(DocumentReference reference) {
     return reference.collection('products').snapshots().map((snap) {
-      return snap.documents.map((doc) {
+      return snap.docs.map((doc) {
         return ProductModel.fromDocument(doc);
       }).toList();
     });
@@ -25,12 +24,13 @@ class ProductRepositoryImpl implements ProductRepository {
 
   @override
   Future<void> addToCart(ProductModel productModel) async {
-    await firestore
+    CollectionReference _collRef = flutterFire
         .collection('customers')
-        .document('n020rrAhbe6AoaURdrza')
-        .collection('cart')
-        .add(
-          productModel.toMap(),
-        );
+        .doc('n020rrAhbe6AoaURdrza')
+        .collection('cart');
+
+    await _collRef.add(
+      productModel.toMap(),
+    );
   }
 }
