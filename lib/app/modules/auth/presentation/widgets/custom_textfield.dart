@@ -1,89 +1,91 @@
-import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
 
-import '../../../home/data/datasources/moz_city.dart';
-
-class CustomTextField extends StatefulWidget {
+class CustomTextField extends StatelessWidget {
   final bool filled;
   final String labelText;
   final Color fillColor;
   final double height;
   final TextEditingController controller;
-  const CustomTextField({
+  final bool isName;
+  final bool isPassword;
+  final bool isPasswordMatcher;
+  final bool isSurname;
+  final bool isEmail;
+  final String password;
+  final FormFieldSetter<String> onSaved;
+
+  CustomTextField({
     Key key,
     this.filled = false,
     this.labelText = '',
     this.fillColor,
     this.height,
     this.controller,
+    this.isName = false,
+    this.isPassword = false,
+    this.isPasswordMatcher = false,
+    this.isSurname = false,
+    this.isEmail = false,
+    this.password,
+    this.onSaved,
   }) : super(key: key);
 
   @override
-  _CustomTextFieldState createState() => _CustomTextFieldState();
-}
-
-class _CustomTextFieldState extends State<CustomTextField> {
-  GlobalKey<AutoCompleteTextFieldState<MozCity>> _key = GlobalKey();
-  AutoCompleteTextField autoCompleteTextField;
-  TextEditingController _editingController = TextEditingController();
-
-  Widget buildCityRow(MozCity cityModel) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-      child: Row(
-        children: <Widget>[
-          Icon(Icons.location_on, color: Colors.red[100], size: 15),
-          SizedBox(width: 3),
-          Expanded(
-              child:
-                  Text(cityModel.city, style: TextStyle(color: Colors.grey))),
-          Text(cityModel.country, style: TextStyle(color: Colors.grey)),
-        ],
-      ),
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Container(
-      height: widget.height ?? null,
-      child: autoCompleteTextField = AutoCompleteTextField<MozCity>(
-        key: _key,
-        suggestions: MozCity.cities,
-        itemFilter: (item, query) {
-          return item.city.toLowerCase().startsWith(query.toLowerCase());
-        },
-        itemSorter: (a, b) {
-          return a.city.compareTo(b.city);
-        },
-        itemSubmitted: (item) {
-          setState(() {
-            autoCompleteTextField.textField.controller.text =
-                "${item.city}, ${item.country}";
-            _editingController.text = '${item.city}, ${item.country}';
-          });
-        },
-        clearOnSubmit: false,
-        controller: _editingController,
-        itemBuilder: (context, item) {
-          return buildCityRow(item);
-        },
-        style: TextStyle(color: Colors.black87),
-        decoration: InputDecoration(
-            enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.0),
-                borderSide: BorderSide.none),
-            border: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.white),
-                borderRadius: BorderRadius.circular(12.0)),
-            focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.white),
-                borderRadius: BorderRadius.circular(12.0)),
-            filled: widget.filled,
-            fillColor: widget.filled ? widget.fillColor : null,
-            labelText: widget.labelText,
-            floatingLabelBehavior: FloatingLabelBehavior.never,
-            labelStyle: TextStyle(color: Colors.black26, fontSize: 15.0)),
+    return FormField<String>(
+      initialValue: '',
+      onSaved: onSaved,
+      validator: (value) {
+        var password;
+        if (value.isEmpty) {
+          return "*field shouldn't be empty";
+        } else if (isName || isSurname) {
+          if (value.length <= 3) return '*should be at least 3 characters';
+        } else if (isPassword) {
+          password = value;
+          if (value.length <= 3) return '*password to week';
+        } else if (isPasswordMatcher) {
+          print(password);
+          if (password != value) return "*password doesn't match";
+        }
+        return null;
+      },
+      builder: (FormFieldState<String> state) => Container(
+        child: Column(
+          children: [
+            Container(
+              height: height ?? null,
+              child: TextField(
+                controller: controller,
+                onChanged: (value) => state.didChange(value),
+                style: TextStyle(color: Colors.black87),
+                decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide.none),
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(12.0)),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(12.0)),
+                    filled: filled,
+                    fillColor: filled ? fillColor : null,
+                    labelText: labelText,
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                    labelStyle:
+                        TextStyle(color: Colors.black26, fontSize: 15.0)),
+              ),
+            ),
+            // getting error message
+            (state.hasError)
+                ? Container(
+                    alignment: Alignment.centerLeft,
+                    child: Text(state.errorText,
+                        style: TextStyle(color: Colors.amber, fontSize: 12)))
+                : Container(width: 0.0, height: 0.0),
+          ],
+        ),
       ),
     );
   }

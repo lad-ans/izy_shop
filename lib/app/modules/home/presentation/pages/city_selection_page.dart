@@ -7,7 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/domain/configs/core_config.dart';
 import '../../../../core/domain/consts/img.dart';
 import '../../../../core/presentation/widgets/rounded_button.dart';
-import '../../../auth/presentation/widgets/custom_textfield.dart';
+import '../widgets/autocomplete_textfield.dart';
 
 class CitySelectionPage extends StatelessWidget {
   @override
@@ -53,7 +53,7 @@ class CitySelectionPage extends StatelessWidget {
               children: [
                 _selectACity,
                 SizedBox(height: 20.0),
-                CustomTextField(
+                AutocompleteTextfield(
                   height: 55.0,
                   fillColor: Colors.white,
                   labelText: 'City',

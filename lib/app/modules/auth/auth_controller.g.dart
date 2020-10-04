@@ -7,11 +7,7 @@ part of 'auth_controller.dart';
 // **************************************************************************
 
 final $AuthController = BindInject(
-  (i) => AuthController(
-      loginWithEmailUsecase: i<LoginWithEmail>(),
-      authStore: i<AuthStore>(),
-      email: i<String>(),
-      password: i<String>()),
+  (i) => AuthController(),
   singleton: true,
   lazy: true,
 );
@@ -23,19 +19,43 @@ final $AuthController = BindInject(
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$AuthController on _AuthControllerBase, Store {
-  Computed<LoginCredential> _$credentialComputed;
+  Computed<bool> _$matchPasswordComputed;
 
   @override
-  LoginCredential get credential => (_$credentialComputed ??=
-          Computed<LoginCredential>(() => super.credential,
-              name: '_AuthControllerBase.credential'))
-      .value;
-  Computed<bool> _$isValidComputed;
+  bool get matchPassword =>
+      (_$matchPasswordComputed ??= Computed<bool>(() => super.matchPassword,
+              name: '_AuthControllerBase.matchPassword'))
+          .value;
+
+  final _$nameAtom = Atom(name: '_AuthControllerBase.name');
 
   @override
-  bool get isValid => (_$isValidComputed ??= Computed<bool>(() => super.isValid,
-          name: '_AuthControllerBase.isValid'))
-      .value;
+  String get name {
+    _$nameAtom.reportRead();
+    return super.name;
+  }
+
+  @override
+  set name(String value) {
+    _$nameAtom.reportWrite(value, super.name, () {
+      super.name = value;
+    });
+  }
+
+  final _$surnameAtom = Atom(name: '_AuthControllerBase.surname');
+
+  @override
+  String get surname {
+    _$surnameAtom.reportRead();
+    return super.surname;
+  }
+
+  @override
+  set surname(String value) {
+    _$surnameAtom.reportWrite(value, super.surname, () {
+      super.surname = value;
+    });
+  }
 
   final _$emailAtom = Atom(name: '_AuthControllerBase.email');
 
@@ -67,26 +87,75 @@ mixin _$AuthController on _AuthControllerBase, Store {
     });
   }
 
+  final _$passwordMatcherAtom =
+      Atom(name: '_AuthControllerBase.passwordMatcher');
+
+  @override
+  String get passwordMatcher {
+    _$passwordMatcherAtom.reportRead();
+    return super.passwordMatcher;
+  }
+
+  @override
+  set passwordMatcher(String value) {
+    _$passwordMatcherAtom.reportWrite(value, super.passwordMatcher, () {
+      super.passwordMatcher = value;
+    });
+  }
+
   final _$_AuthControllerBaseActionController =
       ActionController(name: '_AuthControllerBase');
 
   @override
-  dynamic setEmail(String value) {
+  dynamic setName(String name) {
     final _$actionInfo = _$_AuthControllerBaseActionController.startAction(
-        name: '_AuthControllerBase.setEmail');
+        name: '_AuthControllerBase.setName');
     try {
-      return super.setEmail(value);
+      return super.setName(name);
     } finally {
       _$_AuthControllerBaseActionController.endAction(_$actionInfo);
     }
   }
 
   @override
-  dynamic setPassword(String value) {
+  dynamic setSurname(String surname) {
+    final _$actionInfo = _$_AuthControllerBaseActionController.startAction(
+        name: '_AuthControllerBase.setSurname');
+    try {
+      return super.setSurname(surname);
+    } finally {
+      _$_AuthControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  dynamic setEmail(String email) {
+    final _$actionInfo = _$_AuthControllerBaseActionController.startAction(
+        name: '_AuthControllerBase.setEmail');
+    try {
+      return super.setEmail(email);
+    } finally {
+      _$_AuthControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  dynamic setPassword(String password) {
     final _$actionInfo = _$_AuthControllerBaseActionController.startAction(
         name: '_AuthControllerBase.setPassword');
     try {
-      return super.setPassword(value);
+      return super.setPassword(password);
+    } finally {
+      _$_AuthControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  dynamic setPasswordMatcher(String passwordMatcher) {
+    final _$actionInfo = _$_AuthControllerBaseActionController.startAction(
+        name: '_AuthControllerBase.setPasswordMatcher');
+    try {
+      return super.setPasswordMatcher(passwordMatcher);
     } finally {
       _$_AuthControllerBaseActionController.endAction(_$actionInfo);
     }
@@ -95,10 +164,12 @@ mixin _$AuthController on _AuthControllerBase, Store {
   @override
   String toString() {
     return '''
+name: ${name},
+surname: ${surname},
 email: ${email},
 password: ${password},
-credential: ${credential},
-isValid: ${isValid}
+passwordMatcher: ${passwordMatcher},
+matchPassword: ${matchPassword}
     ''';
   }
 }

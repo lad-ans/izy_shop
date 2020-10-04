@@ -4,14 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:izy_shop/app/app_controller.dart';
 
+import '../../../../app_controller.dart';
 import '../../../../core/domain/configs/core_config.dart';
 import '../../../../core/domain/consts/img.dart';
 import '../../../../core/presentation/widgets/rounded_button.dart';
+import '../../../customer/data/models/customer_model.dart';
+import '../stores/sign_up_store.dart';
 import '../widgets/custom_textfield.dart';
+import '../widgets/on_register_dialog.dart';
 
 class SignUpPage extends StatelessWidget {
+  final CustomerModel customerModel = CustomerModel();
+
+  final TextEditingController _passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,109 +43,180 @@ class SignUpPage extends StatelessWidget {
     );
   }
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final AppController _controller = Modular.get<AppController>();
+  final SignUpStore _signUpStore = Modular.get<SignUpStore>();
   Widget _buildListView(BuildContext context) {
-    return ListView(
-      children: [
-        Image.asset(LOGO_NAMED_WHITE, width: 120, height: 120),
-        SizedBox(height: 20),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            RoundedButton(
-              iconColor: Colors.white,
-              icon: Zocial.facebook,
-              text: 'Login With Facebook',
-              onTap: () async {
-                _controller.select(10);
-              },
-              index: 10,
-            ),
-            SizedBox(width: 20.0),
-            RoundedButton(
-              iconColor: Colors.white,
-              icon: Zocial.google,
-              text: 'Login With Google',
-              onTap: () async {
-                _controller.select(11);
-              },
-              index: 11,
-            ),
-          ],
-        ),
-        SizedBox(height: 30.0),
-        _buildOr(context),
-        SizedBox(height: 15.0),
-        _buildCustomerDetails(),
-        SizedBox(height: 10.0),
-        CustomTextField(
-          height: 55.0,
-          fillColor: Colors.white,
-          labelText: 'E-mail',
-          filled: true,
-        ),
-        SizedBox(height: 10.0),
-        CustomTextField(
-          height: 55.0,
-          fillColor: Colors.white,
-          labelText: 'Password',
-          filled: true,
-        ),
-        SizedBox(height: 10.0),
-        CustomTextField(
-          height: 55.0,
-          fillColor: Colors.white,
-          labelText: 'Confirm Password',
-          filled: true,
-        ),
-        SizedBox(height: 15.0),
-        _buildOnConfirm(context),
-        SizedBox(height: 20.0),
-      ],
+    return Form(
+      key: _formKey,
+      child: ListView(
+        children: [
+          Image.asset(LOGO_NAMED_WHITE, width: 120, height: 120),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              RoundedButton(
+                iconColor: Colors.white,
+                icon: Zocial.facebook,
+                text: 'Login With Facebook',
+                onTap: () async {
+                  _controller.select(10);
+                },
+                index: 10,
+              ),
+              SizedBox(width: 20.0),
+              RoundedButton(
+                iconColor: Colors.white,
+                icon: Zocial.google,
+                text: 'Login With Google',
+                onTap: () async {
+                  _controller.select(11);
+                },
+                index: 11,
+              ),
+            ],
+          ),
+          SizedBox(height: 30.0),
+          _buildOr(context),
+          SizedBox(height: 15.0),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  isName: true,
+                  onSaved: (name) {
+                    customerModel.name = name;
+                  },
+                  height: 55.0,
+                  fillColor: Colors.white,
+                  labelText: 'First Name',
+                  filled: true,
+                ),
+              ),
+              SizedBox(width: 10.0),
+              Expanded(
+                child: CustomTextField(
+                  isSurname: true,
+                  onSaved: (surname) {
+                    customerModel.surname = surname;
+                  },
+                  height: 55.0,
+                  fillColor: Colors.white,
+                  labelText: 'Last Name',
+                  filled: true,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10.0),
+          CustomTextField(
+            onSaved: (email) {
+              customerModel.email = email;
+            },
+            height: 55.0,
+            fillColor: Colors.white,
+            labelText: 'E-mail',
+            filled: true,
+          ),
+          SizedBox(height: 10.0),
+          CustomTextField(
+            controller: _passwordController,
+            isPassword: true,
+            onSaved: (password) {
+              customerModel.password = password;
+            },
+            height: 55.0,
+            fillColor: Colors.white,
+            labelText: 'Password',
+            filled: true,
+          ),
+          SizedBox(height: 10.0),
+          _buildPassMatcherTextField(
+            onSaved: (passwordMatcher) {},
+          ),
+          SizedBox(height: 15.0),
+          _buildOnConfirm(context, onTap: () async {
+            if (_formKey.currentState.validate()) {
+              _formKey.currentState.save();
+              await _signUpStore.executeSignUp(customerModel);
+              showDialog(
+                context: context,
+                builder: (context) => OnRegisterDetailsDialog(
+                  title: 'Please confirm your details below',
+                  firstName: customerModel.name,
+                  lastName: customerModel.surname,
+                  email: customerModel.email,
+                ),
+              );
+            }
+          }),
+          SizedBox(height: 20.0),
+        ],
+      ),
     );
   }
 
-  Container _buildOnConfirm(BuildContext context) {
+  _buildPassMatcherTextField({FormFieldSetter<String> onSaved}) {
+    return FormField<String>(
+      initialValue: '',
+      onSaved: onSaved,
+      validator: (value) {
+        if (value.isEmpty) {
+          return "*field shouldn't be empty";
+        }
+        if (_passwordController.text != value) return "*password doesn't match";
+
+        return null;
+      },
+      builder: (FormFieldState<String> state) => Container(
+        child: Column(
+          children: [
+            Container(
+              height: 55.0,
+              child: TextField(
+                onChanged: (value) => state.didChange(value),
+                style: TextStyle(color: Colors.black87),
+                decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide.none),
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(12.0)),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(12.0)),
+                    filled: true,
+                    fillColor: Colors.white,
+                    labelText: 'Confirm Password',
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                    labelStyle:
+                        TextStyle(color: Colors.black26, fontSize: 15.0)),
+              ),
+            ),
+            // getting error message
+            (state.hasError)
+                ? Container(
+                    alignment: Alignment.centerLeft,
+                    child: Text(state.errorText,
+                        style: TextStyle(color: Colors.amber, fontSize: 12)))
+                : Container(width: 0.0, height: 0.0),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Container _buildOnConfirm(BuildContext context, {VoidCallback onTap}) {
     return Container(
       alignment: Alignment.centerRight,
       child: RoundedButton(
         icon: FontAwesomeIcons.check,
         text: 'Confirm',
         isGreenColor: true,
-        onTap: () => showDialog(
-          context: context,
-          builder: (context) => OnRegisterDetailsDialog(
-            title: 'Please confirm your details below',
-            firstName: 'Carlos',
-            lastName: 'Bernardo',
-            email: 'carlos.b@gmail.com',
-          ),
-        ),
+        onTap: onTap,
       ),
-    );
-  }
-
-  Row _buildCustomerDetails() {
-    return Row(
-      children: [
-        Expanded(
-          child: CustomTextField(
-            height: 55.0,
-            fillColor: Colors.white,
-            labelText: 'First Name',
-            filled: true,
-          ),
-        ),
-        SizedBox(width: 10.0),
-        Expanded(
-          child: CustomTextField(
-            height: 55.0,
-            fillColor: Colors.white,
-            labelText: 'Last Name',
-            filled: true,
-          ),
-        ),
-      ],
     );
   }
 
@@ -159,58 +237,6 @@ class SignUpPage extends StatelessWidget {
         Expanded(
             child: Container(
                 width: getWidth(context), height: 1, color: Colors.white))
-      ],
-    );
-  }
-}
-
-class OnRegisterDetailsDialog extends StatelessWidget {
-  final String title;
-  final String firstName;
-  final String lastName;
-  final String email;
-  const OnRegisterDetailsDialog({
-    Key key,
-    this.title,
-    this.firstName,
-    this.lastName,
-    this.email,
-  }) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return SimpleDialog(
-      contentPadding: EdgeInsets.symmetric(horizontal: 40.0),
-      backgroundColor: Colors.white.withOpacity(0.9),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
-      title: Text(title,
-          textAlign: TextAlign.center, style: TextStyle(fontSize: 16.0)),
-      children: [
-        SizedBox(height: 20.0),
-        Text('Name: $firstName $lastName',
-            textAlign: TextAlign.center, style: TextStyle(fontSize: 18.0)),
-        SizedBox(height: 10.0),
-        Text('E-mail: $email',
-            textAlign: TextAlign.center, style: TextStyle(fontSize: 18.0)),
-        SizedBox(height: 10.0),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            RoundedButton(
-              iconColor: Colors.white,
-              icon: AntDesign.edit,
-              onTap: () => Modular.to.pop(),
-            ),
-            SizedBox(width: 20.0),
-            RoundedButton(
-              iconColor: Colors.white,
-              icon: FontAwesomeIcons.check,
-              onTap: () => Modular.to.pushReplacementNamed('/home/city'),
-              isGreenColor: true,
-            ),
-          ],
-        ),
       ],
     );
   }

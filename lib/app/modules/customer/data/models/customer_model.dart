@@ -1,22 +1,36 @@
-import 'package:meta/meta.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../../auth/domain/entities/logged_user.dart';
-import '../../../auth/domain/entities/logged_user_info.dart';
-
-class CustomerModel extends LoggedUser implements LoggedUserInfo {
-  final String uuid;
+class CustomerModel {
+  String name;
+  String surname;
+  String email;
+  String avatar;
+  String password;
   CustomerModel({
-    @required String name,
-    String email,
-    String phoneNumber,
-    String avatar,
-    this.uuid,
-  }) : super(
-            name: name,
-            email: email,
-            phoneNumber: phoneNumber,
-            avatar: avatar,
-          );
+    this.name,
+    this.surname,
+    this.email,
+    this.avatar,
+    this.password,
+  });
 
-  LoggedUser toLoggedUser() => this;
+  factory CustomerModel.fromDocument(DocumentSnapshot snap) {
+    return CustomerModel(
+      name: snap.data()['name'],
+      surname: snap.data()['surname'],
+      email: snap.data()['email'],
+      avatar: snap.data()['avatar'],
+    );
+  }
+
+  Map<String, dynamic> toMap(User user) {
+    return {
+      'name': this.name,
+      'surname': this.surname,
+      'email': this.email,
+      'avatar': this.avatar,
+      'uid': user.uid
+    };
+  }
 }

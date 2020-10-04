@@ -5,12 +5,13 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:izy_shop/app/app_controller.dart';
+import 'package:izy_shop/app/modules/auth/presentation/widgets/custom_textfield.dart';
 
 import '../../../../core/domain/configs/core_config.dart';
 import '../../../../core/domain/consts/img.dart';
 import '../../../../core/presentation/widgets/rounded_button.dart';
 import '../widgets/custom_text.dart';
-import '../widgets/custom_textfield.dart';
+import '../../../home/presentation/widgets/autocomplete_textfield.dart';
 
 class LoginPage extends StatelessWidget {
   @override

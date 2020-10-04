@@ -1,13 +1,29 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:izy_shop/app/modules/auth/presentation/pages/action_page.dart';
-import 'package:izy_shop/app/modules/auth/presentation/pages/signup_page.dart';
 
 import 'auth_controller.dart';
+import 'data/repositories/auth_repository_impl.dart';
+import 'domain/usecases/sign_in.dart';
+import 'domain/usecases/sign_up.dart';
+import 'presentation/pages/action_page.dart';
 import 'presentation/pages/login_page.dart';
+import 'presentation/pages/signup_page.dart';
+import 'presentation/stores/sign_in_store.dart';
+import 'presentation/stores/sign_out_store.dart';
+import 'presentation/stores/sign_up_store.dart';
 
 class AuthModule extends ChildModule {
   @override
-  List<Bind> get binds => [$AuthController];
+  List<Bind> get binds => [
+        $AuthController,
+        Bind((i) => FirebaseFirestore.instance),
+        $AuthRepositoryImpl,
+        $SignInImpl,
+        $SignUpImpl,
+        $SignUpStore,
+        $SignInStore,
+        $SignOutStore,
+      ];
 
   @override
   List<ModularRouter> get routers => [

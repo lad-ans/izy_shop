@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'logout.dart';
+part of 'auth_repository_impl.dart';
 
 // **************************************************************************
 // InjectionGenerator
 // **************************************************************************
 
-final $LogoutImpl = BindInject(
-  (i) => LogoutImpl(i<LoginRepository>()),
-  singleton: false,
+final $AuthRepositoryImpl = BindInject(
+  (i) => AuthRepositoryImpl(i<FirebaseFirestore>()),
+  singleton: true,
   lazy: true,
 );

@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'get_logged_user.dart';
+part of 'sign_out.dart';
 
 // **************************************************************************
 // InjectionGenerator
 // **************************************************************************
 
-final $GetLoggedUserImpl = BindInject(
-  (i) => GetLoggedUserImpl(i<LoginRepository>()),
-  singleton: false,
+final $SignOutImpl = BindInject(
+  (i) => SignOutImpl(i<AuthRepository>()),
+  singleton: true,
   lazy: true,
 );
