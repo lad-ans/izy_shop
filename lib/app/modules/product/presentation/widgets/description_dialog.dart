@@ -165,7 +165,9 @@ class DescriptionDialog extends StatelessWidget {
             ),
             child: CachedNetworkImage(
               imageUrl: productModel.img,
-              width: 200.0,
+              width: 150.0,
+              height: 150.0,
+              fit: BoxFit.cover,
             ),
           ),
         ),

@@ -34,3 +34,6 @@ const String POTATOES = 'assets/images/shared/products/potatoes.png';
 
 /// customer
 const String CUSTOMER = 'assets/images/shared/deliver.png';
+
+/// cart
+const String EMPTY_CART = 'assets/images/shared/emptyCart.png';

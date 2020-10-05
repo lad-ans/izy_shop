@@ -1,6 +1,8 @@
+import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:izy_shop/app/modules/customer/domain/entities/logged_user.dart';
 
 import '../../../../core/domain/configs/core_config.dart';
 import '../../../../core/domain/entities/route_entity.dart';
@@ -141,7 +143,19 @@ class _ShoppingPageState extends State<ShoppingPage> {
       },
       onAccept: (ProductModel productModel) async {
         Modular.get<AddToCartStore>().setDragFeedbackColor(Colors.transparent);
-        await Modular.get<AddToCartStore>().execute(productModel);
+        if (LoggedUser.instance.loggedUserUid != null) {
+          await Modular.get<AddToCartStore>().execute(productModel);
+        } else {
+          EdgeAlert.show(
+            context,
+            title: 'No user found',
+            description: 'Login to buy item',
+            gravity: EdgeAlert.BOTTOM,
+            icon: Icons.info,
+            backgroundColor: Colors.redAccent,
+            duration: EdgeAlert.LENGTH_SHORT,
+          );
+        }
       },
       onLeave: (productModel) {
         Modular.get<AddToCartStore>().setDragFeedbackColor(Colors.transparent);

@@ -154,8 +154,10 @@ class OnBuyDialog extends StatelessWidget {
               arguments: RouteEntity(productModel: productModel),
             ),
             child: CachedNetworkImage(
+              fit: BoxFit.cover,
               imageUrl: productModel.img,
               height: 150,
+              width: 150,
             ),
           ),
         ),

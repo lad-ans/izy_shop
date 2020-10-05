@@ -5,21 +5,22 @@ import 'package:flutter_modular/flutter_modular_annotations.dart';
 
 import '../../../customer/data/models/customer_model.dart';
 import '../../domain/repositories/auth_repository.dart';
+
 part 'auth_repository_impl.g.dart';
 
 @Injectable()
 class AuthRepositoryImpl implements AuthRepository {
-  FirebaseFirestore _flutterFire;
+  FirebaseFirestore _firestore;
 
   AuthRepositoryImpl(
-    this._flutterFire,
+    this._firestore,
   );
 
   @override
   Future<void> signIn(CustomerModel customerModel) async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: customerModel.email,
+        email: customerModel.email.trim(),
         password: customerModel.password,
       );
     } on FirebaseAuthException catch (e) {
@@ -36,14 +37,12 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       UserCredential userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: customerModel.email,
+        email: customerModel.email.trim(),
         password: customerModel.password,
       );
+
       /// saving customer data on firestore
-      await _flutterFire
-          .collection('customers')
-          .doc(userCredential.user.uid)
-          .set(
+      await _firestore.collection('customers').doc(userCredential.user.uid).set(
             customerModel.toMap(userCredential.user),
           );
     } on FirebaseAuthException catch (e) {

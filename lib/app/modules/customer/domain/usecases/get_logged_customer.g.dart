@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'product_repository_impl.dart';
+part of 'get_logged_customer.dart';
 
 // **************************************************************************
 // InjectionGenerator
 // **************************************************************************
 
-final $ProductRepositoryImpl = BindInject(
-  (i) => ProductRepositoryImpl(firestore: i<FirebaseFirestore>()),
+final $GetLoggedCustomerImpl = BindInject(
+  (i) => GetLoggedCustomerImpl(i<CustomerRepository>()),
   singleton: true,
   lazy: true,
 );

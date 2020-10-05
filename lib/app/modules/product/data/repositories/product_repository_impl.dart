@@ -1,16 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_modular/flutter_modular_annotations.dart';
+import 'package:izy_shop/app/modules/customer/domain/entities/logged_user.dart';
 
 import '../../domain/repositories/product_repository.dart';
 import '../models/product_model.dart';
+
 part 'product_repository_impl.g.dart';
 
 @Injectable()
 class ProductRepositoryImpl implements ProductRepository {
-  final FirebaseFirestore flutterFire;
+  final FirebaseFirestore firestore;
   ProductRepositoryImpl({
-    this.flutterFire,
+    this.firestore,
   });
 
   @override
@@ -24,9 +26,10 @@ class ProductRepositoryImpl implements ProductRepository {
 
   @override
   Future<void> addToCart(ProductModel productModel) async {
-    CollectionReference _collRef = flutterFire
+    print(LoggedUser.instance.loggedUserUid);
+    CollectionReference _collRef = firestore
         .collection('customers')
-        .doc('n020rrAhbe6AoaURdrza')
+        .doc(LoggedUser.instance.loggedUserUid)
         .collection('cart');
 
     await _collRef.add(

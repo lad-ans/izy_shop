@@ -9,7 +9,6 @@ import 'presentation/pages/action_page.dart';
 import 'presentation/pages/login_page.dart';
 import 'presentation/pages/signup_page.dart';
 import 'presentation/stores/sign_in_store.dart';
-import 'presentation/stores/sign_out_store.dart';
 import 'presentation/stores/sign_up_store.dart';
 
 class AuthModule extends ChildModule {
@@ -22,7 +21,6 @@ class AuthModule extends ChildModule {
         $SignUpImpl,
         $SignUpStore,
         $SignInStore,
-        $SignOutStore,
       ];
 
   @override

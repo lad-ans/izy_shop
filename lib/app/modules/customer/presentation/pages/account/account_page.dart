@@ -1,12 +1,18 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../../core/domain/configs/core_config.dart';
 import '../../../../../core/domain/consts/img.dart';
 import '../../../../../core/presentation/widgets/custom_appbar.dart';
+import '../../../../auth/presentation/stores/sign_out_store.dart';
+import '../../../data/models/customer_model.dart';
+import '../../../domain/entities/logged_user.dart';
+import '../../stores/get_logged_customer_store.dart';
 
 class AccountPage extends StatefulWidget {
   final String title;
@@ -20,26 +26,32 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  TextEditingController _nameController =
-      TextEditingController(text: 'Carlos Pedro Chirinza');
-  TextEditingController _emailController =
-      TextEditingController(text: 'kaka@email.com');
-  TextEditingController _passwordController =
-      TextEditingController(text: 'kaka12345');
-  TextEditingController _phoneController =
-      TextEditingController(text: '841234567');
+  final getCurrentCustomer = Modular.get<GetLoggedCustomerStore>();
+  final signOutStore = Modular.get<SignOutStore>();
+  TextEditingController _nameController;
+  TextEditingController _emailController;
+
+  @override
+  void initState() {
+    if (LoggedUser.instance.loggedUserUid != null) {
+      getCurrentCustomer.execute(LoggedUser.instance.loggedUserUid);
+    }
+    super.initState();
+  }
 
   Widget _buildTrailingWidget() {
     return Container(
-      // height: 60.0,
       child: RaisedButton(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
         ),
         color: Colors.white70,
-        onPressed: () {},
+        onPressed: () async {
+          signOutStore.executeSignIn();
+          Modular.to.pop();
+        },
         child: Text(
-          'Guardar',
+          'Sair',
           style: TextStyle(
             color: Colors.red[400],
           ),
@@ -86,40 +98,50 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   _buildAvatarTile(BuildContext context) {
-    return Container(
-      width: 130,
-      height: 130,
-      decoration: BoxDecoration(
-        color: Colors.red[300],
-        borderRadius: BorderRadius.circular(75.0),
-        border: Border.all(color: Colors.red[200], width: 2),
-        image: DecorationImage(
-          image: AssetImage(CUSTOMER),
-          fit: BoxFit.cover,
+    return Observer(builder: (_) {
+      CustomerModel customerModel = getCurrentCustomer?.currentCustomer?.data;
+      if (getCurrentCustomer.currentCustomer.hasError) {
+        return Center(child: Text('Error occured'));
+      }
+      if (getCurrentCustomer?.currentCustomer?.data == null) {
+        return Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation(Colors.red[300]),
+          ),
+        );
+      }
+      return Container(
+        width: 130,
+        height: 130,
+        decoration: BoxDecoration(
+          color: Colors.red[300],
+          borderRadius: BorderRadius.circular(75.0),
+          border: Border.all(color: Colors.red[200], width: 2),
+          image: customerModel.avatar != null
+              ? DecorationImage(
+                  image: CachedNetworkImageProvider(customerModel.avatar),
+                  fit: BoxFit.cover,
+                )
+              : null,
         ),
-      ),
-      child: Visibility(
-        visible: false,
-        child: Center(
-          child: Text(
-            'c'.toUpperCase(),
-            style: TextStyle(
-              fontFamily: 'SofiaPro',
-              fontSize: 52,
-              fontWeight: FontWeight.bold,
-              color: Colors.white70,
+        child: Visibility(
+          visible: customerModel?.avatar == null,
+          child: Center(
+            child: Text(
+              (customerModel.name[0].toUpperCase() +
+                      customerModel.surname[0].toUpperCase()) ??
+                  'C',
+              style: TextStyle(
+                fontFamily: 'Sans',
+                fontSize: 42,
+                fontWeight: FontWeight.bold,
+                color: Colors.white70,
+              ),
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _buildBody(context),
-    );
+      );
+    });
   }
 
   Widget _buildBody(BuildContext context) {
@@ -182,21 +204,44 @@ class _AccountPageState extends State<AccountPage> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30.0),
       ),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 30.0),
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(30.0)),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(height: 40),
-            _buildInputField('Nome', AntDesign.user, _nameController),
-            _buildInputField('E-mail', AntDesign.mail, _emailController),
-            _buildInputField('Senha', AntDesign.lock, _passwordController,
-                isPassword: true),
-            _buildInputField('Telefone', AntDesign.phone, _phoneController),
-          ],
-        ),
-      ),
+      child: Observer(builder: (_) {
+        CustomerModel customerModel = getCurrentCustomer?.currentCustomer?.data;
+        if (getCurrentCustomer.currentCustomer.hasError) {
+          return Center(child: Text('Error occured'));
+        }
+        if (getCurrentCustomer?.currentCustomer?.data == null) {
+          return Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation(Colors.red[300]),
+            ),
+          );
+        }
+
+        _nameController = TextEditingController(
+            text:
+                customerModel.name ?? 'Customer' + ' ' + customerModel.surname);
+        _emailController = TextEditingController(
+            text: customerModel.email ?? 'customer@izyshop.co.mz');
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 50.0),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(30.0)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(height: 40),
+              _buildInputField('Nome', AntDesign.user, _nameController),
+              _buildInputField('E-mail', AntDesign.mail, _emailController),
+            ],
+          ),
+        );
+      }),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _buildBody(context),
     );
   }
 }

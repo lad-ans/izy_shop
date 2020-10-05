@@ -7,7 +7,7 @@ part of 'checkout_repository_impl.dart';
 // **************************************************************************
 
 final $CheckoutRepositoryImpl = BindInject(
-  (i) => CheckoutRepositoryImpl(flutterFire: i<FirebaseFirestore>()),
+  (i) => CheckoutRepositoryImpl(firestore: i<FirebaseFirestore>()),
   singleton: true,
   lazy: true,
 );

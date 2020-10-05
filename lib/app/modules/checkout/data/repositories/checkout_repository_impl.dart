@@ -8,14 +8,14 @@ part 'checkout_repository_impl.g.dart';
 
 @Injectable()
 class CheckoutRepositoryImpl implements CheckoutRepository {
-  final FirebaseFirestore flutterFire;
+  final FirebaseFirestore firestore;
   CheckoutRepositoryImpl({
-    this.flutterFire,
+    this.firestore,
   });
   @override
   Future<bool> setOrder(OrderModel orderModel) async {
     try {
-      await flutterFire.collection('orders').add(orderModel.toMap());
+      await firestore.collection('orders').add(orderModel.toMap());
       print('success written');
       return true;
     } catch (error) {

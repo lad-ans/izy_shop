@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:izy_shop/app/core/domain/utils/number_formatter.dart';
 
+import '../../../../core/domain/utils/number_formatter.dart';
+import '../../../customer/domain/entities/logged_user.dart';
 import '../../data/models/product_model.dart';
 import '../stores/add_to_cart_store.dart';
 import 'cart_product_dialog.dart';
@@ -65,7 +67,7 @@ class ItemTile extends StatelessWidget {
             Positioned(
               bottom: 5.0,
               right: 5.0,
-              child: _buildAddToCartButton(),
+              child: _buildAddToCartButton(context),
             ),
           ],
         ),
@@ -100,7 +102,7 @@ class ItemTile extends StatelessWidget {
   }
 
   final _addToCart = Modular.get<AddToCartStore>();
-  Widget _buildAddToCartButton() {
+  Widget _buildAddToCartButton(BuildContext context) {
     return Visibility(
       visible: showItemPrice,
       child: InkWell(
@@ -116,7 +118,19 @@ class ItemTile extends StatelessWidget {
           ),
         ),
         onTap: () async {
-          await _addToCart.execute(productModel);
+          if (LoggedUser.instance.loggedUserUid != null) {
+            await _addToCart.execute(productModel);
+          } else {
+            EdgeAlert.show(
+              context,
+              title: 'No user found',
+              description: 'Login to buy item',
+              gravity: EdgeAlert.BOTTOM,
+              icon: Icons.info,
+              backgroundColor: Colors.redAccent,
+              duration: EdgeAlert.LENGTH_SHORT,
+            );
+          }
         },
       ),
     );

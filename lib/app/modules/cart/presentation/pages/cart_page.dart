@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:izy_shop/app/core/domain/consts/img.dart';
 import 'package:izy_shop/app/core/domain/utils/number_formatter.dart';
 
 import '../../../../core/domain/configs/core_config.dart';
@@ -119,9 +120,8 @@ class _CartPageState extends State<CartPage> {
                   return Container(
                     alignment: Alignment.center,
                     padding: EdgeInsets.only(top: 20.0),
-                    child: Text(
-                      'No items yet!',
-                      style: TextStyle(color: Colors.red[300]),
+                    child: Center(
+                      child: Image.asset(EMPTY_CART),
                     ),
                   );
                 }

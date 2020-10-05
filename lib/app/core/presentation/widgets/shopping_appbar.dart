@@ -1,13 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:izy_shop/app/core/domain/entities/route_entity.dart';
-import 'package:izy_shop/app/modules/cart/presentation/stores/get_customer_cart_store.dart';
-import 'package:izy_shop/app/modules/product/data/models/product_model.dart';
 
+import '../../../modules/cart/presentation/stores/get_customer_cart_store.dart';
+import '../../../modules/customer/domain/entities/logged_user.dart';
+import '../../../modules/product/data/models/product_model.dart';
 import '../../domain/configs/core_config.dart';
 import '../../domain/consts/img.dart';
+import '../../domain/entities/route_entity.dart';
 import 'help_dialog.dart';
 
 class ShoppingAppBar extends StatefulWidget {
@@ -29,7 +31,7 @@ class ShoppingAppBar extends StatefulWidget {
 
 class _ShoppingAppBarState extends State<ShoppingAppBar> {
   final _getCustomerCartStore = Modular.get<GetCustomerCartStore>();
-
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     _getCustomerCartStore.execute('uuid');
@@ -102,13 +104,46 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
             AntDesign.user,
             label: 'Profile',
             onTap: () async {
-              setAllOrientations();
-              await Modular.to.pushNamed('/customer');
-              setLandscapeOrientation();
+              if (LoggedUser.instance.loggedUserUid != null) {
+                setAllOrientations();
+                await Modular.to.pushNamed('/customer');
+                setLandscapeOrientation();
+              } else {
+                EdgeAlert.show(
+                  context,
+                  title: 'No user found',
+                  description: 'Login to show user info',
+                  gravity: EdgeAlert.BOTTOM,
+                  icon: Icons.info,
+                  backgroundColor: Colors.redAccent,
+                  duration: EdgeAlert.LENGTH_SHORT,
+                );
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    elevation: 0.0,
+                    backgroundColor: Colors.transparent,
+                    title: RaisedButton.icon(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0)),
+                      color: Colors.red[300],
+                      onPressed: () {
+                        Modular.to.pushNamed('/auth');
+                      },
+                      icon: Icon(
+                        Ionicons.ios_log_in,
+                        color: Colors.white,
+                      ),
+                      label: Text(
+                        'Login',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                );
+              }
             },
           ),
-          // SizedBox(width: 5.0),
-          // _buildGold()
         ],
       ),
     );
