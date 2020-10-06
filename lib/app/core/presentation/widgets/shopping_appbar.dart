@@ -48,13 +48,47 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
       child: Row(
         children: [
           _buildRoundedButton(Icons.arrow_back, label: 'Back', onTap: () {
+            List<ProductModel> cartList = _getCustomerCartStore.cartList.data;
             if (widget.isShopping) {
-              List<ProductModel> cartList = _getCustomerCartStore.cartList.data;
-              cartList.forEach((item) {
-                return item.reference.delete();
-              });
+              if (cartList.length != 0) {
+                return showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    backgroundColor: Colors.white70,
+                    title: Text('This action will clear your cart!'),
+                    titleTextStyle: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold),
+                    actions: [
+                      FlatButton(
+                        onPressed: () {
+                          if (widget.isShopping) {
+                            cartList?.forEach((item) {
+                              return item.reference.delete();
+                            });
+                          }
+                          Modular.to.pop();
+                          Modular.to.pop();
+                        },
+                        child: Text('Continue'),
+                      ),
+                      FlatButton(
+                        onPressed: () {
+                          Modular.to.pop();
+                        },
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(color: Colors.black87),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            } else {
+              Modular.to.pop();
             }
-            Modular.to.pop();
           }),
           SizedBox(width: 2.0),
           _buildNavigatorLogo(),
@@ -119,6 +153,7 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
                   duration: EdgeAlert.LENGTH_SHORT,
                 );
                 showDialog(
+                  barrierDismissible: false,
                   context: context,
                   builder: (context) => _buildAlertDialog(),
                 );
@@ -134,25 +169,67 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
     return AlertDialog(
       elevation: 0.0,
       backgroundColor: Colors.transparent,
-      title: Container(
-        height: 50.0,
-        child: RaisedButton.icon(
-          elevation: 0.5,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0),
+      title: Stack(
+        children: [
+          Container(
+            height: 50.0,
+            child: RaisedButton.icon(
+              elevation: 5.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              color: Colors.red[300],
+              onPressed: () {
+                Modular.to.pushNamed('/auth');
+              },
+              icon: Icon(
+                Ionicons.ios_log_in,
+                color: Colors.white,
+              ),
+              label: Text(
+                'Login',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
           ),
-          color: Colors.red[300],
-          onPressed: () {
-            Modular.to.pushNamed('/auth');
-          },
-          icon: Icon(
-            Ionicons.ios_log_in,
-            color: Colors.white,
+          Positioned(
+            top: 0.0,
+            right: 0.0,
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: _buildDialogButton(
+                height: 40.0,
+                width: 40.0,
+                color: Colors.black38,
+                icon: Icons.close,
+                onTap: () => Modular.to.pop(),
+              ),
+            ),
           ),
-          label: Text(
-            'Login',
-            style: TextStyle(color: Colors.white),
-          ),
+        ],
+      ),
+    );
+  }
+
+  GestureDetector _buildDialogButton(
+      {double height,
+      double width,
+      Color color,
+      IconData icon,
+      VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Material(
+        elevation: 2.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50.0),
+        ),
+        child: Container(
+          height: height,
+          width: width,
+          decoration: BoxDecoration(
+              color: color, borderRadius: BorderRadius.circular(50.0)),
+          child: Icon(icon, color: Colors.white70, size: 30),
         ),
       ),
     );

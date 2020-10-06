@@ -10,6 +10,9 @@ class ProductModel {
   String size;
   int qty;
   num deliveryPrice;
+  bool hasWeight;
+  bool hasVol;
+  bool hasSize;
   DocumentReference reference;
   ProductModel({
     this.id,
@@ -21,6 +24,9 @@ class ProductModel {
     this.size,
     this.qty,
     this.deliveryPrice,
+    this.hasWeight,
+    this.hasVol,
+    this.hasSize,
     this.reference,
   });
 
@@ -34,6 +40,9 @@ class ProductModel {
       category: doc.data()['category'],
       qty: doc.data()['qty'],
       id: doc.data()['id'],
+      hasVol: doc.data()['hasVol'],
+      hasWeight: doc.data()['hasWeight'],
+      hasSize: doc.data()['hasSize'],
       deliveryPrice: doc.data()['deliveryPrice'],
       reference: doc.reference,
     );
@@ -48,12 +57,15 @@ class ProductModel {
       "price": this.price,
       "size": this.size,
       'qty': this.qty,
-      'id': this.id
+      'id': this.id,
+      'hasVol': this.hasVol,
+      'hasWeight': this.hasWeight,
+      'hasSize': this.hasSize,
     };
   }
 
   @override
   String toString() {
-    return '${this.name}, ${this.name}, ${this.description}, ${this.img}, ${this.price}, ${this.category}, ${this.size}';
+    return '${this.name}, ${this.name}, ${this.description}, ${this.img}, ${this.price}, ${this.category}, ${this.size}, has size: ${this.hasSize}, has volume: ${this.hasVol}, has size: ${this.hasSize}';
   }
 }

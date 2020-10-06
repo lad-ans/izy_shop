@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_modular/flutter_modular_annotations.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -17,6 +18,7 @@ class AuthRepositoryImpl implements AuthRepository {
     this._firestore,
   );
 
+  /// email pssword signin
   @override
   Future<void> signIn(CustomerModel customerModel) async {
     try {
@@ -33,6 +35,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } catch (e) {}
   }
 
+  /// email pssword signup
   @override
   Future<void> signUp(CustomerModel customerModel) async {
     try {
@@ -57,6 +60,7 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  /// google sign in
   @override
   Future<void> signInWithGoogle() async {
     CustomerModel customerModel = CustomerModel();
@@ -77,16 +81,42 @@ class AuthRepositoryImpl implements AuthRepository {
       await _firestore
           .collection('customers')
           .doc(userCredential.user.uid)
-          .set(customerModel.googleUsetToMap(userCredential.user));
+          .set(customerModel.socialToMap(userCredential.user));
     } catch (e) {
       print(e.toString());
       return e;
     }
   }
 
+  /// facebook sign in
+  @override
+  Future<void> signInWithFacebook() async {
+    CustomerModel customerModel = CustomerModel();
+    try {
+      final LoginResult result = await FacebookAuth.instance.login();
+
+      final FacebookAuthCredential facebookAuthCredential =
+          FacebookAuthProvider.credential(result.accessToken.token);
+
+      final UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithCredential(facebookAuthCredential);
+
+      /// saving customer data on firestore
+      await _firestore
+          .collection('customers')
+          .doc(userCredential.user.uid)
+          .set(customerModel.socialToMap(userCredential.user));
+    } catch (e) {
+      print(e.toString());
+      return e;
+    }
+  }
+
+  /// sign out
   @override
   Future<void> signOut() async {
     await FirebaseAuth.instance.signOut();
     await GoogleSignIn().signOut();
+    await FacebookAuth.instance.logOut();
   }
 }

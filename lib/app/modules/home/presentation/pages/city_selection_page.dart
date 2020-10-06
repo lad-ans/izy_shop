@@ -70,6 +70,7 @@ class CitySelectionPage extends StatelessWidget {
               text: 'Confirm',
               isGreenColor: true,
               onTap: () => Modular.to.pushReplacementNamed('/home'),
+              index: 900,
             ),
           ),
         ],

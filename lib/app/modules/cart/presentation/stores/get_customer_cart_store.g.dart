@@ -38,11 +38,11 @@ mixin _$GetCustomerCartStore on _GetCustomerCartStoreBase, Store {
       ActionController(name: '_GetCustomerCartStoreBase');
 
   @override
-  dynamic execute(String uuid) {
+  dynamic execute(String uid) {
     final _$actionInfo = _$_GetCustomerCartStoreBaseActionController
         .startAction(name: '_GetCustomerCartStoreBase.execute');
     try {
-      return super.execute(uuid);
+      return super.execute(uid);
     } finally {
       _$_GetCustomerCartStoreBaseActionController.endAction(_$actionInfo);
     }

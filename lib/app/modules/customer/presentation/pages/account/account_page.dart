@@ -32,7 +32,7 @@ class _AccountPageState extends State<AccountPage> {
   final getCustomerCartStore = Modular.get<GetCustomerCartStore>();
   final signOutStore = Modular.get<SignOutStore>();
   TextEditingController _nameController;
-  // TextEditingController _surnameController;
+  TextEditingController _surnameController;
   TextEditingController _emailController;
 
   @override
@@ -144,8 +144,8 @@ class _AccountPageState extends State<AccountPage> {
                           : '')) ??
                   'C',
               style: TextStyle(
-                fontFamily: 'Sans',
-                fontSize: 42,
+                fontFamily: 'Poppins',
+                fontSize: 38,
                 fontWeight: FontWeight.bold,
                 color: Colors.white70,
               ),
@@ -232,10 +232,10 @@ class _AccountPageState extends State<AccountPage> {
 
         _nameController = TextEditingController(
             text: customerModel.name + ' ' + customerModel.surname);
-        // _surnameController = TextEditingController(
-        //     text: customerModel.surname);
+        _surnameController = TextEditingController(
+            text: customerModel.surname ?? 'No Surname to display');
         _emailController = TextEditingController(
-            text: customerModel.email ?? 'customer@izyshop.co.mz');
+            text: customerModel.email ?? 'No Email to display');
         return Container(
           padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 30.0),
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(30.0)),
@@ -244,8 +244,10 @@ class _AccountPageState extends State<AccountPage> {
             children: <Widget>[
               SizedBox(height: 40),
               _buildInputField('Nome', AntDesign.user, _nameController),
-              // _buildInputField(
-              //     'Apelido', SimpleLineIcons.user, _surnameController),
+              customerModel.surname.isNotEmpty
+                  ? _buildInputField(
+                      'Apelido', SimpleLineIcons.user, _surnameController)
+                  : Container(height: 0.0, width: 0.0),
               _buildInputField('E-mail', AntDesign.mail, _emailController),
             ],
           ),

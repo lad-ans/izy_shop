@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:izy_shop/app/core/domain/consts/img.dart';
-import 'package:izy_shop/app/core/domain/utils/number_formatter.dart';
-import 'package:izy_shop/app/modules/customer/domain/entities/logged_user.dart';
 
 import '../../../../core/domain/configs/core_config.dart';
+import '../../../../core/domain/consts/img.dart';
 import '../../../../core/domain/entities/route_entity.dart';
+import '../../../../core/domain/utils/number_formatter.dart';
 import '../../../../core/presentation/widgets/amount_checkout_row.dart';
 import '../../../../core/presentation/widgets/custom_statusbar.dart';
 import '../../../../core/presentation/widgets/rounded_button.dart';
 import '../../../../core/presentation/widgets/shopping_appbar.dart';
 import '../../../auth/presentation/widgets/custom_text.dart';
+import '../../../customer/domain/entities/logged_user.dart';
 import '../../../product/data/models/product_model.dart';
 import '../../../product/presentation/widgets/item_tile.dart';
 import '../stores/get_customer_cart_store.dart';
@@ -73,15 +73,18 @@ class _CartPageState extends State<CartPage> {
                 amount: NumberFormatter.instance.numToString(total)),
             Divider(color: Colors.green[200]),
             RoundedButton(
-              isNull: LoggedUser.instance.loggedUserUid == null,
-              onTap: () => Modular.to.pushNamed(
-                '/checkout',
-                arguments: RouteEntity(
-                    cartList: productList,
-                    totalAmount: total,
-                    storeImg: widget.routeEntity.storeImg,
-                    storeName: widget.routeEntity.storeName),
-              ),
+              isNull: LoggedUser.instance.loggedUserUid == null ||
+                  productList.length == 0,
+              onTap: productList.length == 0
+                  ? null
+                  : () => Modular.to.pushNamed(
+                        '/checkout',
+                        arguments: RouteEntity(
+                            cartList: productList,
+                            totalAmount: total,
+                            storeImg: widget.routeEntity.storeImg,
+                            storeName: widget.routeEntity.storeName),
+                      ),
               isGreenColor: (LoggedUser.instance.loggedUserUid != null) &&
                   (productList.length != 0),
               icon: Icons.check,

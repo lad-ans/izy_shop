@@ -3,13 +3,12 @@ import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:izy_shop/app/core/domain/utils/number_formatter.dart';
-import 'package:izy_shop/app/modules/cart/presentation/stores/get_customer_cart_store.dart';
-import 'package:izy_shop/app/modules/customer/domain/entities/logged_user.dart';
 
-import '../../../../core/domain/consts/img.dart';
 import '../../../../core/domain/entities/route_entity.dart';
+import '../../../../core/domain/utils/number_formatter.dart';
 import '../../../../core/presentation/widgets/custom_rich_text.dart';
+import '../../../cart/presentation/stores/get_customer_cart_store.dart';
+import '../../../customer/domain/entities/logged_user.dart';
 import '../../data/models/product_model.dart';
 import '../stores/add_to_cart_store.dart';
 import 'description_dialog.dart';
@@ -176,10 +175,19 @@ class OnBuyDialog extends StatelessWidget {
   Column _buildColumnRight() {
     return Column(
       children: [
-        CustomRichText(
-            labelOne: 'Price: ',
-            labelTwo:
-                '${NumberFormatter.instance.numToString(productModel?.price)} MT'),
+        Row(
+          children: [
+            CustomRichText(
+              labelOne: 'Price: ',
+              labelTwo:
+                  '${NumberFormatter.instance.numToString(productModel?.price)} MT',
+            ),
+            Text(
+              ' (unit)',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
+          ],
+        ),
         SizedBox(height: 8.0),
         ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
@@ -206,25 +214,58 @@ class OnBuyDialog extends StatelessWidget {
   Column _buildColumnLeft() {
     return Column(
       children: [
-        Text('Select Size'),
-        SizedBox(height: 4.0),
-        Row(
-          children: [
-            _buildItemSize(imgItem: APPLES, size: 'small'),
-            SizedBox(width: 10.0),
-            _buildItemSize(imgItem: APPLES, size: 'large', isSelected: true),
-          ],
+        Visibility(
+          visible: productModel.hasSize,
+          child: Text(
+            'Select Size',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        SizedBox(height: 10.0),
+        Visibility(
+          visible: productModel?.hasSize,
+          child: Row(
+            children: [
+              _buildItemSize(size: 'small'),
+              SizedBox(width: 10.0),
+              _buildItemSize(size: 'large', isSelected: true),
+            ],
+          ),
         ),
         Divider(),
-        Text('Select quantity',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        Row(
-          children: [
-            _buildOnQtySelect(qty: '0.5kg'),
-            _buildOnQtySelect(qty: '1kg', isSelected: true),
-            _buildOnQtySelect(qty: '5kg'),
-            _buildOnQtySelect(qty: '10kg'),
-          ],
+        Visibility(
+          visible: productModel.hasWeight || productModel.hasVol,
+          child: Text('Select quantity',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        ),
+        SizedBox(height: 10.0),
+
+        /// if has weight
+        Visibility(
+          visible: productModel.hasWeight,
+          child: Row(
+            children: [
+              _buildOnQtySelect(qty: '0.5kg'),
+              _buildOnQtySelect(qty: '1kg', isSelected: true),
+              _buildOnQtySelect(qty: '5kg'),
+              _buildOnQtySelect(qty: '10kg'),
+            ],
+          ),
+        ),
+
+        /// if has volume
+        Visibility(
+          visible: productModel.hasVol,
+          child: Row(
+            children: [
+              _buildOnQtySelect(qty: '1L'),
+              _buildOnQtySelect(qty: '2L', isSelected: true),
+              _buildOnQtySelect(qty: '5L'),
+            ],
+          ),
         )
       ],
     );
@@ -253,8 +294,7 @@ class OnBuyDialog extends StatelessWidget {
     );
   }
 
-  Column _buildItemSize(
-      {String imgItem, String size, bool isSelected = false}) {
+  Column _buildItemSize({String size, bool isSelected = false}) {
     return Column(
       children: [
         Container(

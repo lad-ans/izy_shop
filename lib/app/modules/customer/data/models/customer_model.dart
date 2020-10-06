@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class CustomerModel {
   String name;
@@ -8,6 +7,7 @@ class CustomerModel {
   String email;
   String avatar;
   String password;
+  String phoneNumber;
   CustomerModel({
     this.name,
     this.surname,
@@ -35,7 +35,7 @@ class CustomerModel {
     };
   }
 
-  Map<String, dynamic> googleUsetToMap(User user) {
+  Map<String, dynamic> socialToMap(User user) {
     return {
       'name': user.displayName,
       'surname': '',

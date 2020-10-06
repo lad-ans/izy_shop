@@ -64,19 +64,20 @@ class RoundedButton extends StatelessWidget {
               width: btnWidth ?? 90,
               height: btnHeight ?? 90,
               decoration: BoxDecoration(
-                  border: Border.all(
-                      color: (isSelected && isCustomized)
-                          ? Colors.red[300]
-                          : isSelected
-                              ? Colors.black
-                              : isGreenColor
-                                  ? Colors.green
-                                  : borderColor ?? Colors.white,
-                      width: 0.7),
-                  borderRadius: BorderRadius.circular(80),
-                  color: isSelected
-                      ? Colors.white
-                      : isGreenColor ? Colors.green : color ?? Colors.black45),
+                border: Border.all(
+                    color: (isSelected && isCustomized)
+                        ? Colors.red[300]
+                        : isSelected
+                            ? Colors.black
+                            : isGreenColor
+                                ? Colors.green
+                                : borderColor ?? Colors.white,
+                    width: 0.7),
+                borderRadius: BorderRadius.circular(80),
+                color: isSelected
+                    ? Colors.white
+                    : isGreenColor ? Colors.green : color ?? Colors.black45,
+              ),
               child: Icon(icon,
                   color: (isCustomized && isSelected)
                       ? Colors.red[300]

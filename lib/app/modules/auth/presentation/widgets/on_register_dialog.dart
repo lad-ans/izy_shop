@@ -37,14 +37,14 @@ class OnRegisterDetailsDialog extends StatelessWidget {
             textAlign: TextAlign.center, style: TextStyle(fontSize: 18.0)),
         SizedBox(height: 10.0),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            RoundedButton(
-              iconColor: Colors.white,
-              icon: AntDesign.edit,
-              onTap: () => Modular.to.pop(),
-            ),
-            SizedBox(width: 20.0),
+            // RoundedButton(
+            //   iconColor: Colors.white,
+            //   icon: AntDesign.edit,
+            //   onTap: () => Modular.to.pop(),
+            // ),
+            // SizedBox(width: 20.0),
             RoundedButton(
               iconColor: Colors.white,
               icon: FontAwesomeIcons.check,
