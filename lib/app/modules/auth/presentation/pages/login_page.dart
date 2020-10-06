@@ -1,10 +1,12 @@
 import 'dart:ui';
 
+import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:izy_shop/app/modules/auth/presentation/stores/sign_in_store.dart';
+import 'package:izy_shop/app/modules/auth/presentation/stores/sign_in_with_google_store.dart';
 import 'package:izy_shop/app/modules/customer/data/models/customer_model.dart';
 import 'package:izy_shop/app/modules/customer/domain/entities/logged_user.dart';
 
@@ -19,6 +21,7 @@ class LoginPage extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final CustomerModel _customerModel = CustomerModel();
   final signInStore = Modular.get<SignInStore>();
+  final signInWithGoogleStore = Modular.get<SignInWithGoogleStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -77,8 +80,30 @@ class LoginPage extends StatelessWidget {
                 text: 'Login With Google',
                 onTap: () async {
                   _controller.select(1);
-                  // await Modular.to.pushReplacementNamed('/home/city');
-                  // _controller.select(100);
+                  await signInWithGoogleStore.execute();
+                  if (LoggedUser.instance.loggedUserUid != null) {
+                    EdgeAlert.show(
+                      context,
+                      title: 'Logged in successfully',
+                      description: 'Greate!! You are logged with Google',
+                      gravity: EdgeAlert.BOTTOM,
+                      icon: Icons.check,
+                      backgroundColor: Colors.green,
+                      duration: EdgeAlert.LENGTH_SHORT,
+                    );
+                    await Modular.to.pushReplacementNamed('/home/city');
+                  } else {
+                    EdgeAlert.show(
+                      context,
+                      title: 'Error on loging in',
+                      description: 'Some error occured on google login',
+                      gravity: EdgeAlert.BOTTOM,
+                      icon: Icons.info,
+                      backgroundColor: Colors.redAccent,
+                      duration: EdgeAlert.LENGTH_SHORT,
+                    );
+                  }
+                  _controller.select(800);
                 },
                 index: 1,
               ),
@@ -117,7 +142,7 @@ class LoginPage extends StatelessWidget {
                 onTap: () async {
                   _controller.select(3);
                   await Modular.to.pushNamed('/auth/signup');
-                  _controller.select(100);
+                  _controller.select(400);
                 },
                 index: 3,
               ),
@@ -131,10 +156,29 @@ class LoginPage extends StatelessWidget {
                     _formKey.currentState.save();
                     await signInStore.executeSignIn(_customerModel);
                     if (LoggedUser.instance.loggedUserUid != null) {
+                      EdgeAlert.show(
+                        context,
+                        title: 'Logged in successfully',
+                        description: 'Greate!! You are logged',
+                        gravity: EdgeAlert.BOTTOM,
+                        icon: Icons.check,
+                        backgroundColor: Colors.green,
+                        duration: EdgeAlert.LENGTH_SHORT,
+                      );
                       Modular.to.pushReplacementNamed('/home/city');
+                    } else {
+                      EdgeAlert.show(
+                        context,
+                        title: 'Error on loging in',
+                        description: 'Some error occured on login',
+                        gravity: EdgeAlert.BOTTOM,
+                        icon: Icons.info,
+                        backgroundColor: Colors.redAccent,
+                        duration: EdgeAlert.LENGTH_SHORT,
+                      );
                     }
                   }
-                  _controller.select(100);
+                  _controller.select(500);
                 },
                 index: 4,
               ),

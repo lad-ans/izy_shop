@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_modular/flutter_modular_annotations.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../customer/data/models/customer_model.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -57,8 +58,35 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<void> signInWithGoogle() async {
+    CustomerModel customerModel = CustomerModel();
+    try {
+      final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final GoogleAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      final UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      /// saving customer data on firestore
+      await _firestore
+          .collection('customers')
+          .doc(userCredential.user.uid)
+          .set(customerModel.googleUsetToMap(userCredential.user));
+    } catch (e) {
+      print(e.toString());
+      return e;
+    }
+  }
+
+  @override
   Future<void> signOut() async {
     await FirebaseAuth.instance.signOut();
-    CustomerModel.fromDocument(null);
+    await GoogleSignIn().signOut();
   }
 }

@@ -10,6 +10,8 @@ import '../../../../../core/domain/configs/core_config.dart';
 import '../../../../../core/domain/consts/img.dart';
 import '../../../../../core/presentation/widgets/custom_appbar.dart';
 import '../../../../auth/presentation/stores/sign_out_store.dart';
+import '../../../../cart/presentation/stores/get_customer_cart_store.dart';
+import '../../../../product/data/models/product_model.dart';
 import '../../../data/models/customer_model.dart';
 import '../../../domain/entities/logged_user.dart';
 import '../../stores/get_logged_customer_store.dart';
@@ -26,15 +28,18 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  final getCurrentCustomer = Modular.get<GetLoggedCustomerStore>();
+  final getCurrentCustomerStore = Modular.get<GetLoggedCustomerStore>();
+  final getCustomerCartStore = Modular.get<GetCustomerCartStore>();
   final signOutStore = Modular.get<SignOutStore>();
   TextEditingController _nameController;
+  // TextEditingController _surnameController;
   TextEditingController _emailController;
 
   @override
   void initState() {
     if (LoggedUser.instance.loggedUserUid != null) {
-      getCurrentCustomer.execute(LoggedUser.instance.loggedUserUid);
+      getCurrentCustomerStore.execute(LoggedUser.instance.loggedUserUid);
+      getCustomerCartStore?.execute(LoggedUser.instance.loggedUserUid);
     }
     super.initState();
   }
@@ -45,15 +50,19 @@ class _AccountPageState extends State<AccountPage> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
         ),
-        color: Colors.white70,
+        color: Colors.red[400],
         onPressed: () async {
-          signOutStore.executeSignIn();
+          List<ProductModel> cartList = getCustomerCartStore.cartList.data;
+          cartList?.forEach((item) {
+            return item.reference.delete();
+          });
+          await signOutStore.executeSignIn();
           Modular.to.pop();
         },
         child: Text(
           'Sair',
           style: TextStyle(
-            color: Colors.red[400],
+            color: Colors.white70,
           ),
         ),
       ),
@@ -99,11 +108,12 @@ class _AccountPageState extends State<AccountPage> {
 
   _buildAvatarTile(BuildContext context) {
     return Observer(builder: (_) {
-      CustomerModel customerModel = getCurrentCustomer?.currentCustomer?.data;
-      if (getCurrentCustomer.currentCustomer.hasError) {
+      CustomerModel customerModel =
+          getCurrentCustomerStore?.currentCustomer?.data;
+      if (getCurrentCustomerStore.currentCustomer.hasError) {
         return Center(child: Text('Error occured'));
       }
-      if (getCurrentCustomer?.currentCustomer?.data == null) {
+      if (getCurrentCustomerStore?.currentCustomer?.data == null) {
         return Center(
           child: CircularProgressIndicator(
             valueColor: AlwaysStoppedAnimation(Colors.red[300]),
@@ -111,12 +121,12 @@ class _AccountPageState extends State<AccountPage> {
         );
       }
       return Container(
-        width: 130,
-        height: 130,
+        width: 110,
+        height: 110,
         decoration: BoxDecoration(
           color: Colors.red[300],
           borderRadius: BorderRadius.circular(75.0),
-          border: Border.all(color: Colors.red[200], width: 2),
+          border: Border.all(color: Colors.white70, width: 2),
           image: customerModel.avatar != null
               ? DecorationImage(
                   image: CachedNetworkImageProvider(customerModel.avatar),
@@ -128,8 +138,10 @@ class _AccountPageState extends State<AccountPage> {
           visible: customerModel?.avatar == null,
           child: Center(
             child: Text(
-              (customerModel.name[0].toUpperCase() +
-                      customerModel.surname[0].toUpperCase()) ??
+              (customerModel?.name[0].toUpperCase() +
+                      (customerModel.surname.isNotEmpty
+                          ? customerModel?.surname[0]?.toUpperCase()
+                          : '')) ??
                   'C',
               style: TextStyle(
                 fontFamily: 'Sans',
@@ -187,9 +199,9 @@ class _AccountPageState extends State<AccountPage> {
           },
         ),
         Positioned(
-          top: -70,
+          top: -60,
           left: getDeviceOrientation(context) == Orientation.portrait
-              ? getHeight(context) / 5.8
+              ? getHeight(context) / 5.6
               : getWidth(context) / 2.6,
           child: _buildAvatarTile(context),
         ),
@@ -205,11 +217,12 @@ class _AccountPageState extends State<AccountPage> {
         borderRadius: BorderRadius.circular(30.0),
       ),
       child: Observer(builder: (_) {
-        CustomerModel customerModel = getCurrentCustomer?.currentCustomer?.data;
-        if (getCurrentCustomer.currentCustomer.hasError) {
+        CustomerModel customerModel =
+            getCurrentCustomerStore?.currentCustomer?.data;
+        if (getCurrentCustomerStore.currentCustomer.hasError) {
           return Center(child: Text('Error occured'));
         }
-        if (getCurrentCustomer?.currentCustomer?.data == null) {
+        if (getCurrentCustomerStore?.currentCustomer?.data == null) {
           return Center(
             child: CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation(Colors.red[300]),
@@ -218,18 +231,21 @@ class _AccountPageState extends State<AccountPage> {
         }
 
         _nameController = TextEditingController(
-            text:
-                customerModel.name ?? 'Customer' + ' ' + customerModel.surname);
+            text: customerModel.name + ' ' + customerModel.surname);
+        // _surnameController = TextEditingController(
+        //     text: customerModel.surname);
         _emailController = TextEditingController(
             text: customerModel.email ?? 'customer@izyshop.co.mz');
         return Container(
-          padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 50.0),
+          padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 30.0),
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(30.0)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               SizedBox(height: 40),
               _buildInputField('Nome', AntDesign.user, _nameController),
+              // _buildInputField(
+              //     'Apelido', SimpleLineIcons.user, _surnameController),
               _buildInputField('E-mail', AntDesign.mail, _emailController),
             ],
           ),

@@ -13,6 +13,7 @@ class CustomTextField extends StatelessWidget {
   final bool isEmail;
   final String password;
   final FormFieldSetter<String> onSaved;
+  final bool obscureText;
 
   CustomTextField({
     Key key,
@@ -28,6 +29,7 @@ class CustomTextField extends StatelessWidget {
     this.isEmail = false,
     this.password,
     this.onSaved,
+    this.obscureText = false,
   }) : super(key: key);
 
   @override
@@ -56,6 +58,7 @@ class CustomTextField extends StatelessWidget {
             Container(
               height: height ?? null,
               child: TextField(
+                obscureText: obscureText,
                 controller: controller,
                 onChanged: (value) => state.didChange(value),
                 style: TextStyle(color: Colors.black87),

@@ -99,7 +99,7 @@ class StorePage extends StatelessWidget {
                             storeName: _routeEntity.storeName,
                             storeRef: store.reference),
                       );
-                      _controller.selectedIndex = 100;
+                      _controller.select(900);
                     },
                     index: index,
                   );

@@ -2,13 +2,13 @@ import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:izy_shop/app/modules/customer/domain/entities/logged_user.dart';
 
 import '../../../../core/domain/configs/core_config.dart';
 import '../../../../core/domain/entities/route_entity.dart';
 import '../../../../core/presentation/widgets/custom_statusbar.dart';
 import '../../../../core/presentation/widgets/shopping_appbar.dart';
 import '../../../cart/presentation/stores/get_customer_cart_store.dart';
+import '../../../customer/domain/entities/logged_user.dart';
 import '../../../product/data/models/product_model.dart';
 import '../../../product/presentation/stores/add_to_cart_store.dart';
 import '../../../product/presentation/widgets/item_tile.dart';
@@ -25,7 +25,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
   @override
   void initState() {
     setLandscapeOrientation();
-    getCustomerCartStore.execute('uuid');
+    getCustomerCartStore.execute(LoggedUser.instance.loggedUserUid);
     super.initState();
   }
 
@@ -181,7 +181,20 @@ class _ShoppingPageState extends State<ShoppingPage> {
               Positioned(
                 top: -8.0,
                 right: -5.0,
-                child: _buildCartCount(),
+                child: Observer(builder: (_) {
+                  List<ProductModel> cartList =
+                      getCustomerCartStore.cartList.data;
+                  if (getCustomerCartStore.cartList.hasError) {
+                    return Center(child: Text('Error occured'));
+                  }
+                  if(getCustomerCartStore.cartList.data == null){
+                    return Center(child: Text('Loading...'));
+                  }
+                  return Visibility(
+                    visible: cartList.length != 0,
+                    child: _buildCartCount(),
+                  );
+                }),
               ),
             ],
           ),

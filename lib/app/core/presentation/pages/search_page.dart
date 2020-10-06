@@ -80,7 +80,8 @@ class SearchPage extends StatelessWidget {
             },
           ),
           child: Container(
-            width: 100,
+            width: 100.0,
+            height: 80.0,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12.0),
               image: DecorationImage(

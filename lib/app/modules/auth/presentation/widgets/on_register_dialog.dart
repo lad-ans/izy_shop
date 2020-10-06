@@ -1,3 +1,4 @@
+import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -47,7 +48,18 @@ class OnRegisterDetailsDialog extends StatelessWidget {
             RoundedButton(
               iconColor: Colors.white,
               icon: FontAwesomeIcons.check,
-              onTap: () => Modular.to.pushReplacementNamed('/home/city'),
+              onTap: () {
+                EdgeAlert.show(
+                  context,
+                  title: 'Logged in successfully',
+                  description: 'Great!! You are logged in',
+                  gravity: EdgeAlert.BOTTOM,
+                  icon: Icons.check,
+                  backgroundColor: Colors.green,
+                  duration: EdgeAlert.LENGTH_SHORT,
+                );
+                Modular.to.pushReplacementNamed('/home/city');
+              },
               isGreenColor: true,
             ),
           ],

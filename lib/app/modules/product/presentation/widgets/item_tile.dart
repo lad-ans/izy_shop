@@ -3,6 +3,8 @@ import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:izy_shop/app/modules/cart/domain/usecases/get_customer_cart.dart';
+import 'package:izy_shop/app/modules/cart/presentation/stores/cart_module_stores.dart';
 
 import '../../../../core/domain/utils/number_formatter.dart';
 import '../../../customer/domain/entities/logged_user.dart';
@@ -24,8 +26,7 @@ class ItemTile extends StatelessWidget {
   final bool isOnCart;
 
   ItemTile(
-      {Key key,
-      this.color,
+      {this.color,
       this.elevation,
       this.hPadd,
       this.showItemPrice = true,
@@ -33,8 +34,9 @@ class ItemTile extends StatelessWidget {
       this.itemWidth,
       this.isOnBasket = false,
       this.isOnCart = false,
-      this.productModel})
-      : super(key: key);
+      this.productModel});
+
+  final _getCustomerCartStore = Modular.get<GetCustomerCartStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +121,22 @@ class ItemTile extends StatelessWidget {
         ),
         onTap: () async {
           if (LoggedUser.instance.loggedUserUid != null) {
+            // List<ProductModel> cartList = _getCustomerCartStore.cartList.data;
+            // cartList.forEach((item) async {
+            //   if (item.id != productModel.id) {
             await _addToCart.execute(productModel);
+            //   } else {
+            //     EdgeAlert.show(
+            //       context,
+            //       title: 'Product exist',
+            //       description: 'This product is present on cart',
+            //       gravity: EdgeAlert.BOTTOM,
+            //       icon: Icons.info,
+            //       backgroundColor: Colors.amber,
+            //       duration: EdgeAlert.LENGTH_SHORT,
+            //     );
+            //   }
+            // });
           } else {
             EdgeAlert.show(
               context,

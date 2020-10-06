@@ -72,7 +72,7 @@ class HomePage extends StatelessWidget {
                           '/store',
                           arguments: RouteEntity(storeName: market.name),
                         );
-                        _controller.selectedIndex = 100;
+                        _controller.select(800);
                       },
                       index: index,
                     );

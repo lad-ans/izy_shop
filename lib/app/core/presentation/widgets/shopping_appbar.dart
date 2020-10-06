@@ -31,10 +31,10 @@ class ShoppingAppBar extends StatefulWidget {
 
 class _ShoppingAppBarState extends State<ShoppingAppBar> {
   final _getCustomerCartStore = Modular.get<GetCustomerCartStore>();
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
-    _getCustomerCartStore.execute('uuid');
+    _getCustomerCartStore.execute(LoggedUser.instance.loggedUserUid);
     super.initState();
   }
 
@@ -120,31 +120,40 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
                 );
                 showDialog(
                   context: context,
-                  builder: (context) => AlertDialog(
-                    elevation: 0.0,
-                    backgroundColor: Colors.transparent,
-                    title: RaisedButton.icon(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0)),
-                      color: Colors.red[300],
-                      onPressed: () {
-                        Modular.to.pushNamed('/auth');
-                      },
-                      icon: Icon(
-                        Ionicons.ios_log_in,
-                        color: Colors.white,
-                      ),
-                      label: Text(
-                        'Login',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
+                  builder: (context) => _buildAlertDialog(),
                 );
               }
             },
           ),
         ],
+      ),
+    );
+  }
+
+  AlertDialog _buildAlertDialog() {
+    return AlertDialog(
+      elevation: 0.0,
+      backgroundColor: Colors.transparent,
+      title: Container(
+        height: 50.0,
+        child: RaisedButton.icon(
+          elevation: 0.5,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          color: Colors.red[300],
+          onPressed: () {
+            Modular.to.pushNamed('/auth');
+          },
+          icon: Icon(
+            Ionicons.ios_log_in,
+            color: Colors.white,
+          ),
+          label: Text(
+            'Login',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
       ),
     );
   }

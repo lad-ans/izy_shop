@@ -93,7 +93,7 @@ class DescriptionDialog extends StatelessWidget {
       ),
       onPressed: onPressed,
       icon: Icon(
-        Icons.delete,
+        Icons.remove_shopping_cart,
         color: Colors.red[300],
         size: 20.0,
       ),

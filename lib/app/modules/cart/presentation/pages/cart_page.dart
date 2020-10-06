@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:izy_shop/app/core/domain/consts/img.dart';
 import 'package:izy_shop/app/core/domain/utils/number_formatter.dart';
+import 'package:izy_shop/app/modules/customer/domain/entities/logged_user.dart';
 
 import '../../../../core/domain/configs/core_config.dart';
 import '../../../../core/domain/entities/route_entity.dart';
@@ -72,6 +73,7 @@ class _CartPageState extends State<CartPage> {
                 amount: NumberFormatter.instance.numToString(total)),
             Divider(color: Colors.green[200]),
             RoundedButton(
+              isNull: LoggedUser.instance.loggedUserUid == null,
               onTap: () => Modular.to.pushNamed(
                 '/checkout',
                 arguments: RouteEntity(
@@ -80,7 +82,8 @@ class _CartPageState extends State<CartPage> {
                     storeImg: widget.routeEntity.storeImg,
                     storeName: widget.routeEntity.storeName),
               ),
-              isGreenColor: true,
+              isGreenColor: (LoggedUser.instance.loggedUserUid != null) &&
+                  (productList.length != 0),
               icon: Icons.check,
               iconSize: 30.0,
               text: 'Confirm',
@@ -117,13 +120,7 @@ class _CartPageState extends State<CartPage> {
                   );
                 }
                 if (productList.length == 0) {
-                  return Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.only(top: 20.0),
-                    child: Center(
-                      child: Image.asset(EMPTY_CART),
-                    ),
-                  );
+                  return _buildEmptyCart();
                 }
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -156,6 +153,41 @@ class _CartPageState extends State<CartPage> {
               isCartPage: true,
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Container _buildEmptyCart() {
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.only(top: 40.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Image.asset(EMPTY_CART, width: 200),
+          SizedBox(height: 40.0),
+          FlatButton.icon(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0)),
+            onPressed: () async {
+              setPortraitOrientations();
+              await Modular.to.pushReplacementNamed('/home');
+              setAllOrientations();
+            },
+            icon: Icon(
+              Icons.add_shopping_cart,
+              color: Colors.red[300],
+              size: 50.0,
+            ),
+            label: Text(
+              'Start Shopping',
+              style: TextStyle(
+                color: Colors.red[300],
+                fontSize: 30.0,
+              ),
+            ),
+          )
         ],
       ),
     );

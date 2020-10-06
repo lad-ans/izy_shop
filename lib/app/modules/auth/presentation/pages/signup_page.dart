@@ -1,9 +1,11 @@
 import 'dart:ui';
 
+import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:izy_shop/app/modules/customer/domain/entities/logged_user.dart';
 
 import '../../../../app_controller.dart';
 import '../../../../core/domain/configs/core_config.dart';
@@ -62,6 +64,8 @@ class SignUpPage extends StatelessWidget {
                 text: 'Login With Facebook',
                 onTap: () async {
                   _controller.select(10);
+                  Future.delayed(Duration(milliseconds: 500));
+                  _controller.select(600);
                 },
                 index: 10,
               ),
@@ -72,6 +76,8 @@ class SignUpPage extends StatelessWidget {
                 text: 'Login With Google',
                 onTap: () async {
                   _controller.select(11);
+                  Future.delayed(Duration(milliseconds: 500));
+                  _controller.select(700);
                 },
                 index: 11,
               ),
@@ -121,6 +127,7 @@ class SignUpPage extends StatelessWidget {
           ),
           SizedBox(height: 10.0),
           CustomTextField(
+            obscureText: true,
             controller: _passwordController,
             isPassword: true,
             onSaved: (password) {
@@ -139,16 +146,29 @@ class SignUpPage extends StatelessWidget {
           _buildOnConfirm(context, onTap: () async {
             if (_formKey.currentState.validate()) {
               _formKey.currentState.save();
+
               await _signUpStore.executeSignUp(customerModel);
-              showDialog(
-                context: context,
-                builder: (context) => OnRegisterDetailsDialog(
-                  title: 'Please confirm your details below',
-                  firstName: customerModel.name,
-                  lastName: customerModel.surname,
-                  email: customerModel.email,
-                ),
-              );
+              if (LoggedUser.instance.loggedUserUid != null) {
+                showDialog(
+                  context: context,
+                  builder: (context) => OnRegisterDetailsDialog(
+                    title: 'Please confirm your details below',
+                    firstName: customerModel.name,
+                    lastName: customerModel.surname,
+                    email: customerModel.email,
+                  ),
+                );
+              } else {
+                EdgeAlert.show(
+                  context,
+                  title: 'Error on signing up',
+                  description: 'Some error occured on signing up. Try again',
+                  gravity: EdgeAlert.BOTTOM,
+                  icon: Icons.info,
+                  backgroundColor: Colors.redAccent,
+                  duration: EdgeAlert.LENGTH_SHORT,
+                );
+              }
             }
           }),
           SizedBox(height: 20.0),
@@ -175,6 +195,7 @@ class SignUpPage extends StatelessWidget {
             Container(
               height: 55.0,
               child: TextField(
+                obscureText: true,
                 onChanged: (value) => state.didChange(value),
                 style: TextStyle(color: Colors.black87),
                 decoration: InputDecoration(

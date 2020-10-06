@@ -58,7 +58,7 @@ class ActionPage extends StatelessWidget {
               onTap: () async {
                 _controller.select(1);
                 await Modular.to.pushNamed('/auth/signup');
-                _controller.select(100);
+                _controller.select(200);
               },
               index: 1,
             ),
@@ -69,7 +69,7 @@ class ActionPage extends StatelessWidget {
               onTap: () async {
                 _controller.select(2);
                 await Modular.to.pushReplacementNamed('/home/city');
-                _controller.select(100);
+                _controller.select(300);
               },
               index: 2,
             ),
