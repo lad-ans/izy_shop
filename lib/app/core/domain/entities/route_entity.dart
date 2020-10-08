@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/widgets.dart';
 
-import 'package:izy_shop/app/modules/product/data/models/product_model.dart';
+import '../../../modules/product/data/models/product_model.dart';
 
 class RouteEntity {
   final num totalAmount;
@@ -10,6 +11,7 @@ class RouteEntity {
   final DocumentReference storeRef;
   final ProductModel productModel;
   final List<ProductModel> cartList;
+  final TextEditingController addressController;
 
   RouteEntity({
     this.totalAmount,
@@ -19,5 +21,6 @@ class RouteEntity {
     this.storeRef,
     this.productModel,
     this.cartList,
+    this.addressController,
   });
 }

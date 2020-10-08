@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:edge_alert/edge_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_modular/flutter_modular_annotations.dart';
@@ -29,8 +32,26 @@ class AuthRepositoryImpl implements AuthRepository {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
+        // EdgeAlert.show(
+        //   context,
+        //   title: 'User notfound',
+        //   description: 'No user found for that email.',
+        //   gravity: EdgeAlert.BOTTOM,
+        //   icon: Icons.info,
+        //   backgroundColor: Colors.redAccent,
+        //   duration: EdgeAlert.LENGTH_SHORT,
+        // );
       } else if (e.code == 'wrong-password') {
         print('Wrong password provided for that user.');
+        // EdgeAlert.show(
+        //   context,
+        //   title: 'Wrong password',
+        //   description: 'Wrong password provided for that user.',
+        //   gravity: EdgeAlert.BOTTOM,
+        //   icon: Icons.info,
+        //   backgroundColor: Colors.redAccent,
+        //   duration: EdgeAlert.LENGTH_VERY_LONG,
+        // );
       }
     } catch (e) {}
   }
@@ -52,8 +73,26 @@ class AuthRepositoryImpl implements AuthRepository {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
+        // EdgeAlert.show(
+        //   context,
+        //   title: 'Weak password',
+        //   description: 'The password provided is too weak.',
+        //   gravity: EdgeAlert.BOTTOM,
+        //   icon: Icons.info,
+        //   backgroundColor: Colors.redAccent,
+        //   duration: EdgeAlert.LENGTH_VERY_LONG,
+        // );
       } else if (e.code == 'email-already-in-use') {
         print('The account already exists for that email.');
+        // EdgeAlert.show(
+        //   context,
+        //   title: 'Email already in use',
+        //   description: 'The account already exists for that email.',
+        //   gravity: EdgeAlert.BOTTOM,
+        //   icon: Icons.info,
+        //   backgroundColor: Colors.redAccent,
+        //   duration: EdgeAlert.LENGTH_VERY_LONG,
+        // );
       }
     } catch (e) {
       print(e.toString());

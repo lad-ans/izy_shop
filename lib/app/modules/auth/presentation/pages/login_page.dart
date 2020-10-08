@@ -75,7 +75,7 @@ class LoginPage extends StatelessWidget {
                     EdgeAlert.show(
                       context,
                       title: 'Logged in successfully',
-                      description: 'Greate!! You are logged with Google',
+                      description: 'Great! You are logged with Google',
                       gravity: EdgeAlert.BOTTOM,
                       icon: Icons.check,
                       backgroundColor: Colors.green,
@@ -85,7 +85,7 @@ class LoginPage extends StatelessWidget {
                   } else {
                     EdgeAlert.show(
                       context,
-                      title: 'Error on loging in',
+                      title: 'Error on Facebook login',
                       description: 'Some error occured on google login',
                       gravity: EdgeAlert.BOTTOM,
                       icon: Icons.info,
@@ -119,7 +119,7 @@ class LoginPage extends StatelessWidget {
                   } else {
                     EdgeAlert.show(
                       context,
-                      title: 'Error on loging in',
+                      title: 'Error on Google login',
                       description: 'Some error occured on google login',
                       gravity: EdgeAlert.BOTTOM,
                       icon: Icons.info,
@@ -182,24 +182,14 @@ class LoginPage extends StatelessWidget {
                     if (LoggedUser.instance.loggedUserUid != null) {
                       EdgeAlert.show(
                         context,
-                        title: 'Logged in successfully',
-                        description: 'Greate!! You are logged',
+                        title: 'Logged successfully',
+                        description: 'Great! You are logged',
                         gravity: EdgeAlert.BOTTOM,
                         icon: Icons.check,
                         backgroundColor: Colors.green,
                         duration: EdgeAlert.LENGTH_SHORT,
                       );
                       Modular.to.pushReplacementNamed('/home/city');
-                    } else {
-                      EdgeAlert.show(
-                        context,
-                        title: 'Error on loging in',
-                        description: 'Some error occured on login',
-                        gravity: EdgeAlert.BOTTOM,
-                        icon: Icons.info,
-                        backgroundColor: Colors.redAccent,
-                        duration: EdgeAlert.LENGTH_SHORT,
-                      );
                     }
                   }
                   _controller.select(500);

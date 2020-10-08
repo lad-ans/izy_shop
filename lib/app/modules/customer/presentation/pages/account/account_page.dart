@@ -53,10 +53,12 @@ class _AccountPageState extends State<AccountPage> {
         color: Colors.red[400],
         onPressed: () async {
           List<ProductModel> cartList = getCustomerCartStore.cartList.data;
-          cartList?.forEach((item) {
-            return item.reference.delete();
-          });
-          await signOutStore.executeSignIn();
+          if (cartList.length != 0) {
+            cartList?.forEach((item) {
+              return item.reference.delete();
+            });
+          }
+          await signOutStore.executeSignOut();
           Modular.to.pop();
         },
         child: Text(
@@ -177,7 +179,11 @@ class _AccountPageState extends State<AccountPage> {
                   showElevation: false,
                   iconData: Ionicons.ios_arrow_round_back,
                   color: Colors.white,
-                  onPressed: () => Modular.to.pop(),
+                  onPressed: () {
+                    setAllOrientations();
+                    Modular.to.pop();
+                    setPortraitOrientations();
+                  },
                   title: ''.toUpperCase(),
                   trailingWidget: _buildTrailingWidget(),
                 ),
@@ -230,8 +236,7 @@ class _AccountPageState extends State<AccountPage> {
           );
         }
 
-        _nameController = TextEditingController(
-            text: customerModel.name + ' ' + customerModel.surname);
+        _nameController = TextEditingController(text: customerModel.name);
         _surnameController = TextEditingController(
             text: customerModel.surname ?? 'No Surname to display');
         _emailController = TextEditingController(

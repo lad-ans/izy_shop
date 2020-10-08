@@ -37,3 +37,6 @@ const String CUSTOMER = 'assets/images/shared/deliver.png';
 
 /// cart
 const String EMPTY_CART = 'assets/images/shared/emptyCart.png';
+
+/// shopping
+const String DRAG_DROP = 'assets/images/shared/dragDrop.png';

@@ -4,6 +4,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../core/domain/configs/core_config.dart';
+import '../../../../core/domain/consts/img.dart';
 import '../../../../core/domain/entities/route_entity.dart';
 import '../../../../core/presentation/widgets/custom_statusbar.dart';
 import '../../../../core/presentation/widgets/shopping_appbar.dart';
@@ -125,15 +126,22 @@ class _ShoppingPageState extends State<ShoppingPage> {
                 arguments: RouteEntity(storeImg: widget.routeEntity.storeImg));
             setLandscapeOrientation();
           },
-          child: Container(
-            alignment: Alignment.bottomRight,
-            decoration: BoxDecoration(
-              color: Colors.green[200],
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(40.0)),
+          child: Material(
+            color: Colors.green[200],
+            elevation: 6.0,
+            shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.only(topLeft: Radius.circular(40.0))),
+            child: Container(
+              alignment: Alignment.bottomRight,
+              decoration: BoxDecoration(
+                color: Colors.green[200],
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(40.0)),
+              ),
+              height: 60.0,
+              width: 130.0,
+              child: _buildCart(),
             ),
-            height: 60.0,
-            width: 130.0,
-            child: _buildCart(),
           ),
         );
       },
@@ -166,40 +174,41 @@ class _ShoppingPageState extends State<ShoppingPage> {
   Container _buildCart() {
     return Container(
       alignment: Alignment.center,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Text('add'.toUpperCase(), style: TextStyle(color: Colors.white)),
-          Stack(
-            overflow: Overflow.visible,
-            children: [
-              Icon(
-                Icons.add_shopping_cart,
-                size: 40,
-                color: Colors.white,
+      child: Observer(builder: (_) {
+        List<ProductModel> cartList = getCustomerCartStore.cartList.data;
+        if (getCustomerCartStore.cartList.hasError) {
+          return Center(child: Text('Error occured'));
+        }
+        if (getCustomerCartStore.cartList.data == null) {
+          return Center(
+            child: Container(
+              width: 20.0,
+              height: 20.0,
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+        return Stack(
+          overflow: Overflow.visible,
+          children: [
+            cartList.length != 0
+                ? Icon(
+                    Icons.add_shopping_cart,
+                    size: 40,
+                    color: Colors.white,
+                  )
+                : Image.asset(DRAG_DROP, height: 40.0),
+            Positioned(
+              top: -8.0,
+              right: -5.0,
+              child: Visibility(
+                visible: cartList.length != 0,
+                child: _buildCartCount(),
               ),
-              Positioned(
-                top: -8.0,
-                right: -5.0,
-                child: Observer(builder: (_) {
-                  List<ProductModel> cartList =
-                      getCustomerCartStore.cartList.data;
-                  if (getCustomerCartStore.cartList.hasError) {
-                    return Center(child: Text('Error occured'));
-                  }
-                  if(getCustomerCartStore.cartList.data == null){
-                    return Center(child: Text('Loading...'));
-                  }
-                  return Visibility(
-                    visible: cartList.length != 0,
-                    child: _buildCartCount(),
-                  );
-                }),
-              ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        );
+      }),
     );
   }
 

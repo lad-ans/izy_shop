@@ -158,16 +158,6 @@ class SignUpPage extends StatelessWidget {
                     email: customerModel.email,
                   ),
                 );
-              } else {
-                EdgeAlert.show(
-                  context,
-                  title: 'Error on signing up',
-                  description: 'Some error occured on signing up. Try again',
-                  gravity: EdgeAlert.BOTTOM,
-                  icon: Icons.info,
-                  backgroundColor: Colors.redAccent,
-                  duration: EdgeAlert.LENGTH_SHORT,
-                );
               }
             }
           }),

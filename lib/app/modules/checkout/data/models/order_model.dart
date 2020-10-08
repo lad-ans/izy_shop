@@ -1,4 +1,3 @@
-import '../../../customer/data/models/customer_model.dart';
 import '../../../product/data/models/product_model.dart';
 
 class OrderModel {
@@ -7,7 +6,7 @@ class OrderModel {
   String instruction;
   String deliveryTime;
   String paymentMethod;
-  CustomerModel customer;
+  String customerName;
   num amount;
   String onDeliveryPhone;
 
@@ -17,20 +16,20 @@ class OrderModel {
     this.instruction,
     this.deliveryTime,
     this.paymentMethod,
-    this.customer,
+    this.customerName,
     this.amount,
     this.onDeliveryPhone,
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'products': List.from(
-          this.products.map((productModel) => productModel.toMap())),
+      'products':
+          List.from(this.products.map((productModel) => productModel.toMap())),
       'location': this.location,
       'instruction': this.instruction,
       'deliveryTime': this.deliveryTime,
       'paymentMethod': this.paymentMethod,
-      'customer': this.customer,
+      'customerName': this.customerName,
       'amount': this.amount,
       'onDeliveryPhone': this.onDeliveryPhone,
     };
@@ -38,6 +37,6 @@ class OrderModel {
 
   @override
   String toString() {
-    return '$products, $location, $instruction, $deliveryTime, $paymentMethod, $customer, $amount, $onDeliveryPhone';
+    return '$products, $location, $instruction, $deliveryTime, $paymentMethod, $customerName, $amount, $onDeliveryPhone';
   }
 }

@@ -8,4 +8,5 @@ class LoggedUser {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String get loggedUserUid => _auth?.currentUser?.uid;
+  String get loggedUsername => _auth?.currentUser?.displayName;
 }

@@ -174,8 +174,7 @@ class _CartPageState extends State<CartPage> {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0)),
             onPressed: () async {
-              setPortraitOrientations();
-              await Modular.to.pushReplacementNamed('/home');
+              await Modular.to.pushNamed('/home');
               setAllOrientations();
             },
             icon: Icon(

@@ -56,7 +56,6 @@ class HomePage extends StatelessWidget {
               if (marketStore.marketList.data == null) {
                 return Center(
                     child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(Colors.red[300]),
                 ));
               }
               return ListView.builder(

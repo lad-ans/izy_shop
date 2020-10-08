@@ -57,9 +57,9 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
                     backgroundColor: Colors.white70,
                     title: Text('This action will clear your cart!'),
                     titleTextStyle: TextStyle(
-                        color: Colors.black87,
+                        color: Colors.black.withOpacity(0.7),
                         fontSize: 20.0,
-                        fontWeight: FontWeight.bold),
+                        fontWeight: FontWeight.w600),
                     actions: [
                       FlatButton(
                         onPressed: () {
@@ -86,9 +86,8 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
                   ),
                 );
               }
-            } else {
-              Modular.to.pop();
             }
+            Modular.to.pop();
           }),
           SizedBox(width: 2.0),
           _buildNavigatorLogo(),
@@ -141,7 +140,7 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
               if (LoggedUser.instance.loggedUserUid != null) {
                 setAllOrientations();
                 await Modular.to.pushNamed('/customer');
-                setLandscapeOrientation();
+                if (widget.isShopping) setLandscapeOrientation();
               } else {
                 EdgeAlert.show(
                   context,
@@ -179,8 +178,10 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
                 borderRadius: BorderRadius.circular(15.0),
               ),
               color: Colors.red[300],
-              onPressed: () {
-                Modular.to.pushNamed('/auth');
+              onPressed: () async {
+                setAllOrientations();
+                await Modular.to.pushNamed('/auth');
+                setLandscapeOrientation();
               },
               icon: Icon(
                 Ionicons.ios_log_in,

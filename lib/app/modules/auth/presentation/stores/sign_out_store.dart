@@ -15,7 +15,7 @@ abstract class _SignOutStoreBase with Store {
     this._signOut,
   );
 
-  Future<void> executeSignIn() async {
+  Future<void> executeSignOut() async {
     await _signOut();
   }
 }

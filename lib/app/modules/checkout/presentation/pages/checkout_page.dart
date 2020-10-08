@@ -11,6 +11,7 @@ import '../../../../core/presentation/widgets/amount_checkout_row.dart';
 import '../../../../core/presentation/widgets/custom_statusbar.dart';
 import '../../../../core/presentation/widgets/rounded_button.dart';
 import '../../../../core/presentation/widgets/shopping_appbar.dart';
+import '../../../customer/domain/entities/logged_user.dart';
 import '../../data/datasources/delivery_time.dart';
 import '../../data/datasources/payment_method.dart';
 import '../../data/models/order_model.dart';
@@ -26,11 +27,12 @@ class CheckoutPage extends StatefulWidget {
 }
 
 class _CheckoutPageState extends State<CheckoutPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final AppController _controller = Modular.get<AppController>();
   final setOrderStore = Modular.get<SetOrderStore>();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   OrderModel orderModel = OrderModel();
+
+  TextEditingController addressController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -119,6 +121,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           if (_formKey.currentState.validate()) {
                             orderModel.products = widget.routeEntity.cartList;
                             orderModel.amount = widget.routeEntity.totalAmount;
+                            orderModel.customerName =
+                                LoggedUser.instance.loggedUsername;
                             print(orderModel);
                             _formKey.currentState.save();
                             await setOrderStore.execute(orderModel);
@@ -149,7 +153,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  Widget _buildDeliveryInstructionTextField({FormFieldSetter<String> onSaved}) {
+  Widget _buildDeliveryInstructionTextField({
+    FormFieldSetter<String> onSaved,
+  }) {
     return FormField<String>(
       initialValue: '',
       onSaved: onSaved,
@@ -176,7 +182,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  Row _buildDeliveryTime({FormFieldSetter<bool> onSaved}) {
+  _buildDeliveryTime({FormFieldSetter<bool> onSaved}) {
     return Row(
       children: [
         RoundedButton(
@@ -221,7 +227,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  Row _buildContact({FormFieldSetter<String> onSaved}) {
+  _buildContact({FormFieldSetter<String> onSaved}) {
     return Row(
       children: [
         RoundedButton(
@@ -237,46 +243,53 @@ class _CheckoutPageState extends State<CheckoutPage> {
           iconSize: 35,
         ),
         Expanded(
-            child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          child: FormField<String>(
-            initialValue: '',
-            onSaved: onSaved,
-            validator: (value) {
-              if (value.trim().isEmpty) return '*required field';
-              if (value.trim().length < 4) return '*Address too short';
-              return null;
-            },
-            builder: (FormFieldState<String> state) {
-              return Column(
-                children: [
-                  TextField(
-                    onChanged: (value) => state.didChange(value),
-                    decoration: InputDecoration(
-                        prefix: Text('+258 ',
-                            style: TextStyle(color: Colors.red[300])),
-                        labelText: '(+258) 84 123 45 67',
-                        floatingLabelBehavior: FloatingLabelBehavior.never,
-                        contentPadding: EdgeInsets.symmetric()),
-                  ),
-                  // getting error message
-                  (state.hasError)
-                      ? Container(
-                          alignment: Alignment.centerLeft,
-                          child: Text(state.errorText,
-                              style:
-                                  TextStyle(color: Colors.red, fontSize: 12)))
-                      : Container(width: 0.0, height: 0.0),
-                ],
-              );
-            },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: FormField<String>(
+              initialValue: '',
+              onSaved: onSaved,
+              validator: (value) {
+                if (value.trim().isEmpty) return '*required field';
+                if (value.trim().length < 4) return '*Address too short';
+                return null;
+              },
+              builder: (FormFieldState<String> state) {
+                return Column(
+                  children: [
+                    TextField(
+                      onChanged: (value) => state.didChange(value),
+                      decoration: InputDecoration(
+                          prefix: Text('+258 ',
+                              style: TextStyle(color: Colors.red[300])),
+                          labelText: '(+258) 84 123 45 67',
+                          floatingLabelBehavior: FloatingLabelBehavior.never,
+                          contentPadding: EdgeInsets.symmetric()),
+                    ),
+                    // getting error message
+                    (state.hasError)
+                        ? Container(
+                            alignment: Alignment.centerLeft,
+                            child: Text(state.errorText,
+                                style:
+                                    TextStyle(color: Colors.red, fontSize: 12)))
+                        : Container(width: 0.0, height: 0.0),
+                  ],
+                );
+              },
+            ),
           ),
-        )),
+        ),
       ],
     );
   }
 
-  Row _buildAddress({FormFieldSetter<String> onSaved}) {
+  formFieldState() {
+    return Column(
+      children: [],
+    );
+  }
+
+  _buildAddress({FormFieldSetter<String> onSaved}) {
     return Row(
       children: [
         RoundedButton(
@@ -290,39 +303,36 @@ class _CheckoutPageState extends State<CheckoutPage> {
           btnHeight: 70.0,
           width: 70.0,
           iconSize: 35,
+          onTap: () async {
+            _controller.select(14);
+            await Modular.to.pushNamed(
+              '/checkout/maps',
+              arguments: RouteEntity(
+                addressController: addressController,
+              ),
+            );
+            _controller.select(1100);
+          },
+          index: 14,
         ),
         Expanded(
             child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          child: FormField<String>(
-            initialValue: '',
+          child: TextFormField(
+            controller: addressController,
+            onChanged: (value) {
+              addressController.text = value;
+            },
+            decoration: InputDecoration(
+              labelText: 'Sommerschild, Maputo',
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+              contentPadding: EdgeInsets.symmetric(),
+            ),
             onSaved: onSaved,
             validator: (value) {
               if (value.trim().isEmpty) return '*required field';
               if (value.trim().length < 3) return '*Address too short';
               return null;
-            },
-            builder: (FormFieldState<String> state) {
-              return Column(
-                children: [
-                  TextField(
-                    onChanged: (value) => state.didChange(value),
-                    decoration: InputDecoration(
-                      labelText: 'Sommerschild, Maputo',
-                      floatingLabelBehavior: FloatingLabelBehavior.never,
-                      contentPadding: EdgeInsets.symmetric(),
-                    ),
-                  ),
-                  // getting error message
-                  (state.hasError)
-                      ? Container(
-                          alignment: Alignment.centerLeft,
-                          child: Text(state.errorText,
-                              style:
-                                  TextStyle(color: Colors.red, fontSize: 12)))
-                      : Container(width: 0.0, height: 0.0),
-                ],
-              );
             },
           ),
         )),
@@ -334,136 +344,137 @@ class _CheckoutPageState extends State<CheckoutPage> {
     FormFieldSetter<String> onSaved,
   }) {
     return FormField<String>(
-        onSaved: onSaved,
-        initialValue: '',
-        validator: (value) {
-          if (value.isEmpty) return '*no payment method selected';
-          return null;
-        },
-        builder: (FormFieldState<String> state) {
-          return Column(
-            children: [
-              Container(
-                height: 150.0,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    RoundedButton(
-                      color: Colors.black12,
-                      borderColor: Colors.black87,
-                      icon: FontAwesomeIcons.moneyBillAlt,
-                      text: 'Cash\n(on delivery)',
-                      textColor: Colors.black,
-                      textSize: 13.0,
-                      btnWidth: 70.0,
-                      btnHeight: 70.0,
-                      width: 70.0,
-                      iconSize: 35,
-                      isCustomized: true,
-                      onTap: () async {
-                        _controller.select(4);
-                        state.didChange(PaymentMethod.CASH_ON_DELIVERY);
-                      },
-                      paymentMethod: PaymentMethod.CASH_ON_DELIVERY,
-                      index: 4,
-                    ),
-                    RoundedButton(
-                      iconColor: Colors.black12,
-                      color: Colors.black12,
-                      borderColor: Colors.black12,
-                      icon: Ionicons.ios_card,
-                      text: 'Pay\nOnline',
-                      textColor: Colors.black,
-                      textSize: 13.0,
-                      btnWidth: 70.0,
-                      btnHeight: 70.0,
-                      width: 70.0,
-                      iconSize: 35,
-                      isCustomized: true,
-                      onTap: null,
-                      isNull: true,
-                      // onTap: () async {
-                      // _controller.select(0);
-                      // },
-                      // index: 0,
-                    ),
-                    SizedBox(width: 7.0),
-                    RoundedButton(
-                      color: Colors.black12,
-                      borderColor: Colors.black87,
-                      icon: Icons.monetization_on,
-                      text: 'Bank\nTransfer',
-                      textColor: Colors.black,
-                      textSize: 13.0,
-                      btnWidth: 70.0,
-                      btnHeight: 70.0,
-                      width: 70.0,
-                      iconSize: 35,
-                      isCustomized: true,
-                      onTap: () async {
-                        _controller.select(1);
-                        state.didChange(PaymentMethod.BANK_TRANSFER);
-                      },
-                      paymentMethod: PaymentMethod.BANK_TRANSFER,
-                      index: 1,
-                    ),
-                    SizedBox(width: 7.0),
-                    RoundedButton(
-                      iconColor: Colors.black12,
-                      color: Colors.black12,
-                      borderColor: Colors.black12,
-                      icon: Icons.phone_android,
-                      text: 'Payment of\nServices',
-                      textColor: Colors.black,
-                      textSize: 13.0,
-                      btnWidth: 70.0,
-                      btnHeight: 70.0,
-                      width: 70.0,
-                      iconSize: 35,
-                      isCustomized: true,
-                      onTap: null,
-                      isNull: true,
-                      // onTap: () async {
-                      // _controller.select(2);
-                      // print(PaymentMethod.PAYMENT_OF_SERVICES);
-                      // },
-                      // index: 2,
-                    ),
-                    SizedBox(width: 7.0),
-                    RoundedButton(
-                      iconColor: Colors.black12,
-                      color: Colors.black12,
-                      borderColor: Colors.black12,
-                      icon: Icons.mobile_screen_share,
-                      text: 'POS\n',
-                      textColor: Colors.black,
-                      textSize: 13.0,
-                      btnWidth: 70.0,
-                      btnHeight: 70.0,
-                      width: 70.0,
-                      iconSize: 35,
-                      isCustomized: true,
-                      onTap: null,
-                      isNull: true,
-                      // onTap: () async {
-                      // _controller.select(3);
-                      // print(PaymentMethod.POS);
-                      // },
-                      // index: 3,
-                    ),
-                    SizedBox(width: 7.0),
-                  ],
-                ),
+      onSaved: onSaved,
+      initialValue: '',
+      validator: (value) {
+        if (value.isEmpty) return '*no payment method selected';
+        return null;
+      },
+      builder: (FormFieldState<String> state) {
+        return Column(
+          children: [
+            Container(
+              height: 150.0,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  RoundedButton(
+                    color: Colors.black12,
+                    borderColor: Colors.black87,
+                    icon: FontAwesomeIcons.moneyBillAlt,
+                    text: 'Cash\n(on delivery)',
+                    textColor: Colors.black,
+                    textSize: 13.0,
+                    btnWidth: 70.0,
+                    btnHeight: 70.0,
+                    width: 70.0,
+                    iconSize: 35,
+                    isCustomized: true,
+                    onTap: () async {
+                      _controller.select(4);
+                      state.didChange(PaymentMethod.CASH_ON_DELIVERY);
+                    },
+                    paymentMethod: PaymentMethod.CASH_ON_DELIVERY,
+                    index: 4,
+                  ),
+                  RoundedButton(
+                    iconColor: Colors.black12,
+                    color: Colors.black12,
+                    borderColor: Colors.black12,
+                    icon: Ionicons.ios_card,
+                    text: 'Pay\nOnline',
+                    textColor: Colors.black,
+                    textSize: 13.0,
+                    btnWidth: 70.0,
+                    btnHeight: 70.0,
+                    width: 70.0,
+                    iconSize: 35,
+                    isCustomized: true,
+                    onTap: null,
+                    isNull: true,
+                    // onTap: () async {
+                    // _controller.select(0);
+                    // },
+                    // index: 0,
+                  ),
+                  SizedBox(width: 7.0),
+                  RoundedButton(
+                    color: Colors.black12,
+                    borderColor: Colors.black87,
+                    icon: Icons.monetization_on,
+                    text: 'Bank\nTransfer',
+                    textColor: Colors.black,
+                    textSize: 13.0,
+                    btnWidth: 70.0,
+                    btnHeight: 70.0,
+                    width: 70.0,
+                    iconSize: 35,
+                    isCustomized: true,
+                    onTap: () async {
+                      _controller.select(1);
+                      state.didChange(PaymentMethod.BANK_TRANSFER);
+                    },
+                    paymentMethod: PaymentMethod.BANK_TRANSFER,
+                    index: 1,
+                  ),
+                  SizedBox(width: 7.0),
+                  RoundedButton(
+                    iconColor: Colors.black12,
+                    color: Colors.black12,
+                    borderColor: Colors.black12,
+                    icon: Icons.phone_android,
+                    text: 'Payment of\nServices',
+                    textColor: Colors.black,
+                    textSize: 13.0,
+                    btnWidth: 70.0,
+                    btnHeight: 70.0,
+                    width: 70.0,
+                    iconSize: 35,
+                    isCustomized: true,
+                    onTap: null,
+                    isNull: true,
+                    // onTap: () async {
+                    // _controller.select(2);
+                    // print(PaymentMethod.PAYMENT_OF_SERVICES);
+                    // },
+                    // index: 2,
+                  ),
+                  SizedBox(width: 7.0),
+                  RoundedButton(
+                    iconColor: Colors.black12,
+                    color: Colors.black12,
+                    borderColor: Colors.black12,
+                    icon: Icons.mobile_screen_share,
+                    text: 'POS\n',
+                    textColor: Colors.black,
+                    textSize: 13.0,
+                    btnWidth: 70.0,
+                    btnHeight: 70.0,
+                    width: 70.0,
+                    iconSize: 35,
+                    isCustomized: true,
+                    onTap: null,
+                    isNull: true,
+                    // onTap: () async {
+                    // _controller.select(3);
+                    // print(PaymentMethod.POS);
+                    // },
+                    // index: 3,
+                  ),
+                  SizedBox(width: 7.0),
+                ],
               ),
-              // getting error message
-              (state.hasError)
-                  ? Container(
-                      alignment: Alignment.centerLeft,
-                      child: Text(state.errorText,
-                          style: TextStyle(color: Colors.red, fontSize: 12)))
-                  : Container(width: 0.0, height: 0.0),
-            ],
-          );
-        });
+            ),
+            // getting error message
+            (state.hasError)
+                ? Container(
+                    alignment: Alignment.centerLeft,
+                    child: Text(state.errorText,
+                        style: TextStyle(color: Colors.red, fontSize: 12)))
+                : Container(width: 0.0, height: 0.0),
+          ],
+        );
+      },
+    );
   }
 }

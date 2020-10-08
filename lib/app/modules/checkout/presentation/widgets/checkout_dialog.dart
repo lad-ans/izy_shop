@@ -61,7 +61,7 @@ class CheckoutDialog extends StatelessWidget {
             onTap: () {
               _controller.select(9);
               List<ProductModel> cartList = _getCustomerCartStore.cartList.data;
-              cartList.forEach((item) {
+              cartList?.forEach((item) {
                 return item.reference.delete();
               });
               Modular.to.pushReplacementNamed('/home');
