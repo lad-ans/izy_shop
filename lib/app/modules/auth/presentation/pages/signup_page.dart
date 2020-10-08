@@ -117,6 +117,7 @@ class SignUpPage extends StatelessWidget {
           ),
           SizedBox(height: 10.0),
           CustomTextField(
+            isMail: true,
             onSaved: (email) {
               customerModel.email = email;
             },

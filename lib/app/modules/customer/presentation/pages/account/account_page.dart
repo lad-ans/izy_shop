@@ -46,7 +46,7 @@ class _AccountPageState extends State<AccountPage> {
 
   Widget _buildTrailingWidget() {
     return Container(
-      child: RaisedButton(
+      child: RaisedButton.icon(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
         ),
@@ -61,8 +61,9 @@ class _AccountPageState extends State<AccountPage> {
           await signOutStore.executeSignOut();
           Modular.to.pop();
         },
-        child: Text(
-          'Sair',
+        icon: Icon(Ionicons.ios_log_out, color: Colors.white),
+        label: Text(
+          'Log Out',
           style: TextStyle(
             color: Colors.white70,
           ),

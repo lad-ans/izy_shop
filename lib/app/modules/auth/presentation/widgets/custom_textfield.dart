@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:string_validator/string_validator.dart';
 
 class CustomTextField extends StatelessWidget {
   final bool filled;
@@ -8,9 +9,8 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final bool isName;
   final bool isPassword;
-  final bool isPasswordMatcher;
   final bool isSurname;
-  final bool isEmail;
+  final bool isMail;
   final String password;
   final FormFieldSetter<String> onSaved;
   final bool obscureText;
@@ -24,9 +24,8 @@ class CustomTextField extends StatelessWidget {
     this.controller,
     this.isName = false,
     this.isPassword = false,
-    this.isPasswordMatcher = false,
     this.isSurname = false,
-    this.isEmail = false,
+    this.isMail = false,
     this.password,
     this.onSaved,
     this.obscureText = false,
@@ -38,17 +37,14 @@ class CustomTextField extends StatelessWidget {
       initialValue: '',
       onSaved: onSaved,
       validator: (value) {
-        var password;
         if (value.isEmpty) {
           return "*field shouldn't be empty";
         } else if (isName || isSurname) {
           if (value.length <= 3) return '*should be at least 3 characters';
         } else if (isPassword) {
-          password = value;
           if (value.length <= 3) return '*password to week';
-        } else if (isPasswordMatcher) {
-          print(password);
-          if (password != value) return "*password doesn't match";
+        } else if (isMail) {
+          if (!isEmail(value)) return "*email malformed";
         }
         return null;
       },

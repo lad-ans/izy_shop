@@ -137,6 +137,7 @@ class LoginPage extends StatelessWidget {
           _buildOr(context),
           SizedBox(height: 15.0),
           CustomTextField(
+            isMail: true,
             height: 55.0,
             fillColor: Colors.white,
             labelText: 'E-mail',

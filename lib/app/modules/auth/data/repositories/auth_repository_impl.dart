@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:edge_alert/edge_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,6 +7,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_modular/flutter_modular_annotations.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../../../core/domain/utils/global_scaffold.dart';
 import '../../../customer/data/models/customer_model.dart';
 import '../../domain/repositories/auth_repository.dart';
 
@@ -32,26 +32,46 @@ class AuthRepositoryImpl implements AuthRepository {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
-        // EdgeAlert.show(
-        //   context,
-        //   title: 'User notfound',
-        //   description: 'No user found for that email.',
-        //   gravity: EdgeAlert.BOTTOM,
-        //   icon: Icons.info,
-        //   backgroundColor: Colors.redAccent,
-        //   duration: EdgeAlert.LENGTH_SHORT,
-        // );
+        return GlobalScaffold.instance.showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error, color: Colors.white),
+                SizedBox(width: 30.0),
+                Text(
+                  'User not found',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       } else if (e.code == 'wrong-password') {
         print('Wrong password provided for that user.');
-        // EdgeAlert.show(
-        //   context,
-        //   title: 'Wrong password',
-        //   description: 'Wrong password provided for that user.',
-        //   gravity: EdgeAlert.BOTTOM,
-        //   icon: Icons.info,
-        //   backgroundColor: Colors.redAccent,
-        //   duration: EdgeAlert.LENGTH_VERY_LONG,
-        // );
+        return GlobalScaffold.instance.showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error, color: Colors.white),
+                SizedBox(width: 30.0),
+                Text(
+                  'Wrong password',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       }
     } catch (e) {}
   }
@@ -73,26 +93,46 @@ class AuthRepositoryImpl implements AuthRepository {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
-        // EdgeAlert.show(
-        //   context,
-        //   title: 'Weak password',
-        //   description: 'The password provided is too weak.',
-        //   gravity: EdgeAlert.BOTTOM,
-        //   icon: Icons.info,
-        //   backgroundColor: Colors.redAccent,
-        //   duration: EdgeAlert.LENGTH_VERY_LONG,
-        // );
+        return GlobalScaffold.instance.showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error, color: Colors.white),
+                SizedBox(width: 30.0),
+                Text(
+                  'Weak password',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       } else if (e.code == 'email-already-in-use') {
         print('The account already exists for that email.');
-        // EdgeAlert.show(
-        //   context,
-        //   title: 'Email already in use',
-        //   description: 'The account already exists for that email.',
-        //   gravity: EdgeAlert.BOTTOM,
-        //   icon: Icons.info,
-        //   backgroundColor: Colors.redAccent,
-        //   duration: EdgeAlert.LENGTH_VERY_LONG,
-        // );
+        return GlobalScaffold.instance.showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error, color: Colors.white),
+                SizedBox(width: 30.0),
+                Text(
+                  'Email already in use',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       }
     } catch (e) {
       print(e.toString());
