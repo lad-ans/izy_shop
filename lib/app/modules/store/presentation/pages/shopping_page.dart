@@ -2,6 +2,7 @@ import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../../../../core/domain/configs/core_config.dart';
 import '../../../../core/domain/consts/img.dart';
@@ -23,22 +24,24 @@ class ShoppingPage extends StatefulWidget {
 }
 
 class _ShoppingPageState extends State<ShoppingPage> {
+  final getCustomerCartStore = Modular.get<GetCustomerCartStore>();
+
   @override
   void initState() {
     setLandscapeOrientation();
-    getCustomerCartStore.execute(LoggedUser.instance.loggedUserUid);
+    getCustomerCartStore.execute();
     super.initState();
   }
 
   @override
-  Widget build(BuildContext context) {
+  build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: _buildBody(),
     );
   }
 
-  Widget _buildBody() {
+  _buildBody() {
     return Container(
       height: getHeight(context),
       child: Stack(
@@ -62,7 +65,8 @@ class _ShoppingPageState extends State<ShoppingPage> {
           Padding(
               padding: EdgeInsets.only(top: getStatusBar(context)),
               child: ShoppingAppBar(
-                isShopping: true,
+                onBack: true,
+                onNavigate: true,
                 routeEntity: widget.routeEntity,
               )),
           Positioned(bottom: 0.0, child: _buildBottomNavBar(context))
@@ -71,7 +75,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
     );
   }
 
-  Container _buildBottomNavBar(BuildContext context) {
+  _buildBottomNavBar(BuildContext context) {
     return Container(
       width: getWidth(context),
       height: 60.0,
@@ -85,8 +89,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
     );
   }
 
-  final getCustomerCartStore = Modular.get<GetCustomerCartStore>();
-  Widget _buildListItem() => Observer(
+  _buildListItem() => Observer(
         builder: (_) {
           List<ProductModel> cartList = getCustomerCartStore.cartList.data;
           if (getCustomerCartStore.cartList.hasError) {
@@ -96,7 +99,10 @@ class _ShoppingPageState extends State<ShoppingPage> {
           }
           if (getCustomerCartStore.cartList.data == null) {
             return Center(
-              child: CircularProgressIndicator(),
+              child: SpinKitFadingCircle(
+                size: 30.0,
+                 color: Colors.red[300]
+              ),
             );
           }
           return ListView.builder(
@@ -116,62 +122,83 @@ class _ShoppingPageState extends State<ShoppingPage> {
         },
       );
 
-  Widget _buildCartTile(BuildContext context) {
-    return DragTarget<ProductModel>(
-      builder: (context, incoming, rejected) {
-        return InkWell(
-          onTap: () async {
-            setAllOrientations();
-            await Modular.to.pushNamed('/cart',
-                arguments: RouteEntity(storeImg: widget.routeEntity.storeImg));
-            setLandscapeOrientation();
-          },
-          child: Material(
-            color: Colors.green[200],
-            elevation: 6.0,
-            shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.only(topLeft: Radius.circular(40.0))),
-            child: Container(
-              alignment: Alignment.bottomRight,
-              decoration: BoxDecoration(
-                color: Colors.green[200],
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(40.0)),
+  _buildCartTile(BuildContext context) {
+    return Observer(builder: (_) {
+      List<ProductModel> cartList = getCustomerCartStore.cartList.data;
+      return DragTarget<ProductModel>(
+        builder: (context, incoming, rejected) {
+          return InkWell(
+            onTap: () async {
+              setAllOrientations();
+              await Modular.to.pushNamed('/cart',
+                  arguments:
+                      RouteEntity(storeImg: widget.routeEntity.storeImg));
+              setLandscapeOrientation();
+            },
+            child: Material(
+              color: Colors.green[200],
+              elevation: 6.0,
+              shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.only(topLeft: Radius.circular(40.0))),
+              child: Container(
+                alignment: Alignment.bottomRight,
+                decoration: BoxDecoration(
+                  color: Colors.green[200],
+                  borderRadius:
+                      BorderRadius.only(topLeft: Radius.circular(40.0)),
+                ),
+                height: 60.0,
+                width: 130.0,
+                child: _buildCart(),
               ),
-              height: 60.0,
-              width: 130.0,
-              child: _buildCart(),
             ),
-          ),
-        );
-      },
-      onWillAccept: (ProductModel productModel) {
-        Modular.get<AddToCartStore>().setDragFeedbackColor(Colors.red[300]);
-        return true;
-      },
-      onAccept: (ProductModel productModel) async {
-        Modular.get<AddToCartStore>().setDragFeedbackColor(Colors.transparent);
-        if (LoggedUser.instance.loggedUserUid != null) {
-          await Modular.get<AddToCartStore>().execute(productModel);
-        } else {
-          EdgeAlert.show(
-            context,
-            title: 'No user found',
-            description: 'Login to buy item',
-            gravity: EdgeAlert.BOTTOM,
-            icon: Icons.info,
-            backgroundColor: Colors.redAccent,
-            duration: EdgeAlert.LENGTH_SHORT,
           );
-        }
-      },
-      onLeave: (productModel) {
-        Modular.get<AddToCartStore>().setDragFeedbackColor(Colors.transparent);
-      },
-    );
+        },
+        onWillAccept: (ProductModel productModel) {
+          Modular.get<AddToCartStore>().setDragFeedbackColor(Colors.red[300]);
+          return true;
+        },
+        onAccept: (ProductModel productModel) async {
+          Modular.get<AddToCartStore>()
+              .setDragFeedbackColor(Colors.transparent);
+          List<ProductModel> tempList =
+              cartList.where((e) => e.id == productModel.id).toList();
+          if (LoggedUser.instance.loggedUserUid != null) {
+            if (tempList.length == 0) {
+              await Modular.get<AddToCartStore>().execute(productModel);
+            } else {
+              EdgeAlert.show(
+                context,
+                title: 'Product exists',
+                description: 'This product already exists on your cart!',
+                gravity: EdgeAlert.TOP,
+                icon: Icons.info,
+                backgroundColor: Colors.amber.withOpacity(0.8),
+                duration: EdgeAlert.LENGTH_SHORT,
+              );
+            }
+          } else {
+            EdgeAlert.show(
+              context,
+              title: 'No user found',
+              description: 'Login to buy item',
+              gravity: EdgeAlert.BOTTOM,
+              icon: Icons.info,
+              backgroundColor: Colors.redAccent,
+              duration: EdgeAlert.LENGTH_SHORT,
+            );
+          }
+        },
+        onLeave: (productModel) {
+          Modular.get<AddToCartStore>()
+              .setDragFeedbackColor(Colors.transparent);
+        },
+      );
+    });
   }
 
-  Container _buildCart() {
+  _buildCart() {
     return Container(
       alignment: Alignment.center,
       child: Observer(builder: (_) {
@@ -184,7 +211,10 @@ class _ShoppingPageState extends State<ShoppingPage> {
             child: Container(
               width: 20.0,
               height: 20.0,
-              child: CircularProgressIndicator(),
+              child: SpinKitFadingCircle(
+                size: 30.0,
+                 color: Colors.red[300]
+              ),
             ),
           );
         }
@@ -212,7 +242,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
     );
   }
 
-  Widget _buildCartCount() {
+  _buildCartCount() {
     return Container(
       alignment: Alignment.center,
       width: 20.0,
@@ -228,7 +258,10 @@ class _ShoppingPageState extends State<ShoppingPage> {
         }
         if (getCustomerCartStore.cartList.data == null) {
           return Center(
-            child: CircularProgressIndicator(),
+            child: SpinKitFadingCircle(
+              size: 30.0,
+               color: Colors.red[300]
+            ),
           );
         }
         return Text(

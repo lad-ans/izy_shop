@@ -7,7 +7,7 @@ import '../repositories/customer_repository.dart';
 part 'get_logged_customer.g.dart';
 
 abstract class GetLoggedCustomer {
-  Stream<CustomerModel> call(String uid);
+  Stream<CustomerModel> call();
 }
 
 @Injectable()
@@ -17,7 +17,7 @@ class GetLoggedCustomerImpl implements GetLoggedCustomer {
     this._repository,
   );
   @override
-  Stream<CustomerModel> call(String uid) {
-    return _repository.getLoggedCustomer(uid);
+  Stream<CustomerModel> call() {
+    return _repository.getLoggedCustomer();
   }
 }

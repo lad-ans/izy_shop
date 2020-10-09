@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../core/domain/entities/route_entity.dart';
@@ -16,12 +17,14 @@ import 'description_dialog.dart';
 class OnBuyDialog extends StatelessWidget {
   final bool isSelected;
   final ProductModel productModel;
+  final RouteEntity routeEntity;
   OnBuyDialog({
     Key key,
     this.isSelected = false,
     this.productModel,
+    this.routeEntity,
   }) {
-    _getCustomerCartStore.execute(LoggedUser.instance.loggedUserUid);
+    _getCustomerCartStore.execute();
   }
 
   final _getCustomerCartStore = Modular.get<GetCustomerCartStore>();
@@ -85,47 +88,50 @@ class OnBuyDialog extends StatelessWidget {
               right: 0.0,
               child: GestureDetector(
                 onTap: () => Modular.to.pop(),
-                child: Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: _buildDialogButton(
-                    height: 50.0,
-                    width: 50.0,
-                    color: Colors.green,
-                    icon: Icons.add,
-                    onTap: () async {
-                      if (LoggedUser.instance.loggedUserUid != null) {
-                        // List<ProductModel> cartList =
-                        //     _getCustomerCartStore.cartList.data;
-                        // cartList.forEach((item) {
-                        //   if (item.id != productModel.id) {
-                        await addToCartStore.execute(productModel);
-                        // } else {
-                        //   EdgeAlert.show(
-                        //     context,
-                        //     title: 'Product exist',
-                        //     description: 'This product is present on cart',
-                        //     gravity: EdgeAlert.BOTTOM,
-                        //     icon: Icons.info,
-                        //     backgroundColor: Colors.amber,
-                        //     duration: EdgeAlert.LENGTH_SHORT,
-                        //   );
-                        // }
-                        // });
-                      } else {
-                        EdgeAlert.show(
-                          context,
-                          title: 'No user found',
-                          description: 'Login to buy item',
-                          gravity: EdgeAlert.BOTTOM,
-                          icon: Icons.info,
-                          backgroundColor: Colors.redAccent,
-                          duration: EdgeAlert.LENGTH_SHORT,
-                        );
-                      }
-                      Modular.to.pop();
-                    },
-                  ),
-                ),
+                child: Observer(builder: (_) {
+                  List<ProductModel> cartList =
+                      _getCustomerCartStore.cartList.data;
+                  return Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: _buildDialogButton(
+                      height: 50.0,
+                      width: 50.0,
+                      color: Colors.green,
+                      icon: Icons.add_shopping_cart,
+                      onTap: () async {
+                        List<ProductModel> tempList = cartList
+                            .where((e) => e.id == productModel.id)
+                            .toList();
+                        if (LoggedUser.instance.loggedUserUid != null) {
+                          if (tempList.length == 0) {
+                            await addToCartStore.execute(productModel);
+                          } else {
+                            EdgeAlert.show(
+                              context,
+                              title: 'Product exists',
+                              description: 'This product already exists on your cart!',
+                              gravity: EdgeAlert.TOP,
+                              icon: Icons.info,
+                              backgroundColor: Colors.amber.withOpacity(0.8),
+                              duration: EdgeAlert.LENGTH_SHORT,
+                            );
+                          }
+                        } else {
+                          EdgeAlert.show(
+                            context,
+                            title: 'No user found',
+                            description: 'Login to buy item',
+                            gravity: EdgeAlert.BOTTOM,
+                            icon: Icons.info,
+                            backgroundColor: Colors.redAccent,
+                            duration: EdgeAlert.LENGTH_SHORT,
+                          );
+                        }
+                        Modular.to.pop();
+                      },
+                    ),
+                  );
+                }),
               ),
             ),
           ],

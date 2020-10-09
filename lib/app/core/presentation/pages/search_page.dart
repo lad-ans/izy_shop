@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'package:izy_shop/app/core/domain/entities/route_entity.dart';
 import 'package:izy_shop/app/core/domain/utils/number_formatter.dart';
@@ -124,7 +125,10 @@ class SearchPage extends StatelessWidget {
           return Container(
               alignment: Alignment.center,
               height: 20.0,
-              child: CircularProgressIndicator());
+              child: SpinKitFadingCircle(
+                size: 30.0,
+                color: Colors.white
+              ));
         }
         return ListView.builder(
           itemCount: productList
@@ -201,7 +205,7 @@ class SearchPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(40.0)),
             child: Icon(
               Icons.close,
-              size: 20.0,
+              size: 30.0,
               color: Colors.black54,
             ),
           ),

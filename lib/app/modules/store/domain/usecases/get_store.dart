@@ -1,12 +1,12 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_modular/flutter_modular_annotations.dart';
 
-import '../../data/models/market_model.dart';
+import '../../data/models/store_category_model.dart';
 import '../repositories/store_repository.dart';
 part 'get_store.g.dart';
 
 abstract class GetStore {
-  Stream<List<MarketModel>> call();
+  Stream<List<StoreCategoryModel>> call();
 }
 
 @Injectable()
@@ -15,7 +15,7 @@ class GetStoreImpl implements GetStore {
   GetStoreImpl(this._storeRepository);
 
   @override
-  Stream<List<MarketModel>> call() {
+  Stream<List<StoreCategoryModel>> call() {
     return _storeRepository.getStores();
   }
 }

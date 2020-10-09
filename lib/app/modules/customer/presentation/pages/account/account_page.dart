@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../../../../../core/domain/configs/core_config.dart';
 import '../../../../../core/domain/consts/img.dart';
@@ -32,19 +33,18 @@ class _AccountPageState extends State<AccountPage> {
   final getCustomerCartStore = Modular.get<GetCustomerCartStore>();
   final signOutStore = Modular.get<SignOutStore>();
   TextEditingController _nameController;
-  TextEditingController _surnameController;
   TextEditingController _emailController;
 
   @override
   void initState() {
     if (LoggedUser.instance.loggedUserUid != null) {
-      getCurrentCustomerStore.execute(LoggedUser.instance.loggedUserUid);
-      getCustomerCartStore?.execute(LoggedUser.instance.loggedUserUid);
+      getCurrentCustomerStore.execute();
+      getCustomerCartStore.execute();
     }
     super.initState();
   }
 
-  Widget _buildTrailingWidget() {
+  _buildTrailingWidget() {
     return Container(
       child: RaisedButton.icon(
         shape: RoundedRectangleBorder(
@@ -72,7 +72,7 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  Widget _buildInputField(
+  _buildInputField(
     String title,
     IconData suffixIcon,
     TextEditingController textController, {
@@ -118,11 +118,13 @@ class _AccountPageState extends State<AccountPage> {
       }
       if (getCurrentCustomerStore?.currentCustomer?.data == null) {
         return Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation(Colors.red[300]),
-          ),
+          child: SpinKitFadingCircle(
+            size: 30.0,
+            color: Colors.red[300]),
         );
       }
+
+      /// return
       return Container(
         width: 110,
         height: 110,
@@ -141,11 +143,7 @@ class _AccountPageState extends State<AccountPage> {
           visible: customerModel?.avatar == null,
           child: Center(
             child: Text(
-              (customerModel?.name[0].toUpperCase() +
-                      (customerModel.surname.isNotEmpty
-                          ? customerModel?.surname[0]?.toUpperCase()
-                          : '')) ??
-                  'C',
+              (customerModel?.name[0].toUpperCase()) ?? 'C',
               style: TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 38,
@@ -159,7 +157,7 @@ class _AccountPageState extends State<AccountPage> {
     });
   }
 
-  Widget _buildBody(BuildContext context) {
+  _buildBody(BuildContext context) {
     return Container(
       height: getHeight(context),
       decoration: BoxDecoration(
@@ -196,7 +194,7 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  Stack _buildStack(BuildContext context) {
+  _buildStack(BuildContext context) {
     return Stack(
       overflow: Overflow.visible,
       children: [
@@ -216,7 +214,7 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  Card _buildCard() {
+  _buildCard() {
     return Card(
       color: Colors.white70,
       elevation: 6,
@@ -231,15 +229,14 @@ class _AccountPageState extends State<AccountPage> {
         }
         if (getCurrentCustomerStore?.currentCustomer?.data == null) {
           return Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation(Colors.red[300]),
+            child: SpinKitFadingCircle(
+              size: 30.0,
+              color: Colors.red[300],
             ),
           );
         }
 
         _nameController = TextEditingController(text: customerModel.name);
-        _surnameController = TextEditingController(
-            text: customerModel.surname ?? 'No Surname to display');
         _emailController = TextEditingController(
             text: customerModel.email ?? 'No Email to display');
         return Container(
@@ -250,10 +247,6 @@ class _AccountPageState extends State<AccountPage> {
             children: <Widget>[
               SizedBox(height: 40),
               _buildInputField('Nome', AntDesign.user, _nameController),
-              customerModel.surname.isNotEmpty
-                  ? _buildInputField(
-                      'Apelido', SimpleLineIcons.user, _surnameController)
-                  : Container(height: 0.0, width: 0.0),
               _buildInputField('E-mail', AntDesign.mail, _emailController),
             ],
           ),

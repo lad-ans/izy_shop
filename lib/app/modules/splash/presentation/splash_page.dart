@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../../../core/domain/consts/img.dart';
 import '../../customer/domain/entities/logged_user.dart';
@@ -28,8 +29,13 @@ class _SplashPageState extends State<SplashPage> {
       backgroundColor: Colors.white,
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 20.0),
-        child: Center(
-          child: Image.asset(LOGO_NAMED),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(LOGO_NAMED),
+            SizedBox(height: 10.0),
+            SpinKitThreeBounce(color: Colors.orange, size: 25.0),
+          ],
         ),
       ),
     );

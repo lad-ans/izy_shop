@@ -22,13 +22,13 @@ mixin _$GetStoreStore on _GetStoreStoreBase, Store {
   final _$marketListAtom = Atom(name: '_GetStoreStoreBase.marketList');
 
   @override
-  ObservableStream<List<MarketModel>> get marketList {
+  ObservableStream<List<StoreCategoryModel>> get marketList {
     _$marketListAtom.reportRead();
     return super.marketList;
   }
 
   @override
-  set marketList(ObservableStream<List<MarketModel>> value) {
+  set marketList(ObservableStream<List<StoreCategoryModel>> value) {
     _$marketListAtom.reportWrite(value, super.marketList, () {
       super.marketList = value;
     });

@@ -3,12 +3,13 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:izy_shop/app/app_controller.dart';
 import 'package:izy_shop/app/core/domain/entities/route_entity.dart';
 
 import '../../core/domain/configs/core_config.dart';
 import '../../core/domain/consts/img.dart';
-import '../store/data/models/market_model.dart';
+import '../store/data/models/store_category_model.dart';
 import '../store/presentation/stores/get_market_store.dart';
 import '../store/presentation/widgets/store_tile.dart';
 
@@ -49,27 +50,31 @@ class HomePage extends StatelessWidget {
           Image.asset(LOGO_NAMED_WHITE, width: 90, height: 90),
           Expanded(
             child: Observer(builder: (_) {
-              List<MarketModel> marketList = marketStore.marketList.data;
+              List<StoreCategoryModel> storeCategoryList =
+                  marketStore.marketList.data;
               if (marketStore.marketList.hasError) {
                 return Center(child: Text('Ocorreu um erro'));
               }
               if (marketStore.marketList.data == null) {
                 return Center(
-                    child: CircularProgressIndicator(
-                ));
+                  child: SpinKitFadingCircle(color: Colors.white, size: 40.0),
+                );
               }
               return ListView.builder(
-                  itemCount: marketList.length,
+                  itemCount: storeCategoryList.length,
                   itemBuilder: (context, index) {
-                    MarketModel market = marketList[index];
+                    StoreCategoryModel storeCategoryModel =
+                        storeCategoryList[index];
                     return StoreTile(
-                      img: market?.logo,
-                      label: market?.name,
+                      img: storeCategoryModel?.logo,
+                      label: storeCategoryModel?.name,
                       onTap: () async {
                         _controller.select(index);
                         await Modular.to.pushNamed(
                           '/store',
-                          arguments: RouteEntity(storeName: market.name),
+                          arguments: RouteEntity(
+                            storeCategory: storeCategoryModel.name,
+                          ),
                         );
                         _controller.select(800);
                       },

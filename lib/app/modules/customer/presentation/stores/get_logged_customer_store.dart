@@ -21,6 +21,6 @@ abstract class _GetLoggedCustomerStoreBase with Store {
   ObservableStream<CustomerModel> currentCustomer;
 
   @action
-  execute(String uid) =>
-      this.currentCustomer = _getLoggedCustomer(uid).asObservable();
+  execute() =>
+      this.currentCustomer = _getLoggedCustomer().asObservable();
 }

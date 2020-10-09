@@ -5,7 +5,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import '../../../../app_controller.dart';
 import '../../../../core/presentation/widgets/rounded_button.dart';
 import '../../../cart/presentation/stores/cart_module_stores.dart';
-import '../../../customer/domain/entities/logged_user.dart';
 import '../../../product/data/models/product_model.dart';
 
 class CheckoutDialog extends StatelessWidget {
@@ -14,7 +13,7 @@ class CheckoutDialog extends StatelessWidget {
     Key key,
     this.isSelected = false,
   }) {
-    _getCustomerCartStore.execute(LoggedUser.instance.loggedUserUid);
+    _getCustomerCartStore.execute();
   }
 
   final _controller = Modular.get<AppController>();

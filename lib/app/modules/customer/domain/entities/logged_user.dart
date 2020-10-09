@@ -1,10 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_modular/flutter_modular.dart';
-
-import '../../presentation/stores/get_logged_customer_store.dart';
+import 'package:izy_shop/app/core/domain/consts/img.dart';
+import 'package:izy_shop/app/modules/customer/data/datasources/local_storage.dart';
 
 class LoggedUser {
-  final getCustomer = Modular.get<GetLoggedCustomerStore>();
   static final LoggedUser instance = LoggedUser._internal();
 
   LoggedUser._internal();
@@ -13,5 +11,15 @@ class LoggedUser {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   String get loggedUserUid => _auth?.currentUser?.uid;
-  String get loggedUsername => _auth?.currentUser?.displayName;
+  String get loggedUsername {
+    String customerName;
+    if (_auth?.currentUser?.displayName != null) {
+      customerName = _auth?.currentUser?.displayName;
+    } else {
+      LocalStorage.instance.getString(CUSTOMER).then((value) {
+        customerName = value;
+      });
+    }
+    return customerName;
+  }
 }

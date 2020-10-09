@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../../../../app_controller.dart';
 import '../../../../core/domain/configs/core_config.dart';
@@ -18,7 +19,7 @@ class StorePage extends StatelessWidget {
   final GetStoreByCategoryStore getStoreByCategoryStore =
       Modular.get<GetStoreByCategoryStore>();
   StorePage(this._routeEntity) {
-    getStoreByCategoryStore.execute(_routeEntity.storeName);
+    getStoreByCategoryStore.execute(_routeEntity.storeCategory);
   }
 
   @override
@@ -78,9 +79,8 @@ class StorePage extends StatelessWidget {
               }
               if (getStoreByCategoryStore.storeList.data == null) {
                 return Center(
-                    child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(Colors.red[300]),
-                ));
+                  child: SpinKitFadingCircle(color: Colors.white, size: 40.0),
+                );
               }
               return ListView.builder(
                 itemCount: storeList.length,
@@ -96,7 +96,8 @@ class StorePage extends StatelessWidget {
                         arguments: RouteEntity(
                             productCategories: store.categories,
                             storeImg: store.logo,
-                            storeName: _routeEntity.storeName,
+                            storeName: store.name,
+                            storeCategory: _routeEntity.storeCategory,
                             storeRef: store.reference),
                       );
                       _controller.select(900);

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:izy_shop/app/modules/customer/data/datasources/local_storage.dart';
 import 'package:izy_shop/app/modules/customer/domain/entities/logged_user.dart';
 
 import '../../../../app_controller.dart';
@@ -147,7 +148,11 @@ class SignUpPage extends StatelessWidget {
           _buildOnConfirm(context, onTap: () async {
             if (_formKey.currentState.validate()) {
               _formKey.currentState.save();
-
+              LocalStorage.instance.clearStorage();
+              LocalStorage.instance.setString(
+                CUSTOMER,
+                customerModel.name + ' ' + customerModel.surname,
+              );
               await _signUpStore.executeSignUp(customerModel);
               if (LoggedUser.instance.loggedUserUid != null) {
                 showDialog(

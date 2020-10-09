@@ -2,7 +2,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_modular/flutter_modular_annotations.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../data/models/market_model.dart';
+import '../../data/models/store_category_model.dart';
 import '../../domain/usecases/get_store.dart';
 
 part 'get_market_store.g.dart';
@@ -18,7 +18,7 @@ abstract class _GetStoreStoreBase with Store {
   }
 
   @observable
-  ObservableStream<List<MarketModel>> marketList;
+  ObservableStream<List<StoreCategoryModel>> marketList;
 
   @action
   execute() {

@@ -5,6 +5,7 @@ import 'data/repositories/checkout_repository_impl.dart';
 import 'domain/usecases/set_order.dart';
 import 'presentation/pages/checkout_page.dart';
 import 'presentation/pages/maps_page.dart';
+import 'presentation/stores/set_delivery_time_store.dart';
 import 'presentation/stores/set_order_store.dart';
 
 class CheckoutModule extends ChildModule {
@@ -13,7 +14,8 @@ class CheckoutModule extends ChildModule {
         Bind((i) => FirebaseFirestore.instance),
         $SetOrderImpl,
         $CheckoutRepositoryImpl,
-        $SetOrderStore
+        $SetOrderStore,
+        $SetDeliveryTimeStore,
       ];
 
   @override

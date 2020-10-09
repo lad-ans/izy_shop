@@ -21,7 +21,7 @@ abstract class _GetCustomerCartStoreBase with Store {
   ObservableStream<List<ProductModel>> cartList;
 
   @action
-  execute(String uid) {
-    this.cartList = _getCustomerCart(uid).asObservable();
+  execute() {
+    this.cartList = _getCustomerCart().asObservable();
   }
 }

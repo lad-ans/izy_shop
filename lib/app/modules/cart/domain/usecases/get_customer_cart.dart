@@ -7,7 +7,7 @@ import '../repositories/cart_repository.dart';
 part 'get_customer_cart.g.dart';
 
 abstract class GetCustomerCart {
-  Stream<List<ProductModel>> call(String uuid);
+  Stream<List<ProductModel>> call();
 }
 
 @Injectable()
@@ -17,7 +17,7 @@ class GetCustomerCartImpl implements GetCustomerCart {
     this._repository,
   );
   @override
-  Stream<List<ProductModel>> call(String uuid) {
-    return _repository.getCustomerCart(uuid);
+  Stream<List<ProductModel>> call() {
+    return _repository.getCustomerCart();
   }
 }

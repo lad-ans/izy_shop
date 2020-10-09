@@ -39,11 +39,11 @@ mixin _$GetLoggedCustomerStore on _GetLoggedCustomerStoreBase, Store {
       ActionController(name: '_GetLoggedCustomerStoreBase');
 
   @override
-  dynamic execute(String uid) {
+  dynamic execute() {
     final _$actionInfo = _$_GetLoggedCustomerStoreBaseActionController
         .startAction(name: '_GetLoggedCustomerStoreBase.execute');
     try {
-      return super.execute(uid);
+      return super.execute();
     } finally {
       _$_GetLoggedCustomerStoreBaseActionController.endAction(_$actionInfo);
     }

@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_modular/flutter_modular_annotations.dart';
-import 'package:izy_shop/app/modules/customer/domain/entities/logged_user.dart';
 
+import '../../domain/entities/logged_user.dart';
 import '../../domain/repositories/customer_repository.dart';
 import '../models/customer_model.dart';
 
@@ -15,7 +15,7 @@ class CustomerRepositoryImpl implements CustomerRepository {
     this.firestore,
   });
   @override
-  Stream<CustomerModel> getLoggedCustomer(String uid) {
+  Stream<CustomerModel> getLoggedCustomer() {
     try {
       return firestore
           .collection('customers')

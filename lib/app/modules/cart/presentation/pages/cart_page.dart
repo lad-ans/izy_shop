@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../../../../core/domain/configs/core_config.dart';
 import '../../../../core/domain/consts/img.dart';
@@ -52,7 +53,10 @@ class _CartPageState extends State<CartPage> {
       }
       if (getCustomerCartStore.cartList.data == null) {
         return Center(
-          child: CircularProgressIndicator(),
+          child: SpinKitFadingCircle(
+            size: 30.0,
+            color: Colors.red[300]
+          ),
         );
       }
       var subTotal = 0;
@@ -83,7 +87,7 @@ class _CartPageState extends State<CartPage> {
                             cartList: productList,
                             totalAmount: total,
                             storeImg: widget.routeEntity.storeImg,
-                            storeName: widget.routeEntity.storeName),
+                            storeCategory: widget.routeEntity.storeCategory),
                       ),
               isGreenColor: (LoggedUser.instance.loggedUserUid != null) &&
                   (productList.length != 0),
@@ -119,7 +123,10 @@ class _CartPageState extends State<CartPage> {
                 }
                 if (getCustomerCartStore.cartList.data == null) {
                   return Center(
-                    child: CircularProgressIndicator(),
+                    child: SpinKitFadingCircle(
+                      size: 30.0,
+                       color: Colors.red[300]
+                    ),
                   );
                 }
                 if (productList.length == 0) {
@@ -151,6 +158,7 @@ class _CartPageState extends State<CartPage> {
           Padding(
             padding: EdgeInsets.only(top: getStatusBar(context)),
             child: ShoppingAppBar(
+              onNavigate: true,
               routeEntity: widget.routeEntity,
               fullAppBar: false,
               isCartPage: true,

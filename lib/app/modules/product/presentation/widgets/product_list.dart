@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../../../../core/domain/consts/img.dart';
 import '../../../../core/domain/entities/route_entity.dart';
@@ -54,7 +55,10 @@ class _ProductListState extends State<ProductList> {
               return Container(
                   alignment: Alignment.center,
                   height: 20.0,
-                  child: CircularProgressIndicator());
+                  child: SpinKitFadingCircle(
+                    size: 30.0,
+                    color: Colors.red[300]
+                  ),);
             }
             return ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -70,6 +74,9 @@ class _ProductListState extends State<ProductList> {
                         el.category.toLowerCase() ==
                         widget.listTitle.toLowerCase())
                     .toList()[index];
+
+                productModel.storeCategory = widget.routeEntity.storeCategory.toLowerCase();
+                productModel.storeName = widget.routeEntity.storeName;
                 return LongPressDraggable(
                   data: productModel,
                   maxSimultaneousDrags: 1,

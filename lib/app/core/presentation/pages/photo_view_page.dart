@@ -27,14 +27,14 @@ class PhotoViewPage extends StatelessWidget {
           Container(
             height: 60.0,
             child: AppBar(
-              iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
+              iconTheme: IconThemeData(color: Colors.white),
               elevation: 0.0,
               backgroundColor: Colors.transparent,
               title: Text(
                 _routeEntity.productModel.name,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: Theme.of(context).primaryColor,
+                  color: Colors.white,
                   fontSize: 16,
                 ),
               ),

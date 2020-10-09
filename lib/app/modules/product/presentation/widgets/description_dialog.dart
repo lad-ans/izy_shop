@@ -95,7 +95,7 @@ class DescriptionDialog extends StatelessWidget {
       icon: Icon(
         Icons.remove_shopping_cart,
         color: Colors.red[300],
-        size: 20.0,
+        size: 30.0,
       ),
       label: Text(
         'Remove',

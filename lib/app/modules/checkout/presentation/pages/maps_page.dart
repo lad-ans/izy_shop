@@ -61,10 +61,14 @@ class _MapsPageState extends State<MapsPage> {
                   color: Colors.white,
                   icon: Icon(FontAwesomeIcons.check, size: 30.0),
                   onPressed: () {
-                    // print(selectedPlace.geometry.location.lat);
-                    // print(selectedPlace.geometry.location.lng);
+                    print(selectedPlace.geometry.location.lat);
+                    print(selectedPlace.geometry.location.lng);
                     widget._routeEntity.addressController.text =
                         selectedPlace.formattedAddress;
+                    widget._routeEntity.orderModel.latitude =
+                        selectedPlace.geometry.location.lat;
+                    widget._routeEntity.orderModel.longitude =
+                        selectedPlace.geometry.location.lng;
                     Modular.to.pop();
                   },
                 ),
@@ -77,8 +81,8 @@ class _MapsPageState extends State<MapsPage> {
   }
 
   _buildResultTile({PickResult selectedPlace, SearchingState state}) {
-    if(state != SearchingState.Searching)
-    return _buildSelectedPlace(selectedPlace);
+    if (state != SearchingState.Searching)
+      return _buildSelectedPlace(selectedPlace);
   }
 
   _buildBody() {

@@ -26,7 +26,6 @@ class ProductRepositoryImpl implements ProductRepository {
 
   @override
   Future<void> addToCart(ProductModel productModel) async {
-    print(LoggedUser.instance.loggedUserUid);
     CollectionReference _collRef = firestore
         .collection('customers')
         .doc(LoggedUser.instance.loggedUserUid)

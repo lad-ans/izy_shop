@@ -15,7 +15,7 @@ class CartRepositoryImpl implements CartRepository {
     this.firestore,
   });
   @override
-  Stream<List<ProductModel>> getCustomerCart(String uuid) {
+  Stream<List<ProductModel>> getCustomerCart() {
     return firestore
         .collection('customers')
         .doc(LoggedUser.instance.loggedUserUid)

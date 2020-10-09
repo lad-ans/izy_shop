@@ -2,9 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:izy_shop/app/modules/cart/domain/usecases/get_customer_cart.dart';
-import 'package:izy_shop/app/modules/cart/presentation/stores/cart_module_stores.dart';
+import 'package:izy_shop/app/core/domain/entities/route_entity.dart';
+import 'package:izy_shop/app/modules/cart/presentation/stores/get_customer_cart_store.dart';
 
 import '../../../../core/domain/utils/number_formatter.dart';
 import '../../../customer/domain/entities/logged_user.dart';
@@ -24,20 +25,23 @@ class ItemTile extends StatelessWidget {
   final double itemWidth;
   final bool isOnBasket;
   final bool isOnCart;
+  final RouteEntity routeEntity;
 
-  ItemTile(
-      {this.color,
-      this.elevation,
-      this.hPadd,
-      this.showItemPrice = true,
-      this.productImg,
-      this.itemWidth,
-      this.isOnBasket = false,
-      this.isOnCart = false,
-      this.productModel});
-
+  ItemTile({
+    this.color,
+    this.elevation,
+    this.hPadd,
+    this.showItemPrice = true,
+    this.productImg,
+    this.itemWidth,
+    this.isOnBasket = false,
+    this.isOnCart = false,
+    this.productModel,
+    this.routeEntity,
+  }) {
+    _getCustomerCartStore.execute();
+  }
   final _getCustomerCartStore = Modular.get<GetCustomerCartStore>();
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -54,6 +58,7 @@ class ItemTile extends StatelessWidget {
                           productModel: productModel,
                         )
                     : (context) => OnBuyDialog(
+                          routeEntity: routeEntity,
                           productModel: productModel,
                         ));
       },
@@ -103,53 +108,56 @@ class ItemTile extends StatelessWidget {
     );
   }
 
-  final _addToCart = Modular.get<AddToCartStore>();
+  final addToCartStore = Modular.get<AddToCartStore>();
   Widget _buildAddToCartButton(BuildContext context) {
     return Visibility(
       visible: showItemPrice,
-      child: InkWell(
-        child: Material(
-          elevation: 6.0,
-          color: Colors.white60,
-          borderRadius: BorderRadius.circular(70.0),
-          child: Center(
-            child: Icon(
-              Ionicons.ios_add_circle,
-              color: Colors.green[200],
+      child: Observer(builder: (_) {
+        List<ProductModel> cartList = _getCustomerCartStore.cartList.data;
+        return InkWell(
+          child: Material(
+            elevation: 6.0,
+            color: Colors.white60,
+            borderRadius: BorderRadius.circular(70.0),
+            child: Center(
+              child: Icon(
+                Ionicons.ios_add_circle,
+                color: Colors.green[200],
+              ),
             ),
           ),
-        ),
-        onTap: () async {
-          if (LoggedUser.instance.loggedUserUid != null) {
-            // List<ProductModel> cartList = _getCustomerCartStore.cartList.data;
-            // cartList.forEach((item) async {
-            //   if (item.id != productModel.id) {
-            await _addToCart.execute(productModel);
-            //   } else {
-            //     EdgeAlert.show(
-            //       context,
-            //       title: 'Product exist',
-            //       description: 'This product is present on cart',
-            //       gravity: EdgeAlert.BOTTOM,
-            //       icon: Icons.info,
-            //       backgroundColor: Colors.amber,
-            //       duration: EdgeAlert.LENGTH_SHORT,
-            //     );
-            //   }
-            // });
-          } else {
-            EdgeAlert.show(
-              context,
-              title: 'No user found',
-              description: 'Login to buy item',
-              gravity: EdgeAlert.BOTTOM,
-              icon: Icons.info,
-              backgroundColor: Colors.redAccent,
-              duration: EdgeAlert.LENGTH_SHORT,
-            );
-          }
-        },
-      ),
+          onTap: () async {
+            print(cartList);
+            List<ProductModel> tempList =
+                cartList.where((e) => e.id == productModel.id).toList();
+            if (LoggedUser.instance.loggedUserUid != null) {
+              if (tempList.length == 0) {
+                await addToCartStore.execute(productModel);
+              } else {
+                EdgeAlert.show(
+                  context,
+                  title: 'Product exists',
+                  description: 'This product already exists on your cart!',
+                  gravity: EdgeAlert.TOP,
+                  icon: Icons.info,
+                  backgroundColor: Colors.amber.withOpacity(0.8),
+                  duration: EdgeAlert.LENGTH_SHORT,
+                );
+              }
+            } else {
+              EdgeAlert.show(
+                context,
+                title: 'No user found',
+                description: 'Login to buy item',
+                gravity: EdgeAlert.BOTTOM,
+                icon: Icons.info,
+                backgroundColor: Colors.redAccent,
+                duration: EdgeAlert.LENGTH_SHORT,
+              );
+            }
+          },
+        );
+      }),
     );
   }
 

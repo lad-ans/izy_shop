@@ -14,6 +14,8 @@ class ProductModel {
   bool hasVol;
   bool hasSize;
   DocumentReference reference;
+  String storeCategory;
+  String storeName;
   ProductModel({
     this.id,
     this.name,
@@ -28,6 +30,8 @@ class ProductModel {
     this.hasVol,
     this.hasSize,
     this.reference,
+    this.storeCategory,
+    this.storeName,
   });
 
   factory ProductModel.fromDocument(DocumentSnapshot doc) {
@@ -45,6 +49,8 @@ class ProductModel {
       hasSize: doc.data()['hasSize'],
       deliveryPrice: doc.data()['deliveryPrice'],
       reference: doc.reference,
+      storeCategory: doc.data()['storeCategory'],
+      storeName: doc.data()['storeName'],
     );
   }
 
@@ -61,11 +67,13 @@ class ProductModel {
       'hasVol': this.hasVol,
       'hasWeight': this.hasWeight,
       'hasSize': this.hasSize,
+      'storeCategory': this.storeCategory,
+      'storeName': this.storeName,
     };
   }
 
   @override
   String toString() {
-    return '${this.name}, ${this.name}, ${this.description}, ${this.img}, ${this.price}, ${this.category}, ${this.size}, has size: ${this.hasSize}, has volume: ${this.hasVol}, has size: ${this.hasSize}';
+    return '${this.name}, ${this.name}, ${this.description}, ${this.img}, ${this.price}, ${this.category}, ${this.size}, has size: ${this.hasSize}, has volume: ${this.hasVol}, has size: ${this.hasSize}, Store cat $storeCategory, Store name $storeName';
   }
 }

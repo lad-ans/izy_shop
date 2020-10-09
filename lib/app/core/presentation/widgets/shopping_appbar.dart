@@ -16,13 +16,15 @@ class ShoppingAppBar extends StatefulWidget {
   final bool fullAppBar;
   final bool isCartPage;
   final RouteEntity routeEntity;
-  final bool isShopping;
+  final bool onNavigate;
+  final bool onBack;
   const ShoppingAppBar({
     Key key,
     this.fullAppBar = true,
     this.isCartPage = false,
     this.routeEntity,
-    this.isShopping = false,
+    this.onNavigate = false,
+    this.onBack = false,
   }) : super(key: key);
 
   @override
@@ -34,7 +36,7 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
 
   @override
   void initState() {
-    _getCustomerCartStore.execute(LoggedUser.instance.loggedUserUid);
+    _getCustomerCartStore.execute();
     super.initState();
   }
 
@@ -49,8 +51,8 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
         children: [
           _buildRoundedButton(Icons.arrow_back, label: 'Back', onTap: () {
             List<ProductModel> cartList = _getCustomerCartStore.cartList.data;
-            if (widget.isShopping) {
-              if (cartList.length != 0) {
+            if (widget.onBack) {
+              if (cartList?.length != 0) {
                 return showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
@@ -63,7 +65,7 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
                     actions: [
                       FlatButton(
                         onPressed: () {
-                          if (widget.isShopping) {
+                          if (widget.onNavigate) {
                             cartList?.forEach((item) {
                               return item.reference.delete();
                             });
@@ -140,7 +142,7 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
               if (LoggedUser.instance.loggedUserUid != null) {
                 setAllOrientations();
                 await Modular.to.pushNamed('/customer');
-                if (widget.isShopping) setLandscapeOrientation();
+                if (widget.onNavigate) setLandscapeOrientation();
               } else {
                 EdgeAlert.show(
                   context,
@@ -164,7 +166,7 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
     );
   }
 
-  AlertDialog _buildAlertDialog() {
+  _buildAlertDialog() {
     return AlertDialog(
       elevation: 0.0,
       backgroundColor: Colors.transparent,
@@ -177,7 +179,7 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0),
               ),
-              color: Colors.red[300],
+              color: Colors.green,
               onPressed: () async {
                 setAllOrientations();
                 await Modular.to.pushNamed('/auth');
@@ -238,7 +240,45 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
 
   Widget _buildNavigatorLogo() => InkWell(
       onTap: () {
-        setAllOrientations();
+        List<ProductModel> cartList = _getCustomerCartStore.cartList.data;
+        if (widget.onNavigate) {
+          if (cartList?.length != 0) {
+            return showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                backgroundColor: Colors.white70,
+                title: Text('This action will clear your cart!'),
+                titleTextStyle: TextStyle(
+                    color: Colors.black.withOpacity(0.7),
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w600),
+                actions: [
+                  FlatButton(
+                    onPressed: () {
+                      if (widget.onNavigate) {
+                        cartList?.forEach((item) {
+                          return item.reference.delete();
+                        });
+                      }
+                      Modular.to.pop();
+                      Modular.to.pushReplacementNamed('/home');
+                    },
+                    child: Text('Continue'),
+                  ),
+                  FlatButton(
+                    onPressed: () {
+                      Modular.to.pop();
+                    },
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(color: Colors.black87),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+        }
         Modular.to.pushReplacementNamed('/home');
       },
       child: Image.asset(LOGO, height: !widget.fullAppBar ? 45.0 : 55.0));
@@ -248,7 +288,7 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
       text: TextSpan(
         children: [
           TextSpan(
-            text: ' ${widget.routeEntity.storeName} / Departaments / ',
+            text: ' ${widget.routeEntity.storeCategory} / Departaments / ',
             style: TextStyle(
               color: Colors.grey,
               fontSize: 10,

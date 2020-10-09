@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:izy_shop/app/modules/customer/data/models/customer_model.dart';
+import 'package:izy_shop/app/modules/customer/presentation/stores/get_logged_customer_store.dart';
 
 import '../../../../app_controller.dart';
 import '../../../../core/domain/configs/core_config.dart';
+import '../../../../core/domain/consts/img.dart';
 import '../../../../core/domain/entities/route_entity.dart';
 import '../../../../core/domain/utils/number_formatter.dart';
 import '../../../../core/presentation/widgets/amount_checkout_row.dart';
 import '../../../../core/presentation/widgets/custom_statusbar.dart';
 import '../../../../core/presentation/widgets/rounded_button.dart';
 import '../../../../core/presentation/widgets/shopping_appbar.dart';
+import '../../../customer/data/datasources/local_storage.dart';
 import '../../../customer/domain/entities/logged_user.dart';
 import '../../data/datasources/delivery_time.dart';
 import '../../data/datasources/payment_method.dart';
 import '../../data/models/order_model.dart';
+import '../stores/set_delivery_time_store.dart';
 import '../stores/set_order_store.dart';
 import '../widgets/checkout_dialog.dart';
 
@@ -76,6 +83,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       onSaved: (address) {
                         orderModel.location = address;
                       },
+                      onRoadSaved: (road) {
+                        orderModel.road = road;
+                      },
+                      onHouseNoSaved: (houseNo) {
+                        orderModel.houseNo = 'House No. ' + houseNo;
+                      },
                     ),
                     Divider(),
                     Text('Contacts', style: TextStyle(fontSize: 18.0)),
@@ -88,10 +101,16 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     SizedBox(height: 20),
                     _buildDeliveryTime(
                       onSaved: (deliveryTime) {
-                        if (deliveryTime) {
-                          orderModel.deliveryTime = DT_30MIN_1HOUR;
+                        if (Modular.get<SetDeliveryTimeStore>().deliveryTime ==
+                            null) {
+                          if (deliveryTime) {
+                            orderModel.deliveryTime = DT_30MIN_1HOUR;
+                          } else {
+                            orderModel.deliveryTime = DT_2HOUR_3HOUR;
+                          }
                         } else {
-                          orderModel.deliveryTime = DT_2HOUR_3HOUR;
+                          orderModel.deliveryTime =
+                              Modular.get<SetDeliveryTimeStore>().deliveryTime;
                         }
                       },
                     ),
@@ -123,7 +142,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
                             orderModel.amount = widget.routeEntity.totalAmount;
                             orderModel.customerName =
                                 LoggedUser.instance.loggedUsername;
-                            print(orderModel);
                             _formKey.currentState.save();
                             await setOrderStore.execute(orderModel);
                             showDialog(
@@ -143,6 +161,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             Padding(
               padding: EdgeInsets.only(top: getStatusBar(context)),
               child: ShoppingAppBar(
+                onNavigate: true,
                 routeEntity: widget.routeEntity,
                 fullAppBar: false,
               ),
@@ -182,7 +201,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
+  DatePickerTheme get pickerTheme => DatePickerTheme(
+      headerColor: Colors.red[300],
+      backgroundColor: Colors.white70,
+      cancelStyle: TextStyle(color: Colors.white, fontSize: 16),
+      itemStyle: TextStyle(color: Colors.red[300], fontSize: 18),
+      doneStyle: TextStyle(color: Colors.white, fontSize: 16));
+
   _buildDeliveryTime({FormFieldSetter<bool> onSaved}) {
+    String customTime;
     return Row(
       children: [
         RoundedButton(
@@ -196,6 +223,34 @@ class _CheckoutPageState extends State<CheckoutPage> {
           btnHeight: 70.0,
           width: 70.0,
           iconSize: 35,
+          onTap: () async {
+            _controller.select(15);
+
+            /// pick date
+            await DatePicker.showDatePicker(
+              context,
+              showTitleActions: true,
+              minTime: DateTime.now(),
+              maxTime: DateTime(2021, 12, 31),
+              theme: pickerTheme,
+              onConfirm: (date) {
+                var selectedDate = '${date.day}/${date.month}/${date.year}';
+
+                /// pick time
+                DatePicker.showTimePicker(context,
+                    theme: pickerTheme,
+                    showTitleActions: true, onConfirm: (date) {
+                  customTime =
+                      'Date: $selectedDate \nHours: ${date.hour}h:${date.minute}min';
+                  Modular.get<SetDeliveryTimeStore>()
+                      .setDeliveryTime(customTime);
+                }, currentTime: DateTime.now());
+              },
+              currentTime: DateTime.now(),
+              locale: LocaleType.en,
+            );
+            _controller.select(1200);
+          },
         ),
         Expanded(
           child: Padding(
@@ -204,21 +259,45 @@ class _CheckoutPageState extends State<CheckoutPage> {
               initialValue: false,
               onSaved: onSaved,
               builder: (state) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('2h - 3h', style: TextStyle(color: Colors.red[300])),
-                    Switch(
-                      activeColor: Colors.green[200],
-                      value: state.value,
-                      onChanged: (value) {
-                        state.didChange(value);
-                      },
-                    ),
-                    Text('30min - 1h',
-                        style: TextStyle(color: Colors.red[300])),
-                  ],
-                );
+                return Observer(builder: (_) {
+                  final String deliveryTime =
+                      Modular.get<SetDeliveryTimeStore>().deliveryTime;
+                  return Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Visibility(
+                            visible: deliveryTime == null,
+                            child: Text('2h - 3h',
+                                style: TextStyle(color: Colors.red[300])),
+                          ),
+                          Visibility(
+                            visible: deliveryTime == null,
+                            child: Switch(
+                              activeColor: Colors.green[200],
+                              value: state.value,
+                              onChanged: (value) {
+                                state.didChange(value);
+                              },
+                            ),
+                          ),
+                          Visibility(
+                            visible: deliveryTime == null,
+                            child: Text('30min - 1h',
+                                style: TextStyle(color: Colors.red[300])),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        deliveryTime ?? '',
+                        style: TextStyle(
+                          color: Colors.red[300],
+                        ),
+                      ),
+                    ],
+                  );
+                });
               },
             ),
           ),
@@ -283,13 +362,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  formFieldState() {
-    return Column(
-      children: [],
-    );
-  }
-
-  _buildAddress({FormFieldSetter<String> onSaved}) {
+  _buildAddress({
+    FormFieldSetter<String> onSaved,
+    FormFieldSetter<String> onRoadSaved,
+    FormFieldSetter<String> onHouseNoSaved,
+  }) {
     return Row(
       children: [
         RoundedButton(
@@ -308,8 +385,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             await Modular.to.pushNamed(
               '/checkout/maps',
               arguments: RouteEntity(
-                addressController: addressController,
-              ),
+                  addressController: addressController, orderModel: orderModel),
             );
             _controller.select(1100);
           },
@@ -318,22 +394,45 @@ class _CheckoutPageState extends State<CheckoutPage> {
         Expanded(
             child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          child: TextFormField(
-            controller: addressController,
-            onChanged: (value) {
-              addressController.text = value;
-            },
-            decoration: InputDecoration(
-              labelText: 'Sommerschild, Maputo',
-              floatingLabelBehavior: FloatingLabelBehavior.never,
-              contentPadding: EdgeInsets.symmetric(),
-            ),
-            onSaved: onSaved,
-            validator: (value) {
-              if (value.trim().isEmpty) return '*required field';
-              if (value.trim().length < 3) return '*Address too short';
-              return null;
-            },
+          child: Column(
+            children: [
+              TextFormField(
+                // enabled: false,
+                controller: addressController,
+                onChanged: (value) {},
+                maxLines: 2,
+                decoration: InputDecoration(
+                  labelText: 'Sommerschild, Maputo',
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  contentPadding: EdgeInsets.symmetric(),
+                ),
+                onSaved: onSaved,
+                validator: (value) {
+                  if (value.trim().isEmpty) return '*required field';
+                  if (value.trim().length < 3) return '*Address too short';
+                  return null;
+                },
+              ),
+              TextFormField(
+                onChanged: (value) {},
+                decoration: InputDecoration(
+                  labelText: 'Road',
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  contentPadding: EdgeInsets.symmetric(),
+                ),
+                onSaved: onRoadSaved,
+              ),
+              TextFormField(
+                onChanged: (value) {},
+                decoration: InputDecoration(
+                  prefixText: 'House no. ',
+                  labelText: 'House no.',
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  contentPadding: EdgeInsets.symmetric(),
+                ),
+                onSaved: onHouseNoSaved,
+              ),
+            ],
           ),
         )),
       ],
