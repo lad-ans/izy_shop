@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../modules/cart/presentation/stores/get_customer_cart_store.dart';
+import '../../../modules/cart/presentation/stores/get_cart_store.dart';
+import '../../../modules/cart/presentation/stores/remove_all_store.dart';
 import '../../../modules/customer/domain/entities/logged_user.dart';
 import '../../../modules/product/data/models/product_model.dart';
 import '../../domain/configs/core_config.dart';
@@ -32,13 +33,8 @@ class ShoppingAppBar extends StatefulWidget {
 }
 
 class _ShoppingAppBarState extends State<ShoppingAppBar> {
-  final _getCustomerCartStore = Modular.get<GetCustomerCartStore>();
-
-  @override
-  void initState() {
-    _getCustomerCartStore.execute();
-    super.initState();
-  }
+  final _getCartStore = Modular.get<GetCartStore>();
+  final _removeAllStore = Modular.get<RemoveAllCartStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +46,7 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
       child: Row(
         children: [
           _buildRoundedButton(Icons.arrow_back, label: 'Back', onTap: () {
-            List<ProductModel> cartList = _getCustomerCartStore.cartList.data;
+            List<ProductModel> cartList = _getCartStore.execute();
             if (widget.onBack) {
               if (cartList?.length != 0) {
                 return showDialog(
@@ -66,9 +62,7 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
                       FlatButton(
                         onPressed: () {
                           if (widget.onNavigate) {
-                            cartList?.forEach((item) {
-                              return item.reference.delete();
-                            });
+                            _removeAllStore.execute();
                           }
                           Modular.to.pop();
                           Modular.to.pop();
@@ -240,7 +234,7 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
 
   Widget _buildNavigatorLogo() => InkWell(
       onTap: () {
-        List<ProductModel> cartList = _getCustomerCartStore.cartList.data;
+        List<ProductModel> cartList = _getCartStore.execute();
         if (widget.onNavigate) {
           if (cartList?.length != 0) {
             return showDialog(
@@ -256,9 +250,7 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
                   FlatButton(
                     onPressed: () {
                       if (widget.onNavigate) {
-                        cartList?.forEach((item) {
-                          return item.reference.delete();
-                        });
+                        _removeAllStore.execute();
                       }
                       Modular.to.pop();
                       Modular.to.pushReplacementNamed('/home');

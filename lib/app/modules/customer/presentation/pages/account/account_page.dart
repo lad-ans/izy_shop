@@ -11,7 +11,7 @@ import '../../../../../core/domain/configs/core_config.dart';
 import '../../../../../core/domain/consts/img.dart';
 import '../../../../../core/presentation/widgets/custom_appbar.dart';
 import '../../../../auth/presentation/stores/sign_out_store.dart';
-import '../../../../cart/presentation/stores/get_customer_cart_store.dart';
+import '../../../../cart/presentation/stores/cart_store_module.dart';
 import '../../../../product/data/models/product_model.dart';
 import '../../../data/models/customer_model.dart';
 import '../../../domain/entities/logged_user.dart';
@@ -29,17 +29,16 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  final getCurrentCustomerStore = Modular.get<GetLoggedCustomerStore>();
-  final getCustomerCartStore = Modular.get<GetCustomerCartStore>();
-  final signOutStore = Modular.get<SignOutStore>();
+  final _getCurrentCustomerStore = Modular.get<GetLoggedCustomerStore>();
+  final _getCartStore = Modular.get<GetCartStore>();
+  final _signOutStore = Modular.get<SignOutStore>();
   TextEditingController _nameController;
   TextEditingController _emailController;
 
   @override
   void initState() {
     if (LoggedUser.instance.loggedUserUid != null) {
-      getCurrentCustomerStore.execute();
-      getCustomerCartStore.execute();
+      _getCurrentCustomerStore.execute();
     }
     super.initState();
   }
@@ -52,13 +51,13 @@ class _AccountPageState extends State<AccountPage> {
         ),
         color: Colors.red[400],
         onPressed: () async {
-          List<ProductModel> cartList = getCustomerCartStore.cartList.data;
+          List<ProductModel> cartList = _getCartStore.execute();
           if (cartList.length != 0) {
             cartList?.forEach((item) {
               return item.reference.delete();
             });
           }
-          await signOutStore.executeSignOut();
+          await _signOutStore.executeSignOut();
           Modular.to.pop();
         },
         icon: Icon(Ionicons.ios_log_out, color: Colors.white),
@@ -112,15 +111,13 @@ class _AccountPageState extends State<AccountPage> {
   _buildAvatarTile(BuildContext context) {
     return Observer(builder: (_) {
       CustomerModel customerModel =
-          getCurrentCustomerStore?.currentCustomer?.data;
-      if (getCurrentCustomerStore.currentCustomer.hasError) {
+          _getCurrentCustomerStore?.currentCustomer?.data;
+      if (_getCurrentCustomerStore.currentCustomer.hasError) {
         return Center(child: Text('Error occured'));
       }
-      if (getCurrentCustomerStore?.currentCustomer?.data == null) {
+      if (_getCurrentCustomerStore?.currentCustomer?.data == null) {
         return Center(
-          child: SpinKitFadingCircle(
-            size: 30.0,
-            color: Colors.red[300]),
+          child: SpinKitFadingCircle(size: 30.0, color: Colors.red[300]),
         );
       }
 
@@ -223,11 +220,11 @@ class _AccountPageState extends State<AccountPage> {
       ),
       child: Observer(builder: (_) {
         CustomerModel customerModel =
-            getCurrentCustomerStore?.currentCustomer?.data;
-        if (getCurrentCustomerStore.currentCustomer.hasError) {
+            _getCurrentCustomerStore?.currentCustomer?.data;
+        if (_getCurrentCustomerStore.currentCustomer.hasError) {
           return Center(child: Text('Error occured'));
         }
-        if (getCurrentCustomerStore?.currentCustomer?.data == null) {
+        if (_getCurrentCustomerStore?.currentCustomer?.data == null) {
           return Center(
             child: SpinKitFadingCircle(
               size: 30.0,

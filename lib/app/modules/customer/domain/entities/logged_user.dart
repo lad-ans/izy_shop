@@ -10,7 +10,7 @@ class LoggedUser {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  String get loggedUserUid => _auth?.currentUser?.uid;
+  String get loggedUserUid => _auth.currentUser.uid;
   String get loggedUsername {
     String customerName;
     if (_auth?.currentUser?.displayName != null) {

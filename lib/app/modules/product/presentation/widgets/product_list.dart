@@ -6,12 +6,12 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../../../../core/domain/consts/img.dart';
 import '../../../../core/domain/entities/route_entity.dart';
+import '../../../cart/presentation/stores/add_to_cart_store.dart';
 import '../../data/models/product_model.dart';
-import '../stores/add_to_cart_store.dart';
 import '../stores/get_product_store.dart';
 import 'item_tile.dart';
 
-class ProductList extends StatefulWidget {
+class ProductList extends StatelessWidget {
   final double height;
   final String listTitle;
   final bool showListTitle;
@@ -23,29 +23,20 @@ class ProductList extends StatefulWidget {
     this.listTitle,
     this.showListTitle = true,
     this.routeEntity,
-  }) : super(key: key);
-
-  @override
-  _ProductListState createState() => _ProductListState();
-}
-
-class _ProductListState extends State<ProductList> {
-  @override
-  void initState() {
-    getProductStore.execute(widget.routeEntity.storeRef);
-    super.initState();
+  }) {
+    getProductStore.execute(routeEntity.storeRef);
   }
 
-  final GetProductStore getProductStore = Modular.get<GetProductStore>();
+  final getProductStore = Modular.get<GetProductStore>();
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Visibility(visible: widget.showListTitle, child: _buildTitle()),
+        Visibility(visible: showListTitle, child: _buildTitle()),
         Container(
-          height: widget.height ?? 90.0,
+          height: height ?? 90.0,
           child: Observer(builder: (_) {
             List<ProductModel> productList = getProductStore.products.data;
             if (getProductStore.products.hasError) {
@@ -53,30 +44,27 @@ class _ProductListState extends State<ProductList> {
             }
             if (getProductStore.products.data == null) {
               return Container(
-                  alignment: Alignment.center,
-                  height: 20.0,
-                  child: SpinKitFadingCircle(
-                    size: 30.0,
-                    color: Colors.red[300]
-                  ),);
+                alignment: Alignment.center,
+                height: 20.0,
+                child: SpinKitFadingCircle(size: 30.0, color: Colors.red[300]),
+              );
             }
             return ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: productList
-                  .where((el) =>
-                      el.category.toLowerCase() ==
-                      widget.listTitle.toLowerCase())
-                  .toList()
-                  .length,
+                  ?.where((el) =>
+                      el.category.toLowerCase() == listTitle.toLowerCase())
+                  ?.toList()
+                  ?.length,
               itemBuilder: (context, index) {
                 ProductModel productModel = productList
                     .where((el) =>
-                        el.category.toLowerCase() ==
-                        widget.listTitle.toLowerCase())
+                        el.category.toLowerCase() == listTitle.toLowerCase())
                     .toList()[index];
 
-                productModel.storeCategory = widget.routeEntity.storeCategory.toLowerCase();
-                productModel.storeName = widget.routeEntity.storeName;
+                productModel.storeCategory =
+                    routeEntity.storeCategory.toLowerCase();
+                productModel.storeName = routeEntity.storeName;
                 return LongPressDraggable(
                   data: productModel,
                   maxSimultaneousDrags: 1,
@@ -126,7 +114,7 @@ class _ProductListState extends State<ProductList> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.0),
       child: Text(
-        widget.listTitle.toUpperCase() ?? '',
+        listTitle.toUpperCase() ?? '',
         style: TextStyle(
           color: Colors.grey[700],
           fontWeight: FontWeight.bold,

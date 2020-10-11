@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:izy_shop/app/modules/splash/splash_module.dart';
 
 import 'app_controller.dart';
 import 'app_widget.dart';
@@ -12,9 +11,12 @@ import 'modules/auth/data/repositories/auth_repository_impl.dart';
 import 'modules/auth/domain/usecases/sign_out.dart';
 import 'modules/auth/presentation/stores/sign_out_store.dart';
 import 'modules/cart/cart_module.dart';
-import 'modules/cart/data/repositories/cart_repository_impl.dart';
-import 'modules/cart/domain/usecases/get_customer_cart.dart';
-import 'modules/cart/presentation/stores/cart_module_stores.dart';
+import 'modules/cart/data/datasources/cart_data_source.dart';
+import 'modules/cart/domain/usecases/add_to_cart.dart';
+import 'modules/cart/domain/usecases/get_cart.dart';
+import 'modules/cart/domain/usecases/remove_all_cart.dart';
+import 'modules/cart/domain/usecases/remove_from_cart.dart';
+import 'modules/cart/presentation/stores/cart_store_module.dart';
 import 'modules/checkout/checkout_module.dart';
 import 'modules/customer/customer_module.dart';
 import 'modules/customer/data/repositories/customer_repository_impl.dart';
@@ -22,8 +24,9 @@ import 'modules/customer/domain/usecases/get_logged_customer.dart';
 import 'modules/customer/presentation/stores/get_logged_customer_store.dart';
 import 'modules/home/home_module.dart';
 import 'modules/product/data/repositories/product_repository_impl.dart';
-import 'modules/product/domain/usecases/product_module_usecases.dart';
-import 'modules/product/presentation/stores/product_module_stores.dart';
+import 'modules/product/domain/usecases/get_product.dart';
+import 'modules/product/presentation/stores/get_product_store.dart';
+import 'modules/splash/splash_module.dart';
 import 'modules/store/store_module.dart';
 
 class AppModule extends MainModule {
@@ -33,18 +36,21 @@ class AppModule extends MainModule {
         $AppController,
         Bind((i) => FirebaseFirestore.instance),
 
-        /// product module
+        /// product
         $ProductRepositoryImpl,
-        $GetProductStore,
         $GetProductImpl,
-        $AddToCartStore,
-        $AddToCartImpl,
+        $GetProductStore,
 
         /// cart module
-        $CartStore,
-        $GetCustomerCartStore,
-        $GetCustomerCartImpl,
-        $CartRepositoryImpl,
+        $CartDataSourceImpl,
+        $AddToCartImpl,
+        $GetCartImpl,
+        $RemoveFromCartImpl,
+        $RemoveAllCartImpl,
+        $GetCartStore,
+        $AddToCartStore,
+        $RemoveAllCartStore,
+        $RemoveFromCartStore,
 
         /// customer
         $CustomerRepositoryImpl,

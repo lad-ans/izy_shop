@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:izy_shop/app/core/domain/entities/route_entity.dart';
 import 'package:izy_shop/app/core/domain/utils/number_formatter.dart';
+import 'package:izy_shop/app/modules/cart/presentation/stores/remove_from_cart_store.dart';
 
 import '../../../../core/presentation/widgets/custom_rich_text.dart';
 import '../../data/models/product_model.dart';
@@ -12,13 +13,15 @@ class DescriptionDialog extends StatelessWidget {
   final bool isFromNet;
   final ProductModel productModel;
   final bool shoRemovalButton;
-  const DescriptionDialog({
+  DescriptionDialog({
     Key key,
     this.isSelected = false,
     this.isFromNet = false,
     this.productModel,
     this.shoRemovalButton = true,
   }) : super(key: key);
+
+  final _removeFromCartStore = Modular.get<RemoveFromCartStore>();
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
@@ -55,8 +58,8 @@ class DescriptionDialog extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: _buildRemovalButton(
-                      onPressed: () async {
-                        await productModel.reference.delete();
+                      onPressed: () {
+                        _removeFromCartStore.execute(productModel);
                         Modular.to.pop();
                       },
                     ),

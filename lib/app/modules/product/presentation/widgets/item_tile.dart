@@ -2,15 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:izy_shop/app/core/domain/entities/route_entity.dart';
-import 'package:izy_shop/app/modules/cart/presentation/stores/get_customer_cart_store.dart';
 
+import '../../../../core/domain/entities/route_entity.dart';
 import '../../../../core/domain/utils/number_formatter.dart';
+import '../../../cart/presentation/stores/add_to_cart_store.dart';
+import '../../../cart/presentation/stores/get_cart_store.dart';
 import '../../../customer/domain/entities/logged_user.dart';
 import '../../data/models/product_model.dart';
-import '../stores/add_to_cart_store.dart';
 import 'cart_product_dialog.dart';
 import 'description_dialog.dart';
 import 'on_buy_dialog.dart';
@@ -38,10 +37,12 @@ class ItemTile extends StatelessWidget {
     this.isOnCart = false,
     this.productModel,
     this.routeEntity,
-  }) {
-    _getCustomerCartStore.execute();
-  }
-  final _getCustomerCartStore = Modular.get<GetCustomerCartStore>();
+  });
+
+  /// dependencies
+  final _getCartStore = Modular.get<GetCartStore>();
+  final _addToCartStore = Modular.get<AddToCartStore>();
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -108,56 +109,55 @@ class ItemTile extends StatelessWidget {
     );
   }
 
-  final addToCartStore = Modular.get<AddToCartStore>();
   Widget _buildAddToCartButton(BuildContext context) {
     return Visibility(
       visible: showItemPrice,
-      child: Observer(builder: (_) {
-        List<ProductModel> cartList = _getCustomerCartStore.cartList.data;
-        return InkWell(
-          child: Material(
-            elevation: 6.0,
-            color: Colors.white60,
-            borderRadius: BorderRadius.circular(70.0),
-            child: Center(
-              child: Icon(
-                Ionicons.ios_add_circle,
-                color: Colors.green[200],
-              ),
+      child: InkWell(
+        child: Material(
+          elevation: 6.0,
+          color: Colors.white60,
+          borderRadius: BorderRadius.circular(70.0),
+          child: Center(
+            child: Icon(
+              Ionicons.ios_add_circle,
+              color: Colors.green[200],
             ),
           ),
-          onTap: () async {
-            print(cartList);
-            List<ProductModel> tempList =
-                cartList.where((e) => e.id == productModel.id).toList();
-            if (LoggedUser.instance.loggedUserUid != null) {
-              if (tempList.length == 0) {
-                await addToCartStore.execute(productModel);
-              } else {
-                EdgeAlert.show(
-                  context,
-                  title: 'Product exists',
-                  description: 'This product already exists on your cart!',
-                  gravity: EdgeAlert.TOP,
-                  icon: Icons.info,
-                  backgroundColor: Colors.amber.withOpacity(0.8),
-                  duration: EdgeAlert.LENGTH_SHORT,
-                );
-              }
+        ),
+        onTap: () {
+          /// get cart
+          List<ProductModel> cartList = _getCartStore.execute();
+          print(cartList);
+          List<ProductModel> tempList =
+              cartList?.where((e) => e.id == productModel.id)?.toList();
+          if (LoggedUser.instance.loggedUserUid != null) {
+            if (tempList?.length == 0) {
+              /// adding to cart
+              _addToCartStore.execute(productModel);
             } else {
               EdgeAlert.show(
                 context,
-                title: 'No user found',
-                description: 'Login to buy item',
-                gravity: EdgeAlert.BOTTOM,
+                title: 'Product exists',
+                description: 'This product already exists on your cart!',
+                gravity: EdgeAlert.TOP,
                 icon: Icons.info,
-                backgroundColor: Colors.redAccent,
+                backgroundColor: Colors.amber.withOpacity(0.8),
                 duration: EdgeAlert.LENGTH_SHORT,
               );
             }
-          },
-        );
-      }),
+          } else {
+            EdgeAlert.show(
+              context,
+              title: 'No user found',
+              description: 'Login to buy item',
+              gravity: EdgeAlert.BOTTOM,
+              icon: Icons.info,
+              backgroundColor: Colors.redAccent,
+              duration: EdgeAlert.LENGTH_SHORT,
+            );
+          }
+        },
+      ),
     );
   }
 

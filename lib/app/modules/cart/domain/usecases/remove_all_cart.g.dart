@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'cart_repository_impl.dart';
+part of 'remove_all_cart.dart';
 
 // **************************************************************************
 // InjectionGenerator
 // **************************************************************************
 
-final $CartRepositoryImpl = BindInject(
-  (i) => CartRepositoryImpl(firestore: i<FirebaseFirestore>()),
+final $RemoveAllCartImpl = BindInject(
+  (i) => RemoveAllCartImpl(i<CartDataSource>()),
   singleton: true,
   lazy: true,
 );

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../../../../core/domain/configs/core_config.dart';
 import '../../../../core/domain/consts/img.dart';
@@ -15,7 +13,7 @@ import '../../../auth/presentation/widgets/custom_text.dart';
 import '../../../customer/domain/entities/logged_user.dart';
 import '../../../product/data/models/product_model.dart';
 import '../../../product/presentation/widgets/item_tile.dart';
-import '../stores/get_customer_cart_store.dart';
+import '../stores/get_cart_store.dart';
 
 class CartPage extends StatefulWidget {
   final RouteEntity routeEntity;
@@ -28,7 +26,7 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  final getCustomerCartStore = Modular.get<GetCustomerCartStore>();
+  final GetCartStore _getCartStore = Modular.get<GetCartStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -44,67 +42,54 @@ class _CartPageState extends State<CartPage> {
   }
 
   Widget _buidBottomNavBar() {
-    return Observer(builder: (_) {
-      List<ProductModel> productList = getCustomerCartStore.cartList.data;
-      if (getCustomerCartStore.cartList.hasError) {
-        return Center(
-          child: Text('Error Occured'),
-        );
-      }
-      if (getCustomerCartStore.cartList.data == null) {
-        return Center(
-          child: SpinKitFadingCircle(
-            size: 30.0,
-            color: Colors.red[300]
-          ),
-        );
-      }
-      var subTotal = 0;
-      for (var item in productList) {
-        subTotal += item.price * item.qty;
-      }
-      var total = subTotal + 350;
-      return Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AmountCheckoutRow(
-                title: 'SubTotal',
-                amount: NumberFormatter.instance.numToString(subTotal)),
-            AmountCheckoutRow(title: 'Delivery', amount: '350,00'),
-            AmountCheckoutRow(
-                title: 'Total Amount',
-                amount: NumberFormatter.instance.numToString(total)),
-            Divider(color: Colors.green[200]),
-            RoundedButton(
-              isNull: LoggedUser.instance.loggedUserUid == null ||
-                  productList.length == 0,
-              onTap: productList.length == 0
-                  ? null
-                  : () => Modular.to.pushNamed(
-                        '/checkout',
-                        arguments: RouteEntity(
-                            cartList: productList,
-                            totalAmount: total,
-                            storeImg: widget.routeEntity.storeImg,
-                            storeCategory: widget.routeEntity.storeCategory),
-                      ),
-              isGreenColor: (LoggedUser.instance.loggedUserUid != null) &&
-                  (productList.length != 0),
-              icon: Icons.check,
-              iconSize: 30.0,
-              text: 'Confirm',
-              btnWidth: 50.0,
-              btnHeight: 50.0,
-              width: 70.0,
-              textColor: Colors.black87,
-              textSize: 14.0,
-            )
-          ]);
-    });
+    List<ProductModel> productList = _getCartStore.execute();
+
+    var subTotal = 0;
+    // for (var item in productList) {
+    //   subTotal += item.price * item.qty;
+    // }
+    var total = subTotal + 350;
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AmountCheckoutRow(
+              title: 'SubTotal',
+              amount: NumberFormatter.instance.numToString(subTotal)),
+          AmountCheckoutRow(title: 'Delivery', amount: '350,00'),
+          AmountCheckoutRow(
+              title: 'Total Amount',
+              amount: NumberFormatter.instance.numToString(total)),
+          Divider(color: Colors.green[200]),
+          RoundedButton(
+            isNull: LoggedUser.instance.loggedUserUid == null ||
+                productList.length == 0,
+            onTap: productList.length == 0
+                ? null
+                : () => Modular.to.pushNamed(
+                      '/checkout',
+                      arguments: RouteEntity(
+                          cartList: productList,
+                          totalAmount: total,
+                          storeImg: widget.routeEntity.storeImg,
+                          storeCategory: widget.routeEntity.storeCategory),
+                    ),
+            isGreenColor: (LoggedUser.instance.loggedUserUid != null) &&
+                (productList.length != 0),
+            icon: Icons.check,
+            iconSize: 30.0,
+            text: 'Confirm',
+            btnWidth: 50.0,
+            btnHeight: 50.0,
+            width: 70.0,
+            textColor: Colors.black87,
+            textSize: 14.0,
+          )
+        ]);
   }
 
-  Widget _buildBody() {
+  _buildBody() {
+    List<ProductModel> productList = _getCartStore.execute();
     return Container(
       height: getHeight(context),
       child: Stack(
@@ -113,45 +98,27 @@ class _CartPageState extends State<CartPage> {
           Padding(
             padding: EdgeInsets.only(top: 75),
             child: SingleChildScrollView(
-              child: Observer(builder: (_) {
-                List<ProductModel> productList =
-                    getCustomerCartStore.cartList.data;
-                if (getCustomerCartStore.cartList.hasError) {
-                  return Center(
-                    child: Text('Error Occured'),
-                  );
-                }
-                if (getCustomerCartStore.cartList.data == null) {
-                  return Center(
-                    child: SpinKitFadingCircle(
-                      size: 30.0,
-                       color: Colors.red[300]
-                    ),
-                  );
-                }
-                if (productList.length == 0) {
-                  return _buildEmptyCart();
-                }
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _buildHeader(),
-                    Divider(),
-                    Column(
+              child: productList.length == 0
+                  ? _buildEmptyCart()
+                  : Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      children: productList.map((productModel) {
-                        return _buildBodyContent(
-                          productModel.img,
-                          productModel.name,
-                          productModel.description ?? 'No description!',
-                          productModel.price,
-                          productModel,
-                        );
-                      }).toList(),
+                      children: [
+                        _buildHeader(),
+                        Divider(),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: productList?.map<Widget>((productModel) {
+                            return _buildBodyContent(
+                              productModel.img,
+                              productModel.name,
+                              productModel.description ?? 'No description!',
+                              productModel.price,
+                              productModel,
+                            );
+                          })?.toList(),
+                        ),
+                      ],
                     ),
-                  ],
-                );
-              }),
             ),
           ),
           CustomStatusBar(color: Colors.white),
@@ -217,7 +184,7 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-  Container _buildBodyContent(
+  _buildBodyContent(
     String product,
     String itemDesc,
     String itemDescDetail,
@@ -242,9 +209,10 @@ class _CartPageState extends State<CartPage> {
                     productImg: product,
                     showItemPrice: false),
               ),
-              Text(
-                  '${NumberFormatter.instance.numToString(price * productModel.qty)} MT',
-                  style: TextStyle(fontSize: 11.0, color: Colors.red[300]))
+              // Text(
+              //   '${NumberFormatter.instance.numToString(price * productModel.qty)} MT',
+              //   style: TextStyle(fontSize: 11.0, color: Colors.red[300]),
+              // ),
             ],
           ),
           _buildItemDesc(itemDesc, itemDescDetail),
@@ -275,7 +243,7 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-  Container _buildItemInc(ProductModel productModel) {
+  _buildItemInc(ProductModel productModel) {
     return Container(
       alignment: Alignment.center,
       height: 40.0,

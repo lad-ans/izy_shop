@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_modular/flutter_modular_annotations.dart';
-import 'package:izy_shop/app/modules/customer/domain/entities/logged_user.dart';
 
 import '../../domain/repositories/product_repository.dart';
 import '../models/product_model.dart';
@@ -24,15 +23,4 @@ class ProductRepositoryImpl implements ProductRepository {
     });
   }
 
-  @override
-  Future<void> addToCart(ProductModel productModel) async {
-    CollectionReference _collRef = firestore
-        .collection('customers')
-        .doc(LoggedUser.instance.loggedUserUid)
-        .collection('cart');
-
-    await _collRef.add(
-      productModel.toMap(),
-    );
-  }
 }
