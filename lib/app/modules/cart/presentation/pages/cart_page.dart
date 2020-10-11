@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../core/domain/configs/core_config.dart';
@@ -29,6 +30,12 @@ class _CartPageState extends State<CartPage> {
   final GetCartStore _getCartStore = Modular.get<GetCartStore>();
 
   @override
+  void initState() {
+    _getCartStore.execute();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -42,14 +49,17 @@ class _CartPageState extends State<CartPage> {
   }
 
   Widget _buidBottomNavBar() {
-    List<ProductModel> productList = _getCartStore.execute();
+    return Observer(builder: (_) {
+      List<ProductModel> productList = _getCartStore.cartList;
 
-    var subTotal = 0;
-    // for (var item in productList) {
-    //   subTotal += item.price * item.qty;
-    // }
-    var total = subTotal + 350;
-    return Column(
+      num subTotal = 0;
+
+      for (ProductModel item in productList) {
+        subTotal += item.price * item.qty;
+      }
+
+      num total = subTotal + 350;
+      return Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -85,55 +95,60 @@ class _CartPageState extends State<CartPage> {
             textColor: Colors.black87,
             textSize: 14.0,
           )
-        ]);
+        ],
+      );
+    });
   }
 
   _buildBody() {
-    List<ProductModel> productList = _getCartStore.execute();
-    return Container(
-      height: getHeight(context),
-      child: Stack(
-        children: [
-          SizedBox(height: getStatusBar(context)),
-          Padding(
-            padding: EdgeInsets.only(top: 75),
-            child: SingleChildScrollView(
-              child: productList.length == 0
-                  ? _buildEmptyCart()
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        _buildHeader(),
-                        Divider(),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: productList?.map<Widget>((productModel) {
-                            return _buildBodyContent(
-                              productModel.img,
-                              productModel.name,
-                              productModel.description ?? 'No description!',
-                              productModel.price,
-                              productModel,
-                            );
-                          })?.toList(),
-                        ),
-                      ],
-                    ),
+    return Observer(builder: (_) {
+      List<ProductModel> productList = _getCartStore.cartList;
+      print(productList);
+      return Container(
+        height: getHeight(context),
+        child: Stack(
+          children: [
+            SizedBox(height: getStatusBar(context)),
+            Padding(
+              padding: EdgeInsets.only(top: 75),
+              child: SingleChildScrollView(
+                child: productList.length == 0
+                    ? _buildEmptyCart()
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          _buildHeader(),
+                          Divider(),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: productList.map<Widget>((productModel) {
+                              return _buildBodyContent(
+                                productModel.img,
+                                productModel.name,
+                                productModel.description ?? 'No description!',
+                                productModel.price,
+                                productModel,
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+              ),
             ),
-          ),
-          CustomStatusBar(color: Colors.white),
-          Padding(
-            padding: EdgeInsets.only(top: getStatusBar(context)),
-            child: ShoppingAppBar(
-              onNavigate: true,
-              routeEntity: widget.routeEntity,
-              fullAppBar: false,
-              isCartPage: true,
+            CustomStatusBar(color: Colors.white),
+            Padding(
+              padding: EdgeInsets.only(top: getStatusBar(context)),
+              child: ShoppingAppBar(
+                onNavigate: true,
+                routeEntity: widget.routeEntity,
+                fullAppBar: false,
+                isCartPage: true,
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 
   Container _buildEmptyCart() {
@@ -209,10 +224,10 @@ class _CartPageState extends State<CartPage> {
                     productImg: product,
                     showItemPrice: false),
               ),
-              // Text(
-              //   '${NumberFormatter.instance.numToString(price * productModel.qty)} MT',
-              //   style: TextStyle(fontSize: 11.0, color: Colors.red[300]),
-              // ),
+              Text(
+                '${NumberFormatter.instance.numToString(price * productModel.qty)} MT',
+                style: TextStyle(fontSize: 11.0, color: Colors.red[300]),
+              ),
             ],
           ),
           _buildItemDesc(itemDesc, itemDescDetail),
@@ -268,16 +283,18 @@ class _CartPageState extends State<CartPage> {
                         Icon(Icons.remove, size: 20, color: Colors.black87))),
             onTap: () {
               if (productModel.qty > 1) {
-                productModel.qty--;
+                setState(() {
+                  productModel.qty--;
+                });
               }
-              productModel.reference.update({
-                'qty': productModel.qty,
-              });
+              // productModel.reference.update({
+              //   'qty': productModel.qty,
+              // });
             },
           ),
           SizedBox(width: 15.0),
           Text(
-            productModel.qty.toString() ?? '1',
+            productModel.qty.toString(),
             style: TextStyle(
                 color: Colors.redAccent,
                 fontWeight: FontWeight.bold,
@@ -299,11 +316,13 @@ class _CartPageState extends State<CartPage> {
             ),
             onTap: () {
               if (productModel.qty >= 1) {
-                productModel.qty++;
+                setState(() {
+                  productModel.qty++;
+                });
               }
-              productModel.reference.update({
-                'qty': productModel.qty,
-              });
+              // productModel.reference.update({
+              //   'qty': productModel.qty,
+              // });
             },
           ),
         ],

@@ -16,6 +16,7 @@ abstract class _AddToCartStoreBase with Store {
 
   _AddToCartStoreBase(this._addToCart);
 
+  @action
   void execute(ProductModel productModel) {
     _addToCart(productModel);
   }

@@ -46,9 +46,11 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
       child: Row(
         children: [
           _buildRoundedButton(Icons.arrow_back, label: 'Back', onTap: () {
-            List<ProductModel> cartList = _getCartStore.execute();
+            List<ProductModel> cartList = [];
+            _getCartStore.execute();
+            cartList.addAll(_getCartStore.cartList);
             if (widget.onBack) {
-              if (cartList?.length != 0) {
+              if (cartList.length > 0) {
                 return showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
@@ -232,11 +234,13 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
     );
   }
 
-  Widget _buildNavigatorLogo() => InkWell(
+  _buildNavigatorLogo() => InkWell(
       onTap: () {
-        List<ProductModel> cartList = _getCartStore.execute();
+        List<ProductModel> cartList = [];
+        _getCartStore.execute();
+        cartList.addAll(_getCartStore.cartList);
         if (widget.onNavigate) {
-          if (cartList?.length != 0) {
+          if (cartList.length > 0) {
             return showDialog(
               context: context,
               builder: (context) => AlertDialog(

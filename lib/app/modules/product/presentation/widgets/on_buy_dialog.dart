@@ -93,12 +93,14 @@ class OnBuyDialog extends StatelessWidget {
                     color: Colors.green,
                     icon: Icons.add_shopping_cart,
                     onTap: () {
-                      List<ProductModel> cartList = _getCartStore.execute();
-                      List<ProductModel> tempList = cartList
+                      _getCartStore.execute();
+                      List<ProductModel> cartList = _getCartStore.cartList;
+                      List<ProductModel> tempList = [];
+                      tempList.addAll(cartList
                           ?.where((e) => e.id == productModel.id)
-                          ?.toList();
+                          ?.toList());
                       if (LoggedUser.instance.loggedUserUid != null) {
-                        if (tempList.length == 0) {
+                        if (tempList?.length == 0) {
                           _addToCartStore.execute(productModel);
                         } else {
                           EdgeAlert.show(
@@ -135,7 +137,7 @@ class OnBuyDialog extends StatelessWidget {
     );
   }
 
-  GestureDetector _buildDialogButton(
+  _buildDialogButton(
       {double height,
       double width,
       Color color,
@@ -159,7 +161,7 @@ class OnBuyDialog extends StatelessWidget {
     );
   }
 
-  Row _buildContentRow() {
+  _buildContentRow() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -173,7 +175,7 @@ class OnBuyDialog extends StatelessWidget {
     );
   }
 
-  Column _buildColumnRight() {
+  _buildColumnRight() {
     return Column(
       children: [
         Row(
@@ -212,7 +214,7 @@ class OnBuyDialog extends StatelessWidget {
     );
   }
 
-  Column _buildColumnLeft() {
+  _buildColumnLeft() {
     return Column(
       children: [
         Visibility(
@@ -272,7 +274,7 @@ class OnBuyDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildOnQtySelect({String qty, bool isSelected = false}) {
+  _buildOnQtySelect({String qty, bool isSelected = false}) {
     return Padding(
       padding: const EdgeInsets.all(2.0),
       child: Column(
@@ -295,7 +297,7 @@ class OnBuyDialog extends StatelessWidget {
     );
   }
 
-  Column _buildItemSize({String size, bool isSelected = false}) {
+  _buildItemSize({String size, bool isSelected = false}) {
     return Column(
       children: [
         Container(

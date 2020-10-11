@@ -1,5 +1,6 @@
 import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../core/domain/configs/core_config.dart';
@@ -23,10 +24,11 @@ class ShoppingPage extends StatefulWidget {
 
 class _ShoppingPageState extends State<ShoppingPage> {
   final _getCartStore = Modular.get<GetCartStore>();
+
   @override
   void initState() {
-    print(widget.routeEntity.storeRef);
     setLandscapeOrientation();
+    _getCartStore.execute();
     super.initState();
   }
 
@@ -89,32 +91,38 @@ class _ShoppingPageState extends State<ShoppingPage> {
   }
 
   _buildListItem() {
-    List<ProductModel> cartList = _getCartStore.execute();
-    return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemCount: cartList.length,
-      itemBuilder: (context, index) {
-        ProductModel productModel = cartList[index];
-        return ItemTile(
-          itemWidth: 60.0,
-          isOnBasket: true,
-          color: Theme.of(context).cardColor,
-          productModel: productModel,
-          showItemPrice: false,
-        );
-      },
-    );
+    return Observer(builder: (_) {
+      List<ProductModel> cartList = _getCartStore.cartList;
+      return ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: cartList.length,
+        itemBuilder: (context, index) {
+          ProductModel productModel = cartList[index];
+          return ItemTile(
+            itemWidth: 60.0,
+            isOnBasket: true,
+            color: Theme.of(context).cardColor,
+            productModel: productModel,
+            showItemPrice: false,
+          );
+        },
+      );
+    });
   }
 
   _buildCartTile(BuildContext context) {
-    List<ProductModel> cartList = _getCartStore.execute();
+    List<ProductModel> cartList = _getCartStore.cartList;
     return DragTarget<ProductModel>(
       builder: (context, incoming, rejected) {
         return InkWell(
           onTap: () async {
             setAllOrientations();
-            await Modular.to.pushNamed('/cart',
-                arguments: RouteEntity(storeImg: widget.routeEntity.storeImg));
+            await Modular.to.pushNamed(
+              '/cart',
+              arguments: RouteEntity(
+                storeImg: widget.routeEntity.storeImg,
+              ),
+            );
             setLandscapeOrientation();
           },
           child: Material(
@@ -142,8 +150,9 @@ class _ShoppingPageState extends State<ShoppingPage> {
       },
       onAccept: (ProductModel productModel) {
         Modular.get<AddToCartStore>().setDragFeedbackColor(Colors.transparent);
-        List<ProductModel> tempList =
-            cartList?.where((e) => e.id == productModel.id)?.toList();
+        List<ProductModel> tempList = [];
+        tempList
+            .addAll(cartList?.where((e) => e.id == productModel.id)?.toList());
         if (LoggedUser.instance.loggedUserUid != null) {
           if (tempList.length == 0) {
             Modular.get<AddToCartStore>().execute(productModel);
@@ -177,46 +186,52 @@ class _ShoppingPageState extends State<ShoppingPage> {
   }
 
   _buildCart() {
-    List<ProductModel> cartList = _getCartStore.execute();
-    return Container(
-      alignment: Alignment.center,
-      child: Stack(
-        overflow: Overflow.visible,
-        children: [
-          cartList.length != 0
-              ? Icon(
-                  Icons.add_shopping_cart,
-                  size: 40,
-                  color: Colors.white,
-                )
-              : Image.asset(DRAG_DROP, height: 40.0),
-          Positioned(
-            top: -8.0,
-            right: -5.0,
-            child: Visibility(
-              visible: cartList.length != 0,
-              child: _buildCartCount(),
+    return Observer(builder: (_) {
+      List<ProductModel> cartList = _getCartStore.cartList;
+      return Container(
+        alignment: Alignment.center,
+        child: Stack(
+          overflow: Overflow.visible,
+          children: [
+            cartList.length != 0
+                ? Icon(
+                    Icons.add_shopping_cart,
+                    size: 40,
+                    color: Colors.white,
+                  )
+                : Image.asset(DRAG_DROP, height: 40.0),
+            Positioned(
+              top: -8.0,
+              right: -5.0,
+              child: Visibility(
+                visible: cartList.length != 0,
+                child: _buildCartCount(),
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 
   _buildCartCount() {
-    List<ProductModel> cartList = _getCartStore.execute();
     return Container(
       alignment: Alignment.center,
       width: 20.0,
       height: 20.0,
       decoration: BoxDecoration(
-          color: Colors.redAccent, borderRadius: BorderRadius.circular(10.0)),
-      child: Text(
-        cartList.length.toString(),
-        overflow: TextOverflow.ellipsis,
-        textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.white, fontSize: 10.0),
+        color: Colors.redAccent,
+        borderRadius: BorderRadius.circular(10.0),
       ),
+      child: Observer(builder: (_) {
+        List<ProductModel> cartList = _getCartStore.cartList;
+        return Text(
+          cartList.length.toString(),
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.white, fontSize: 10.0),
+        );
+      }),
     );
   }
 

@@ -6,14 +6,14 @@ import 'package:mobx/mobx.dart';
 part 'remove_from_cart_store.g.dart';
 
 @Injectable()
-class RemoveFromCartStore = _RemoveFromCartStoreBase
-    with _$RemoveFromCartStore;
+class RemoveFromCartStore = _RemoveFromCartStoreBase with _$RemoveFromCartStore;
 
 abstract class _RemoveFromCartStoreBase with Store {
   final RemoveFromCart _removeFromCart;
 
   _RemoveFromCartStoreBase(this._removeFromCart);
 
+  @action
   void execute(ProductModel productModel) {
     _removeFromCart(productModel);
   }

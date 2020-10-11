@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../core/domain/entities/route_entity.dart';
@@ -125,13 +126,13 @@ class ItemTile extends StatelessWidget {
           ),
         ),
         onTap: () {
-          /// get cart
-          List<ProductModel> cartList = _getCartStore.execute();
-          print(cartList);
-          List<ProductModel> tempList =
-              cartList?.where((e) => e.id == productModel.id)?.toList();
+          _getCartStore.execute();
+          List<ProductModel> cartList = _getCartStore.cartList;
+          List<ProductModel> tempList = [];
+          tempList.addAll(
+              cartList?.where((e) => e.id == productModel.id)?.toList());
           if (LoggedUser.instance.loggedUserUid != null) {
-            if (tempList?.length == 0) {
+            if (tempList.length == 0) {
               /// adding to cart
               _addToCartStore.execute(productModel);
             } else {
