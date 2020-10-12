@@ -39,6 +39,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.routeEntity.storeId);
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: _buildBody(),
@@ -134,6 +135,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         textSize: 14.0,
                         onTap: () async {
                           if (_formKey.currentState.validate()) {
+                            orderModel.storeId = widget.routeEntity.storeId;
                             orderModel.products = widget.routeEntity.cartList;
                             orderModel.amount = widget.routeEntity.totalAmount;
                             orderModel.customerName =

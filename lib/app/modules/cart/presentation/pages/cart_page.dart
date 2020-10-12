@@ -78,6 +78,7 @@ class _CartPageState extends State<CartPage> {
                 : () => Modular.to.pushNamed(
                       '/checkout',
                       arguments: RouteEntity(
+                          storeId: widget.routeEntity.storeId,
                           cartList: productList,
                           totalAmount: total,
                           storeImg: widget.routeEntity.storeImg,
@@ -102,7 +103,6 @@ class _CartPageState extends State<CartPage> {
   _buildBody() {
     return Observer(builder: (_) {
       List<ProductModel> productList = _cartDataSource.customerCart;
-      print(productList);
       return Container(
         height: getHeight(context),
         child: Stack(
@@ -141,7 +141,6 @@ class _CartPageState extends State<CartPage> {
                 onNavigate: true,
                 routeEntity: widget.routeEntity,
                 fullAppBar: false,
-                isCartPage: true,
               ),
             ),
           ],

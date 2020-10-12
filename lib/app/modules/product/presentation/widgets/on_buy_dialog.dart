@@ -2,30 +2,29 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:izy_shop/app/modules/cart/data/datasources/cart_data_source.dart';
+import 'package:izy_shop/app/modules/product/presentation/stores/get_price_by_key_store.dart';
 
 import '../../../../core/domain/entities/route_entity.dart';
 import '../../../../core/domain/utils/number_formatter.dart';
 import '../../../../core/presentation/widgets/custom_rich_text.dart';
-import '../../../cart/presentation/stores/add_to_cart_store.dart';
+import '../../../cart/data/datasources/cart_data_source.dart';
 import '../../../customer/domain/entities/logged_user.dart';
 import '../../data/models/product_model.dart';
 import 'description_dialog.dart';
 
 class OnBuyDialog extends StatelessWidget {
-  final bool isSelected;
   final ProductModel productModel;
   final RouteEntity routeEntity;
   OnBuyDialog({
     Key key,
-    this.isSelected = false,
     this.productModel,
     this.routeEntity,
   });
 
   final _cartDataSource = Modular.get<CartDataSource>();
-  final _addToCartStore = Modular.get<AddToCartStore>();
+  final _getPriceByKeyStore = Modular.get<GetPriceByKeyStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -180,11 +179,13 @@ class OnBuyDialog extends StatelessWidget {
       children: [
         Row(
           children: [
-            CustomRichText(
-              labelOne: 'Price: ',
-              labelTwo:
-                  '${NumberFormatter.instance.numToString(productModel?.price)} MT',
-            ),
+            // Observer(builder: (_) {
+            //   return CustomRichText(
+            //       labelOne: 'Price: ',
+            //       labelTwo: _getPriceByKeyStore.customPrice == 0
+            //           ? '${NumberFormatter.instance.numToString(productModel?.price)} MT'
+            //           : _getPriceByKeyStore.customPrice == productModel.customPrice '${NumberFormatter.instance.numToString(_getPriceByKeyStore.customPrice).toString()} MT');
+            // }),
             Text(
               ' (unit)',
               style: TextStyle(fontWeight: FontWeight.w700),
@@ -208,8 +209,11 @@ class OnBuyDialog extends StatelessWidget {
           ),
         ),
         Divider(),
-        Text(productModel.name,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          child: Text(productModel.name,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        ),
       ],
     );
   }
@@ -229,14 +233,16 @@ class OnBuyDialog extends StatelessWidget {
         ),
         SizedBox(height: 10.0),
         Visibility(
-          visible: productModel?.hasSize,
-          child: Row(
-            children: [
-              _buildItemSize(size: 'small'),
-              SizedBox(width: 10.0),
-              _buildItemSize(size: 'large', isSelected: true),
-            ],
-          ),
+          visible: productModel.hasSize,
+          child: productModel.hasSize
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: productModel?.customPrice?.keys
+                      ?.map<Widget>(
+                          (key) => _buildItemSize(size: key, key: key))
+                      ?.toList(),
+                )
+              : Container(),
         ),
         Divider(),
         Visibility(
@@ -249,79 +255,133 @@ class OnBuyDialog extends StatelessWidget {
         /// if has weight
         Visibility(
           visible: productModel.hasWeight,
-          child: Row(
-            children: [
-              _buildOnQtySelect(qty: '0.5kg'),
-              _buildOnQtySelect(qty: '1kg', isSelected: true),
-              _buildOnQtySelect(qty: '5kg'),
-              _buildOnQtySelect(qty: '10kg'),
-            ],
-          ),
+          child: productModel.hasWeight
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: productModel?.customPrice?.keys
+                      ?.map<Widget>(
+                          (key) => _buildOnQtySelect(qty: key, key: key))
+                      ?.toList(),
+                )
+              : Container(),
         ),
 
         /// if has volume
         Visibility(
           visible: productModel.hasVol,
-          child: Row(
-            children: [
-              _buildOnQtySelect(qty: '1L'),
-              _buildOnQtySelect(qty: '2L', isSelected: true),
-              _buildOnQtySelect(qty: '5L'),
-            ],
-          ),
+          child: productModel.hasVol
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: productModel?.customPrice?.keys
+                      ?.map<Widget>(
+                          (key) => _buildOnQtySelect(qty: key, key: key))
+                      ?.toList(),
+                )
+              : Container(),
         )
       ],
     );
   }
 
-  _buildOnQtySelect({String qty, bool isSelected = false}) {
+  _buildOnQtySelect({String qty, bool isSelected = false, String key}) {
     return Padding(
-      padding: const EdgeInsets.all(2.0),
+      padding: const EdgeInsets.all(3.0),
       child: Column(
         children: [
-          Text(qty),
-          Container(
-            height: 30.0,
-            width: 30.0,
-            decoration: BoxDecoration(
-              color: isSelected ? Colors.green[200] : Colors.transparent,
-              borderRadius: BorderRadius.circular(30.0),
-              border: Border.all(
-                width: 0.6,
-                color: isSelected ? Colors.green[200] : Colors.black,
-              ),
+          Text(
+            qty.toUpperCase(),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
             ),
           ),
+          SizedBox(height: 5.0),
+          Observer(builder: (_) {
+            return InkWell(
+              borderRadius: BorderRadius.circular(30.0),
+              onTap: () {
+                _getPriceByKeyStore.selectKey(key, productModel.customPrice);
+              },
+              child: Container(
+                height: 30.0,
+                width: 30.0,
+                decoration: BoxDecoration(
+                  color: _getPriceByKeyStore.isSelected == key
+                      ? Colors.green[200]
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(30.0),
+                  border: Border.all(
+                    width: 0.6,
+                    color: isSelected ? Colors.green[200] : Colors.black,
+                  ),
+                ),
+              ),
+            );
+          }),
         ],
       ),
     );
   }
 
-  _buildItemSize({String size, bool isSelected = false}) {
-    return Column(
-      children: [
-        Container(
-          height: 100.0,
-          width: 100.0,
-          decoration: BoxDecoration(
-            color: isSelected ? Colors.green[200] : Colors.transparent,
-            borderRadius: BorderRadius.circular(30.0),
-            border: Border.all(
-              width: 0.6,
-              color: isSelected ? Colors.green[200] : Colors.black,
-            ),
-          ),
-          child: ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
-              child: CachedNetworkImage(
-                imageUrl: productModel.img,
-                width: 100.0,
+  _buildItemSize({String size, String key}) {
+    return InkWell(
+      onTap: () {
+        _getPriceByKeyStore.selectKey(key, productModel.customPrice);
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(3.0),
+        child: Column(
+          children: [
+            Observer(builder: (_) {
+              return Container(
                 height: 100.0,
-                fit: BoxFit.cover,
-              )),
+                width: 100.0,
+                decoration: BoxDecoration(
+                  color: _getPriceByKeyStore.isSelected == key
+                      ? Colors.green[200]
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(30.0),
+                  border: Border.all(
+                    width: 0.6,
+                    color: _getPriceByKeyStore.isSelected == key
+                        ? Colors.green[200]
+                        : Colors.black,
+                  ),
+                ),
+                child: Observer(builder: (_) {
+                  return Container(
+                    width: 100.0,
+                    height: 100.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.0),
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: CachedNetworkImageProvider(
+                          productModel.img,
+                        ),
+                        colorFilter: _getPriceByKeyStore.isSelected == key
+                            ? ColorFilter.mode(
+                                Colors.red[300].withOpacity(0.7),
+                                BlendMode.color,
+                              )
+                            : null,
+                      ),
+                    ),
+                  );
+                }),
+              );
+            }),
+            SizedBox(height: 5.0),
+            Text(
+              size.toUpperCase(),
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
-        Text(size, style: TextStyle(fontSize: 12))
-      ],
+      ),
     );
   }
 }

@@ -94,6 +94,7 @@ class StorePage extends StatelessWidget {
                       await Modular.to.pushNamed(
                         '/store/shopping',
                         arguments: RouteEntity(
+                            storeId: store.reference.id,
                             productCategories: store.categories,
                             storeImg: store.logo,
                             storeName: store.name,

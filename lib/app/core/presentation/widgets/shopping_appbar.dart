@@ -15,14 +15,12 @@ import 'help_dialog.dart';
 
 class ShoppingAppBar extends StatefulWidget {
   final bool fullAppBar;
-  final bool isCartPage;
   final RouteEntity routeEntity;
   final bool onNavigate;
   final bool onBack;
   const ShoppingAppBar({
     Key key,
     this.fullAppBar = true,
-    this.isCartPage = false,
     this.routeEntity,
     this.onNavigate = false,
     this.onBack = false,
@@ -120,7 +118,7 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
           Visibility(
               visible: widget.fullAppBar,
               child: _buildRoundedButton(AntDesign.filter,
-                  label: 'Filters', onTap: () {})),
+                  label: 'Filters', onTap: () {}, isFilter: true)),
           SizedBox(width: 2.0),
           _buildRoundedButton(
             AntDesign.question,
@@ -337,19 +335,20 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
   //   );
   // }
 
-  Widget _buildRoundedButtonLabel(String label) => Container(
+  _buildRoundedButtonLabel(String label, {bool isFilter = false}) => Container(
         width: !widget.fullAppBar ? 30.0 : 45,
         child: Text(
           label ?? '',
           textAlign: TextAlign.center,
           style: TextStyle(
+            color: isFilter ? Colors.black26 : Colors.black,
             fontSize: !widget.fullAppBar ? 8.0 : 12.0,
           ),
         ),
       );
 
-  Widget _buildRoundedButton(IconData icon,
-      {VoidCallback onTap, String label}) {
+  _buildRoundedButton(IconData icon,
+      {VoidCallback onTap, String label, bool isFilter = false}) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(45.0),
@@ -358,15 +357,17 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
         child: Column(
           children: [
             Container(
-                height: !widget.fullAppBar ? 40.0 : 45.0,
-                width: !widget.fullAppBar ? 40.0 : 45.0,
-                decoration: BoxDecoration(
-                    color: Colors.black45,
-                    borderRadius:
-                        BorderRadius.circular(widget.fullAppBar ? 30.0 : 45.0)),
-                child: Icon(icon,
-                    size: !widget.fullAppBar ? 20 : 30.0, color: Colors.white)),
-            _buildRoundedButtonLabel(label),
+              height: !widget.fullAppBar ? 40.0 : 45.0,
+              width: !widget.fullAppBar ? 40.0 : 45.0,
+              decoration: BoxDecoration(
+                  color: isFilter ? Colors.black26 : Colors.black45,
+                  borderRadius:
+                      BorderRadius.circular(widget.fullAppBar ? 30.0 : 45.0)),
+              child: Icon(icon,
+                  size: !widget.fullAppBar ? 20 : 30.0,
+                  color: isFilter ? Colors.white38 : Colors.white),
+            ),
+            _buildRoundedButtonLabel(label, isFilter: isFilter),
           ],
         ),
       ),

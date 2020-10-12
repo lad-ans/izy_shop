@@ -21,6 +21,7 @@ import 'modules/customer/presentation/stores/get_logged_customer_store.dart';
 import 'modules/home/home_module.dart';
 import 'modules/product/data/repositories/product_repository_impl.dart';
 import 'modules/product/domain/usecases/get_product.dart';
+import 'modules/product/presentation/stores/get_price_by_key_store.dart';
 import 'modules/product/presentation/stores/get_product_store.dart';
 import 'modules/splash/splash_module.dart';
 import 'modules/store/store_module.dart';
@@ -50,6 +51,9 @@ class AppModule extends MainModule {
         $AuthRepositoryImpl,
         $SignOutImpl,
         $SignOutStore,
+
+        /// store
+        $GetPriceByKeyStore
       ];
 
   @override

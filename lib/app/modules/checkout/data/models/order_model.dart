@@ -1,6 +1,7 @@
 import '../../../product/data/models/product_model.dart';
 
 class OrderModel {
+  String storeId;
   List<ProductModel> products;
   String location;
   String road;
@@ -15,6 +16,7 @@ class OrderModel {
   double longitude;
 
   OrderModel({
+    this.storeId,
     this.products,
     this.location,
     this.road,
@@ -44,6 +46,7 @@ class OrderModel {
       'onDeliveryPhone': this.onDeliveryPhone,
       'latitude': this.latitude,
       'longitude': this.longitude,
+      'storeId': this.storeId
     };
   }
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-
+import 'dart:ui' as ui;
 import '../../../../app_controller.dart';
 import '../../../../core/domain/configs/core_config.dart';
 import '../../../../core/domain/consts/img.dart';
@@ -21,16 +21,33 @@ class StoreTile extends StatelessWidget {
     this.index,
   }) : super(key: key);
 
-  Widget _buildLabel() => Container(
+  _buildLabel(BuildContext context) => Container(
         padding: EdgeInsets.all(10.0),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontFamily: 'Sans',
-            color: Colors.white,
-            fontWeight: FontWeight.w200,
-            fontSize: 40,
-          ),
+        child: Stack(
+          children: [
+            Positioned(
+              top: 2.0,
+              left: 2.0,
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontFamily: 'SofiaPro',
+                  color: Colors.black,
+                  fontWeight: FontWeight.w200,
+                  fontSize: 35,
+                ).copyWith(color: Colors.black.withOpacity(0.5)),
+              ),
+            ),
+            BackdropFilter(
+              filter: ui.ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
+              child: Text(label, style: TextStyle(
+                  fontFamily: 'SofiaPro',
+                  color: Colors.white.withOpacity(0.7),
+                  fontWeight: FontWeight.w200,
+                  fontSize: 35,
+                )),
+            ),
+          ],
         ),
       );
   final AppController _controller = Modular.get<AppController>();
@@ -60,7 +77,7 @@ class StoreTile extends StatelessWidget {
                 image: NetworkImage(img),
               ),
             ),
-            child: _buildLabel(),
+            child: _buildLabel(context),
           );
         }),
       ),

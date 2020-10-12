@@ -119,6 +119,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
               await Modular.to.pushNamed(
                 '/cart',
                 arguments: RouteEntity(
+                  storeId: widget.routeEntity.storeId,
                   storeImg: widget.routeEntity.storeImg,
                 ),
               );

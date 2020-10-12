@@ -5,6 +5,7 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:izy_shop/app/modules/cart/data/datasources/cart_data_source.dart';
+import 'package:izy_shop/app/modules/product/presentation/stores/get_price_by_key_store.dart';
 
 import '../../../../core/domain/entities/route_entity.dart';
 import '../../../../core/domain/utils/number_formatter.dart';
@@ -42,27 +43,28 @@ class ItemTile extends StatelessWidget {
 
   /// dependencies
   final _cartDataSource = Modular.get<CartDataSource>();
-  final _addToCartStore = Modular.get<AddToCartStore>();
+  final _getPriceByKeyStore = Modular.get<GetPriceByKeyStore>();
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: isOnBasket
-                ? (context) => DescriptionDialog(
-                      productModel: productModel,
-                    )
-                : isOnCart
-                    ? (context) => CartProductDialog(
-                          productModel: productModel,
-                        )
-                    : (context) => OnBuyDialog(
-                          routeEntity: routeEntity,
-                          productModel: productModel,
-                        ));
+          barrierDismissible: false,
+          context: context,
+          builder: isOnBasket
+              ? (context) => DescriptionDialog(
+                    productModel: productModel,
+                  )
+              : isOnCart
+                  ? (context) => CartProductDialog(
+                        productModel: productModel,
+                      )
+                  : (context) => OnBuyDialog(
+                        routeEntity: routeEntity,
+                        productModel: productModel,
+                      ),
+        );
       },
       child: Container(
         child: Stack(
@@ -173,14 +175,18 @@ class ItemTile extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(
-              '${NumberFormatter.instance.numToString(productModel?.price)} MT',
-              style: TextStyle(
-                color: Colors.red[200],
-                fontSize: 10.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            Observer(builder: (_) {
+              return Text(
+                _getPriceByKeyStore.customPrice == 0
+                    ? '${NumberFormatter.instance.numToString(productModel?.price)} MT'
+                    : '${NumberFormatter.instance.numToString(_getPriceByKeyStore.customPrice).toString()} MT',
+                style: TextStyle(
+                  color: Colors.red[200],
+                  fontSize: 10.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              );
+            }),
           ],
         ),
       ),

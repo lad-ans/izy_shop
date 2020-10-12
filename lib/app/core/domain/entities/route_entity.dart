@@ -5,6 +5,7 @@ import '../../../modules/checkout/data/models/order_model.dart';
 import '../../../modules/product/data/models/product_model.dart';
 
 class RouteEntity {
+  final String storeId;
   final num totalAmount;
   final String storeCategory;
   final List productCategories;
@@ -17,6 +18,7 @@ class RouteEntity {
   final OrderModel orderModel;
 
   RouteEntity({
+    this.storeId,
     this.totalAmount,
     this.storeCategory,
     this.productCategories,

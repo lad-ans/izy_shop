@@ -14,6 +14,10 @@ import '../store/presentation/stores/get_market_store.dart';
 import '../store/presentation/widgets/store_tile.dart';
 
 class HomePage extends StatelessWidget {
+  HomePage() {
+    setAllOrientations();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
