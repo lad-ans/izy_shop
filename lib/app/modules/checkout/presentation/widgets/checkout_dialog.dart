@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:izy_shop/app/modules/cart/presentation/stores/cart_store_module.dart';
 
 import '../../../../app_controller.dart';
 import '../../../../core/presentation/widgets/rounded_button.dart';
+import '../../../cart/data/datasources/cart_data_source.dart';
 
 class CheckoutDialog extends StatelessWidget {
   final bool isSelected;
@@ -14,7 +14,8 @@ class CheckoutDialog extends StatelessWidget {
   });
 
   final _controller = Modular.get<AppController>();
-  final _removeAllCartStore = Modular.get<RemoveAllCartStore>();
+  final _cartDataSource = Modular.get<CartDataSource>();
+
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
@@ -56,7 +57,7 @@ class CheckoutDialog extends StatelessWidget {
             textColor: Colors.black54,
             onTap: () {
               _controller.select(9);
-              _removeAllCartStore.execute();
+              _cartDataSource.removeAll();
               Modular.to.pushReplacementNamed('/home');
             },
             index: 9,

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../core/domain/entities/route_entity.dart';
-import '../../../cart/presentation/stores/cart_store_module.dart';
+import '../../../cart/data/datasources/cart_data_source.dart';
 import '../../data/models/product_model.dart';
 
 class CartProductDialog extends StatelessWidget {
@@ -15,7 +15,7 @@ class CartProductDialog extends StatelessWidget {
     this.productModel,
   }) : super(key: key);
 
-  final _removeFromCartStore = Modular.get<RemoveFromCartStore>();
+  final _cartDataSource = Modular.get<CartDataSource>();
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
@@ -38,7 +38,7 @@ class CartProductDialog extends StatelessWidget {
                 child: Container(
                   child: _buildRemovalButton(
                     onPressed: () {
-                      _removeFromCartStore.execute(productModel);
+                      _cartDataSource.removeFromCart(productModel);
                       Modular.to.pop();
                     },
                   ),

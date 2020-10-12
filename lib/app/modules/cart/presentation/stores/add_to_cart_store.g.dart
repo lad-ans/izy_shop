@@ -7,7 +7,7 @@ part of 'add_to_cart_store.dart';
 // **************************************************************************
 
 final $AddToCartStore = BindInject(
-  (i) => AddToCartStore(i<AddToCart>()),
+  (i) => AddToCartStore(),
   singleton: true,
   lazy: true,
 );

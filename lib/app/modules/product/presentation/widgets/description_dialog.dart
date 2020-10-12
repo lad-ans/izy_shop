@@ -1,11 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:izy_shop/app/core/domain/entities/route_entity.dart';
-import 'package:izy_shop/app/core/domain/utils/number_formatter.dart';
-import 'package:izy_shop/app/modules/cart/presentation/stores/remove_from_cart_store.dart';
 
+import '../../../../core/domain/entities/route_entity.dart';
+import '../../../../core/domain/utils/number_formatter.dart';
 import '../../../../core/presentation/widgets/custom_rich_text.dart';
+import '../../../cart/data/datasources/cart_data_source.dart';
 import '../../data/models/product_model.dart';
 
 class DescriptionDialog extends StatelessWidget {
@@ -21,7 +21,7 @@ class DescriptionDialog extends StatelessWidget {
     this.shoRemovalButton = true,
   }) : super(key: key);
 
-  final _removeFromCartStore = Modular.get<RemoveFromCartStore>();
+  final _cartDataSource = Modular.get<CartDataSource>();
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
@@ -59,7 +59,7 @@ class DescriptionDialog extends StatelessWidget {
                     padding: const EdgeInsets.all(5.0),
                     child: _buildRemovalButton(
                       onPressed: () {
-                        _removeFromCartStore.execute(productModel);
+                        _cartDataSource.removeFromCart(productModel);
                         Modular.to.pop();
                       },
                     ),

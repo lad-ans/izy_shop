@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:izy_shop/app/modules/cart/data/datasources/cart_data_source.dart';
 
 import '../../../../core/domain/entities/route_entity.dart';
 import '../../../../core/domain/utils/number_formatter.dart';
 import '../../../cart/presentation/stores/add_to_cart_store.dart';
-import '../../../cart/presentation/stores/get_cart_store.dart';
 import '../../../customer/domain/entities/logged_user.dart';
 import '../../data/models/product_model.dart';
 import 'cart_product_dialog.dart';
@@ -41,7 +41,7 @@ class ItemTile extends StatelessWidget {
   });
 
   /// dependencies
-  final _getCartStore = Modular.get<GetCartStore>();
+  final _cartDataSource = Modular.get<CartDataSource>();
   final _addToCartStore = Modular.get<AddToCartStore>();
 
   @override
@@ -111,55 +111,56 @@ class ItemTile extends StatelessWidget {
   }
 
   Widget _buildAddToCartButton(BuildContext context) {
-    return Visibility(
-      visible: showItemPrice,
-      child: InkWell(
-        child: Material(
-          elevation: 6.0,
-          color: Colors.white60,
-          borderRadius: BorderRadius.circular(70.0),
-          child: Center(
-            child: Icon(
-              Ionicons.ios_add_circle,
-              color: Colors.green[200],
+    return Observer(builder: (_) {
+      List<ProductModel> cartList = _cartDataSource.customerCart;
+      return Visibility(
+        visible: showItemPrice,
+        child: InkWell(
+          child: Material(
+            elevation: 6.0,
+            color: Colors.white60,
+            borderRadius: BorderRadius.circular(70.0),
+            child: Center(
+              child: Icon(
+                Ionicons.ios_add_circle,
+                color: Colors.green[200],
+              ),
             ),
           ),
-        ),
-        onTap: () {
-          _getCartStore.execute();
-          List<ProductModel> cartList = _getCartStore.cartList;
-          List<ProductModel> tempList = [];
-          tempList.addAll(
-              cartList?.where((e) => e.id == productModel.id)?.toList());
-          if (LoggedUser.instance.loggedUserUid != null) {
-            if (tempList.length == 0) {
-              /// adding to cart
-              _addToCartStore.execute(productModel);
+          onTap: () {
+            List<ProductModel> tempList = [];
+            tempList.addAll(
+                cartList?.where((e) => e.id == productModel.id)?.toList());
+            if (LoggedUser.instance.loggedUserUid != null) {
+              if (tempList.length == 0) {
+                /// adding to cart
+                _cartDataSource.addToCart(productModel);
+              } else {
+                EdgeAlert.show(
+                  context,
+                  title: 'Product exists',
+                  description: 'This product already exists on your cart!',
+                  gravity: EdgeAlert.TOP,
+                  icon: Icons.info,
+                  backgroundColor: Colors.amber.withOpacity(0.8),
+                  duration: EdgeAlert.LENGTH_SHORT,
+                );
+              }
             } else {
               EdgeAlert.show(
                 context,
-                title: 'Product exists',
-                description: 'This product already exists on your cart!',
-                gravity: EdgeAlert.TOP,
+                title: 'No user found',
+                description: 'Login to buy item',
+                gravity: EdgeAlert.BOTTOM,
                 icon: Icons.info,
-                backgroundColor: Colors.amber.withOpacity(0.8),
+                backgroundColor: Colors.redAccent,
                 duration: EdgeAlert.LENGTH_SHORT,
               );
             }
-          } else {
-            EdgeAlert.show(
-              context,
-              title: 'No user found',
-              description: 'Login to buy item',
-              gravity: EdgeAlert.BOTTOM,
-              icon: Icons.info,
-              backgroundColor: Colors.redAccent,
-              duration: EdgeAlert.LENGTH_SHORT,
-            );
-          }
-        },
-      ),
-    );
+          },
+        ),
+      );
+    });
   }
 
   Widget _buildItemPrice() {

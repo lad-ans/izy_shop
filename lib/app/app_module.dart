@@ -12,11 +12,7 @@ import 'modules/auth/domain/usecases/sign_out.dart';
 import 'modules/auth/presentation/stores/sign_out_store.dart';
 import 'modules/cart/cart_module.dart';
 import 'modules/cart/data/datasources/cart_data_source.dart';
-import 'modules/cart/domain/usecases/add_to_cart.dart';
-import 'modules/cart/domain/usecases/get_cart.dart';
-import 'modules/cart/domain/usecases/remove_all_cart.dart';
-import 'modules/cart/domain/usecases/remove_from_cart.dart';
-import 'modules/cart/presentation/stores/cart_store_module.dart';
+import 'modules/cart/presentation/stores/add_to_cart_store.dart';
 import 'modules/checkout/checkout_module.dart';
 import 'modules/customer/customer_module.dart';
 import 'modules/customer/data/repositories/customer_repository_impl.dart';
@@ -42,15 +38,8 @@ class AppModule extends MainModule {
         $GetProductStore,
 
         /// cart module
-        $CartDataSourceImpl,
-        $AddToCartImpl,
-        $GetCartImpl,
-        $RemoveFromCartImpl,
-        $RemoveAllCartImpl,
-        $GetCartStore,
+        $CartDataSource,
         $AddToCartStore,
-        $RemoveAllCartStore,
-        $RemoveFromCartStore,
 
         /// customer
         $CustomerRepositoryImpl,

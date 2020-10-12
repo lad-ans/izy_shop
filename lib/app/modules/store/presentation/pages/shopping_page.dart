@@ -8,8 +8,8 @@ import '../../../../core/domain/consts/img.dart';
 import '../../../../core/domain/entities/route_entity.dart';
 import '../../../../core/presentation/widgets/custom_statusbar.dart';
 import '../../../../core/presentation/widgets/shopping_appbar.dart';
+import '../../../cart/data/datasources/cart_data_source.dart';
 import '../../../cart/presentation/stores/add_to_cart_store.dart';
-import '../../../cart/presentation/stores/get_cart_store.dart';
 import '../../../customer/domain/entities/logged_user.dart';
 import '../../../product/data/models/product_model.dart';
 import '../../../product/presentation/widgets/item_tile.dart';
@@ -23,12 +23,11 @@ class ShoppingPage extends StatefulWidget {
 }
 
 class _ShoppingPageState extends State<ShoppingPage> {
-  final _getCartStore = Modular.get<GetCartStore>();
+  final _cartDataSource = Modular.get<CartDataSource>();
 
   @override
   void initState() {
     setLandscapeOrientation();
-    _getCartStore.execute();
     super.initState();
   }
 
@@ -52,7 +51,6 @@ class _ShoppingPageState extends State<ShoppingPage> {
               child: Column(
                   children: widget?.routeEntity?.productCategories?.map(
                         (productCategory) {
-                          // return Container();
                           return ProductList(
                             routeEntity: widget.routeEntity,
                             listTitle: productCategory,
@@ -92,7 +90,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
 
   _buildListItem() {
     return Observer(builder: (_) {
-      List<ProductModel> cartList = _getCartStore.cartList;
+      List<ProductModel> cartList = Modular.get<CartDataSource>().customerCart;
       return ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: cartList.length,
@@ -111,89 +109,94 @@ class _ShoppingPageState extends State<ShoppingPage> {
   }
 
   _buildCartTile(BuildContext context) {
-    List<ProductModel> cartList = _getCartStore.cartList;
-    return DragTarget<ProductModel>(
-      builder: (context, incoming, rejected) {
-        return InkWell(
-          onTap: () async {
-            setAllOrientations();
-            await Modular.to.pushNamed(
-              '/cart',
-              arguments: RouteEntity(
-                storeImg: widget.routeEntity.storeImg,
+    return Observer(builder: (_) {
+      List<ProductModel> cartList = _cartDataSource.customerCart;
+      return DragTarget<ProductModel>(
+        builder: (context, incoming, rejected) {
+          return InkWell(
+            onTap: () async {
+              setAllOrientations();
+              await Modular.to.pushNamed(
+                '/cart',
+                arguments: RouteEntity(
+                  storeImg: widget.routeEntity.storeImg,
+                ),
+              );
+              setLandscapeOrientation();
+            },
+            child: Material(
+              color: Colors.green[200],
+              elevation: 6.0,
+              shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.only(topLeft: Radius.circular(40.0))),
+              child: Container(
+                alignment: Alignment.bottomRight,
+                decoration: BoxDecoration(
+                  color: Colors.green[200],
+                  borderRadius:
+                      BorderRadius.only(topLeft: Radius.circular(40.0)),
+                ),
+                height: 60.0,
+                width: 130.0,
+                child: _buildCart(),
               ),
-            );
-            setLandscapeOrientation();
-          },
-          child: Material(
-            color: Colors.green[200],
-            elevation: 6.0,
-            shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.only(topLeft: Radius.circular(40.0))),
-            child: Container(
-              alignment: Alignment.bottomRight,
-              decoration: BoxDecoration(
-                color: Colors.green[200],
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(40.0)),
-              ),
-              height: 60.0,
-              width: 130.0,
-              child: _buildCart(),
             ),
-          ),
-        );
-      },
-      onWillAccept: (ProductModel productModel) {
-        Modular.get<AddToCartStore>().setDragFeedbackColor(Colors.red[300]);
-        return true;
-      },
-      onAccept: (ProductModel productModel) {
-        Modular.get<AddToCartStore>().setDragFeedbackColor(Colors.transparent);
-        List<ProductModel> tempList = [];
-        tempList
-            .addAll(cartList?.where((e) => e.id == productModel.id)?.toList());
-        if (LoggedUser.instance.loggedUserUid != null) {
-          if (tempList.length == 0) {
-            Modular.get<AddToCartStore>().execute(productModel);
+          );
+        },
+        onWillAccept: (ProductModel productModel) {
+          Modular.get<AddToCartStore>().setDragFeedbackColor(Colors.red[300]);
+          return true;
+        },
+        onAccept: (ProductModel productModel) {
+          Modular.get<AddToCartStore>()
+              .setDragFeedbackColor(Colors.transparent);
+          List<ProductModel> tempList = [];
+          tempList.addAll(
+              cartList?.where((e) => e.id == productModel.id)?.toList());
+          if (LoggedUser.instance.loggedUserUid != null) {
+            if (tempList.length == 0) {
+              _cartDataSource.addToCart(productModel);
+            } else {
+              EdgeAlert.show(
+                context,
+                title: 'Product exists',
+                description: 'This product already exists on your cart!',
+                gravity: EdgeAlert.TOP,
+                icon: Icons.info,
+                backgroundColor: Colors.amber.withOpacity(0.8),
+                duration: EdgeAlert.LENGTH_SHORT,
+              );
+            }
           } else {
             EdgeAlert.show(
               context,
-              title: 'Product exists',
-              description: 'This product already exists on your cart!',
-              gravity: EdgeAlert.TOP,
+              title: 'No user found',
+              description: 'Login to buy item',
+              gravity: EdgeAlert.BOTTOM,
               icon: Icons.info,
-              backgroundColor: Colors.amber.withOpacity(0.8),
+              backgroundColor: Colors.redAccent,
               duration: EdgeAlert.LENGTH_SHORT,
             );
           }
-        } else {
-          EdgeAlert.show(
-            context,
-            title: 'No user found',
-            description: 'Login to buy item',
-            gravity: EdgeAlert.BOTTOM,
-            icon: Icons.info,
-            backgroundColor: Colors.redAccent,
-            duration: EdgeAlert.LENGTH_SHORT,
-          );
-        }
-      },
-      onLeave: (productModel) {
-        Modular.get<AddToCartStore>().setDragFeedbackColor(Colors.transparent);
-      },
-    );
+        },
+        onLeave: (productModel) {
+          Modular.get<AddToCartStore>()
+              .setDragFeedbackColor(Colors.transparent);
+        },
+      );
+    });
   }
 
   _buildCart() {
     return Observer(builder: (_) {
-      List<ProductModel> cartList = _getCartStore.cartList;
+      List<ProductModel> cartList = _cartDataSource.customerCart;
       return Container(
         alignment: Alignment.center,
         child: Stack(
           overflow: Overflow.visible,
           children: [
-            cartList.length != 0
+            cartList.length > 0
                 ? Icon(
                     Icons.add_shopping_cart,
                     size: 40,
@@ -224,7 +227,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: Observer(builder: (_) {
-        List<ProductModel> cartList = _getCartStore.cartList;
+        List<ProductModel> cartList = _cartDataSource.customerCart;
         return Text(
           cartList.length.toString(),
           overflow: TextOverflow.ellipsis,

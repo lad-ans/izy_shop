@@ -2,10 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../modules/cart/presentation/stores/get_cart_store.dart';
-import '../../../modules/cart/presentation/stores/remove_all_store.dart';
+import '../../../modules/cart/data/datasources/cart_data_source.dart';
 import '../../../modules/customer/domain/entities/logged_user.dart';
 import '../../../modules/product/data/models/product_model.dart';
 import '../../domain/configs/core_config.dart';
@@ -33,8 +33,7 @@ class ShoppingAppBar extends StatefulWidget {
 }
 
 class _ShoppingAppBarState extends State<ShoppingAppBar> {
-  final _getCartStore = Modular.get<GetCartStore>();
-  final _removeAllStore = Modular.get<RemoveAllCartStore>();
+  final _cartDataSource = Modular.get<CartDataSource>();
 
   @override
   Widget build(BuildContext context) {
@@ -45,47 +44,48 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
       width: getWidth(context),
       child: Row(
         children: [
-          _buildRoundedButton(Icons.arrow_back, label: 'Back', onTap: () {
-            List<ProductModel> cartList = [];
-            _getCartStore.execute();
-            cartList.addAll(_getCartStore.cartList);
-            if (widget.onBack) {
-              if (cartList.length > 0) {
-                return showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    backgroundColor: Colors.white70,
-                    title: Text('This action will clear your cart!'),
-                    titleTextStyle: TextStyle(
-                        color: Colors.black.withOpacity(0.7),
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.w600),
-                    actions: [
-                      FlatButton(
-                        onPressed: () {
-                          if (widget.onNavigate) {
-                            _removeAllStore.execute();
-                          }
-                          Modular.to.pop();
-                          Modular.to.pop();
-                        },
-                        child: Text('Continue'),
-                      ),
-                      FlatButton(
-                        onPressed: () {
-                          Modular.to.pop();
-                        },
-                        child: Text(
-                          'Cancel',
-                          style: TextStyle(color: Colors.black87),
+          Observer(builder: (_) {
+            List<ProductModel> cartList = _cartDataSource.customerCart;
+            return _buildRoundedButton(Icons.arrow_back, label: 'Back',
+                onTap: () {
+              if (widget.onBack) {
+                if (cartList.length > 0) {
+                  return showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      backgroundColor: Colors.white70,
+                      title: Text('This action will clear your cart!'),
+                      titleTextStyle: TextStyle(
+                          color: Colors.black.withOpacity(0.7),
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w600),
+                      actions: [
+                        FlatButton(
+                          onPressed: () {
+                            if (widget.onNavigate) {
+                              _cartDataSource.removeAll();
+                            }
+                            Modular.to.pop();
+                            Modular.to.pop();
+                          },
+                          child: Text('Continue'),
                         ),
-                      ),
-                    ],
-                  ),
-                );
+                        FlatButton(
+                          onPressed: () {
+                            Modular.to.pop();
+                          },
+                          child: Text(
+                            'Cancel',
+                            style: TextStyle(color: Colors.black87),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
               }
-            }
-            Modular.to.pop();
+              Modular.to.pop();
+            });
           }),
           SizedBox(width: 2.0),
           _buildNavigatorLogo(),
@@ -234,50 +234,50 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
     );
   }
 
-  _buildNavigatorLogo() => InkWell(
-      onTap: () {
-        List<ProductModel> cartList = [];
-        _getCartStore.execute();
-        cartList.addAll(_getCartStore.cartList);
-        if (widget.onNavigate) {
-          if (cartList.length > 0) {
-            return showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                backgroundColor: Colors.white70,
-                title: Text('This action will clear your cart!'),
-                titleTextStyle: TextStyle(
-                    color: Colors.black.withOpacity(0.7),
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w600),
-                actions: [
-                  FlatButton(
-                    onPressed: () {
-                      if (widget.onNavigate) {
-                        _removeAllStore.execute();
-                      }
-                      Modular.to.pop();
-                      Modular.to.pushReplacementNamed('/home');
-                    },
-                    child: Text('Continue'),
-                  ),
-                  FlatButton(
-                    onPressed: () {
-                      Modular.to.pop();
-                    },
-                    child: Text(
-                      'Cancel',
-                      style: TextStyle(color: Colors.black87),
+  _buildNavigatorLogo() => Observer(builder: (_) {
+        List<ProductModel> cartList = _cartDataSource.customerCart;
+        return InkWell(
+            onTap: () {
+              if (widget.onNavigate) {
+                if (cartList.length > 0) {
+                  return showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      backgroundColor: Colors.white70,
+                      title: Text('This action will clear your cart!'),
+                      titleTextStyle: TextStyle(
+                          color: Colors.black.withOpacity(0.7),
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w600),
+                      actions: [
+                        FlatButton(
+                          onPressed: () {
+                            if (widget.onNavigate) {
+                              _cartDataSource.removeAll();
+                            }
+                            Modular.to.pop();
+                            Modular.to.pushReplacementNamed('/home');
+                          },
+                          child: Text('Continue'),
+                        ),
+                        FlatButton(
+                          onPressed: () {
+                            Modular.to.pop();
+                          },
+                          child: Text(
+                            'Cancel',
+                            style: TextStyle(color: Colors.black87),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-            );
-          }
-        }
-        Modular.to.pushReplacementNamed('/home');
-      },
-      child: Image.asset(LOGO, height: !widget.fullAppBar ? 45.0 : 55.0));
+                  );
+                }
+              }
+              Modular.to.pushReplacementNamed('/home');
+            },
+            child: Image.asset(LOGO, height: !widget.fullAppBar ? 45.0 : 55.0));
+      });
 
   Widget _buildNavigationText() {
     return RichText(

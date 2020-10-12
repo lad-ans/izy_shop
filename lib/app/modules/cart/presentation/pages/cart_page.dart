@@ -14,7 +14,7 @@ import '../../../auth/presentation/widgets/custom_text.dart';
 import '../../../customer/domain/entities/logged_user.dart';
 import '../../../product/data/models/product_model.dart';
 import '../../../product/presentation/widgets/item_tile.dart';
-import '../stores/get_cart_store.dart';
+import '../../data/datasources/cart_data_source.dart';
 
 class CartPage extends StatefulWidget {
   final RouteEntity routeEntity;
@@ -27,11 +27,10 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  final GetCartStore _getCartStore = Modular.get<GetCartStore>();
+  final _cartDataSource = Modular.get<CartDataSource>();
 
   @override
   void initState() {
-    _getCartStore.execute();
     super.initState();
   }
 
@@ -50,7 +49,7 @@ class _CartPageState extends State<CartPage> {
 
   Widget _buidBottomNavBar() {
     return Observer(builder: (_) {
-      List<ProductModel> productList = _getCartStore.cartList;
+      List<ProductModel> productList = _cartDataSource.customerCart;
 
       num subTotal = 0;
 
@@ -102,7 +101,7 @@ class _CartPageState extends State<CartPage> {
 
   _buildBody() {
     return Observer(builder: (_) {
-      List<ProductModel> productList = _getCartStore.cartList;
+      List<ProductModel> productList = _cartDataSource.customerCart;
       print(productList);
       return Container(
         height: getHeight(context),
@@ -287,9 +286,6 @@ class _CartPageState extends State<CartPage> {
                   productModel.qty--;
                 });
               }
-              // productModel.reference.update({
-              //   'qty': productModel.qty,
-              // });
             },
           ),
           SizedBox(width: 15.0),
@@ -320,9 +316,6 @@ class _CartPageState extends State<CartPage> {
                   productModel.qty++;
                 });
               }
-              // productModel.reference.update({
-              //   'qty': productModel.qty,
-              // });
             },
           ),
         ],

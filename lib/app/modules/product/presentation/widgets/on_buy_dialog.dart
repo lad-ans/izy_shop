@@ -3,12 +3,12 @@ import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:izy_shop/app/modules/cart/data/datasources/cart_data_source.dart';
 
 import '../../../../core/domain/entities/route_entity.dart';
 import '../../../../core/domain/utils/number_formatter.dart';
 import '../../../../core/presentation/widgets/custom_rich_text.dart';
 import '../../../cart/presentation/stores/add_to_cart_store.dart';
-import '../../../cart/presentation/stores/get_cart_store.dart';
 import '../../../customer/domain/entities/logged_user.dart';
 import '../../data/models/product_model.dart';
 import 'description_dialog.dart';
@@ -24,7 +24,7 @@ class OnBuyDialog extends StatelessWidget {
     this.routeEntity,
   });
 
-  final _getCartStore = Modular.get<GetCartStore>();
+  final _cartDataSource = Modular.get<CartDataSource>();
   final _addToCartStore = Modular.get<AddToCartStore>();
 
   @override
@@ -93,15 +93,15 @@ class OnBuyDialog extends StatelessWidget {
                     color: Colors.green,
                     icon: Icons.add_shopping_cart,
                     onTap: () {
-                      _getCartStore.execute();
-                      List<ProductModel> cartList = _getCartStore.cartList;
+                      List<ProductModel> cartList =
+                          _cartDataSource.customerCart;
                       List<ProductModel> tempList = [];
                       tempList.addAll(cartList
                           ?.where((e) => e.id == productModel.id)
                           ?.toList());
                       if (LoggedUser.instance.loggedUserUid != null) {
                         if (tempList?.length == 0) {
-                          _addToCartStore.execute(productModel);
+                          _cartDataSource.addToCart(productModel);
                         } else {
                           EdgeAlert.show(
                             context,

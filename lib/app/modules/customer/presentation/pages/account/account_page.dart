@@ -6,12 +6,12 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:izy_shop/app/modules/cart/data/datasources/cart_data_source.dart';
 
 import '../../../../../core/domain/configs/core_config.dart';
 import '../../../../../core/domain/consts/img.dart';
 import '../../../../../core/presentation/widgets/custom_appbar.dart';
 import '../../../../auth/presentation/stores/sign_out_store.dart';
-import '../../../../cart/presentation/stores/cart_store_module.dart';
 import '../../../../product/data/models/product_model.dart';
 import '../../../data/models/customer_model.dart';
 import '../../../domain/entities/logged_user.dart';
@@ -30,7 +30,7 @@ class AccountPage extends StatefulWidget {
 
 class _AccountPageState extends State<AccountPage> {
   final _getCurrentCustomerStore = Modular.get<GetLoggedCustomerStore>();
-  final _getCartStore = Modular.get<GetCartStore>();
+  final _cartDataSource = Modular.get<CartDataSource>();
   final _signOutStore = Modular.get<SignOutStore>();
   TextEditingController _nameController;
   TextEditingController _emailController;
@@ -44,31 +44,33 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   _buildTrailingWidget() {
-    return Container(
-      child: RaisedButton.icon(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        color: Colors.red[400],
-        onPressed: () async {
-          List<ProductModel> cartList = _getCartStore.execute();
-          if (cartList.length != 0) {
-            cartList?.forEach((item) {
-              return item.reference.delete();
-            });
-          }
-          await _signOutStore.executeSignOut();
-          Modular.to.pop();
-        },
-        icon: Icon(Ionicons.ios_log_out, color: Colors.white),
-        label: Text(
-          'Log Out',
-          style: TextStyle(
-            color: Colors.white70,
+    return Observer(builder: (_) {
+      List<ProductModel> cartList = _cartDataSource.customerCart;
+      return Container(
+        child: RaisedButton.icon(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          color: Colors.red[400],
+          onPressed: () async {
+            if (cartList.length != 0) {
+              cartList?.forEach((item) {
+                return item.reference.delete();
+              });
+            }
+            await _signOutStore.executeSignOut();
+            Modular.to.pop();
+          },
+          icon: Icon(Ionicons.ios_log_out, color: Colors.white),
+          label: Text(
+            'Log Out',
+            style: TextStyle(
+              color: Colors.white70,
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   _buildInputField(
