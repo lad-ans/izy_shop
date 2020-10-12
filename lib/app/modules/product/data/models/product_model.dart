@@ -13,7 +13,7 @@ class ProductModel {
   bool hasWeight;
   bool hasVol;
   bool hasSize;
-  Map<String, num> customPrice;
+  // Map<String, num> customPrice;
   DocumentReference reference;
   String storeCategory;
   String storeName;
@@ -30,7 +30,7 @@ class ProductModel {
     this.hasWeight,
     this.hasVol,
     this.hasSize,
-    this.customPrice,
+    // this.customPrice,
     this.reference,
     this.storeCategory,
     this.storeName,
@@ -53,7 +53,7 @@ class ProductModel {
       reference: doc.reference,
       storeCategory: doc.data()['storeCategory'],
       storeName: doc.data()['storeName'],
-      customPrice: doc.data()['customPrice']
+      // customPrice: doc.data()['customPrice'],
     );
   }
 
