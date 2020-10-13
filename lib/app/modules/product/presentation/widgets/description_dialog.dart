@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../core/domain/entities/route_entity.dart';
-import '../../../../core/domain/utils/number_formatter.dart';
-import '../../../../core/presentation/widgets/custom_rich_text.dart';
 import '../../../cart/data/datasources/cart_data_source.dart';
 import '../../data/models/product_model.dart';
 

@@ -10,7 +10,6 @@ import '../../../../core/domain/utils/number_formatter.dart';
 import '../../../cart/data/datasources/cart_data_source.dart';
 import '../../../customer/domain/entities/logged_user.dart';
 import '../../data/models/product_model.dart';
-import '../stores/get_price_by_key_store.dart';
 import 'cart_product_dialog.dart';
 import 'description_dialog.dart';
 import 'on_buy_dialog.dart';
@@ -42,7 +41,6 @@ class ItemTile extends StatelessWidget {
 
   /// dependencies
   final _cartDataSource = Modular.get<CartDataSource>();
-  final _getPriceByKeyStore = Modular.get<GetPriceByKeyStore>();
 
   @override
   Widget build(BuildContext context) {

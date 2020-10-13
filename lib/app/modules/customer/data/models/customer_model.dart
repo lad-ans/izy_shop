@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:izy_shop/app/core/domain/consts/img.dart';
-import 'package:izy_shop/app/modules/customer/data/datasources/local_storage.dart';
 
 class CustomerModel {
   String name;
