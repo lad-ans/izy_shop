@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:edge_alert/edge_alert.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:izy_shop/app/modules/product/presentation/stores/get_price_by_key_store.dart';
 
 import '../../../../core/domain/entities/route_entity.dart';
 import '../../../../core/domain/utils/number_formatter.dart';
@@ -12,6 +12,7 @@ import '../../../../core/presentation/widgets/custom_rich_text.dart';
 import '../../../cart/data/datasources/cart_data_source.dart';
 import '../../../customer/domain/entities/logged_user.dart';
 import '../../data/models/product_model.dart';
+import '../stores/get_price_by_key_store.dart';
 import 'description_dialog.dart';
 
 class OnBuyDialog extends StatelessWidget {
@@ -92,15 +93,43 @@ class OnBuyDialog extends StatelessWidget {
                     color: Colors.green,
                     icon: Icons.add_shopping_cart,
                     onTap: () {
+                      Map<String, dynamic> _selectedItem = {
+                        _getPriceByKeyStore.selectedCustomPriceKey:
+                            _getPriceByKeyStore.selectedCustomPriceValue
+                      };
                       List<ProductModel> cartList =
                           _cartDataSource.customerCart;
-                      List<ProductModel> tempList = [];
-                      tempList.addAll(cartList
-                          ?.where((e) => e.id == productModel.id)
-                          ?.toList());
+
+                      /// setup temp list
+                      List<ProductModel> tempList = cartList?.where((item) {
+                        if (productModel.hasSize ||
+                            productModel.hasVol ||
+                            productModel.hasWeight) {
+                          return mapEquals(item.selectedItem, _selectedItem);
+                        } else {
+                          return item.id == productModel.id;
+                        }
+                      })?.toList();
+
                       if (LoggedUser.instance.loggedUserUid != null) {
+                        /// condition to add to cart
                         if (tempList?.length == 0) {
-                          _cartDataSource.addToCart(productModel);
+                          /// set selected item
+                          productModel.selectedItem = _selectedItem;
+                          if (productModel.selectedItem.values.first == null) {
+                            EdgeAlert.show(
+                              context,
+                              title: 'Select price',
+                              description: 'Please select price!',
+                              gravity: EdgeAlert.TOP,
+                              icon: Icons.info,
+                              backgroundColor: Colors.amber.withOpacity(0.9),
+                              duration: EdgeAlert.LENGTH_VERY_LONG,
+                            );
+                          } else {
+                            _cartDataSource.addToCart(productModel);
+                            print(_cartDataSource.customerCart);
+                          }
                         } else {
                           EdgeAlert.show(
                             context,
@@ -124,6 +153,7 @@ class OnBuyDialog extends StatelessWidget {
                           duration: EdgeAlert.LENGTH_SHORT,
                         );
                       }
+
                       Modular.to.pop();
                     },
                   ),
@@ -177,21 +207,26 @@ class OnBuyDialog extends StatelessWidget {
   _buildColumnRight() {
     return Column(
       children: [
-        Row(
-          children: [
-            // Observer(builder: (_) {
-            //   return CustomRichText(
-            //       labelOne: 'Price: ',
-            //       labelTwo: _getPriceByKeyStore.customPrice == 0
-            //           ? '${NumberFormatter.instance.numToString(productModel?.price)} MT'
-            //           : _getPriceByKeyStore.customPrice == productModel.customPrice '${NumberFormatter.instance.numToString(_getPriceByKeyStore.customPrice).toString()} MT');
-            // }),
-            Text(
+        Observer(builder: (_) {
+          return CustomRichText(
+              labelOne: 'Price: ',
+              labelTwo: productModel.hasSize ||
+                      productModel.hasVol ||
+                      productModel.hasWeight
+                  ? _getPriceByKeyStore.customPrice == 0
+                      ? 'select item'
+                      : '${NumberFormatter.instance.numToString(_getPriceByKeyStore.customPrice).toString()} MT'
+                  : '${NumberFormatter.instance.numToString(productModel.price).toString()} MT');
+        }),
+        Observer(builder: (_) {
+          return Visibility(
+            visible: _getPriceByKeyStore.customPrice != 0,
+            child: Text(
               ' (unit)',
               style: TextStyle(fontWeight: FontWeight.w700),
             ),
-          ],
-        ),
+          );
+        }),
         SizedBox(height: 8.0),
         ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
@@ -306,7 +341,7 @@ class OnBuyDialog extends StatelessWidget {
                 height: 30.0,
                 width: 30.0,
                 decoration: BoxDecoration(
-                  color: _getPriceByKeyStore.isSelected == key
+                  color: _getPriceByKeyStore.keyReceiver == key
                       ? Colors.green[200]
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(30.0),
@@ -337,13 +372,13 @@ class OnBuyDialog extends StatelessWidget {
                 height: 100.0,
                 width: 100.0,
                 decoration: BoxDecoration(
-                  color: _getPriceByKeyStore.isSelected == key
+                  color: _getPriceByKeyStore.keyReceiver == key
                       ? Colors.green[200]
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(30.0),
                   border: Border.all(
                     width: 0.6,
-                    color: _getPriceByKeyStore.isSelected == key
+                    color: _getPriceByKeyStore.keyReceiver == key
                         ? Colors.green[200]
                         : Colors.black,
                   ),
@@ -359,7 +394,7 @@ class OnBuyDialog extends StatelessWidget {
                         image: CachedNetworkImageProvider(
                           productModel.img,
                         ),
-                        colorFilter: _getPriceByKeyStore.isSelected == key
+                        colorFilter: _getPriceByKeyStore.keyReceiver == key
                             ? ColorFilter.mode(
                                 Colors.red[300].withOpacity(0.7),
                                 BlendMode.color,

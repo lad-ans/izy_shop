@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:izy_shop/app/core/domain/entities/route_entity.dart';
 import 'package:photo_view/photo_view.dart';
 
 import '../../domain/configs/core_config.dart';
+import '../../domain/entities/route_entity.dart';
 
 class PhotoViewPage extends StatelessWidget {
   final RouteEntity _routeEntity;

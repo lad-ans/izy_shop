@@ -156,18 +156,32 @@ class _ShoppingPageState extends State<ShoppingPage> {
           tempList.addAll(
               cartList?.where((e) => e.id == productModel.id)?.toList());
           if (LoggedUser.instance.loggedUserUid != null) {
-            if (tempList.length == 0) {
-              _cartDataSource.addToCart(productModel);
-            } else {
+            if (productModel.hasSize ||
+                productModel.hasVol ||
+                productModel.hasWeight) {
               EdgeAlert.show(
                 context,
-                title: 'Product exists',
-                description: 'This product already exists on your cart!',
+                title: 'Select price',
+                description: 'Please open the product to select price!',
                 gravity: EdgeAlert.TOP,
                 icon: Icons.info,
-                backgroundColor: Colors.amber.withOpacity(0.8),
-                duration: EdgeAlert.LENGTH_SHORT,
+                backgroundColor: Colors.amber.withOpacity(0.9),
+                duration: EdgeAlert.LENGTH_VERY_LONG,
               );
+            } else {
+              if (tempList.length == 0) {
+                _cartDataSource.addToCart(productModel);
+              } else {
+                EdgeAlert.show(
+                  context,
+                  title: 'Product exists',
+                  description: 'This product already exists on your cart!',
+                  gravity: EdgeAlert.TOP,
+                  icon: Icons.info,
+                  backgroundColor: Colors.amber.withOpacity(0.8),
+                  duration: EdgeAlert.LENGTH_SHORT,
+                );
+              }
             }
           } else {
             EdgeAlert.show(

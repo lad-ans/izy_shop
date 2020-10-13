@@ -67,22 +67,6 @@ class DescriptionDialog extends StatelessWidget {
                 ),
               ),
             ),
-            // Positioned(
-            //   bottom: 0.0,
-            //   right: 0.0,
-            //   child: GestureDetector(
-            //     onTap: () => Modular.to.pop(),
-            //     child: Padding(
-            //       padding: const EdgeInsets.all(5.0),
-            //       child: _buildDialogButton(
-            //         height: 50.0,
-            //         width: 50.0,
-            //         color: Colors.green,
-            //         icon: Icons.check,
-            //       ),
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ],
@@ -154,11 +138,6 @@ class DescriptionDialog extends StatelessWidget {
   Column _buildColumnRight() {
     return Column(
       children: [
-        CustomRichText(
-            labelOne: 'Price: ',
-            labelTwo:
-                '${NumberFormatter.instance.numToString(productModel.price)} MT'),
-        SizedBox(height: 8.0),
         ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
           child: InkWell(

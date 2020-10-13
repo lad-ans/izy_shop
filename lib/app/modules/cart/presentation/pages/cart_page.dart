@@ -30,11 +30,6 @@ class _CartPageState extends State<CartPage> {
   final _cartDataSource = Modular.get<CartDataSource>();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -50,11 +45,16 @@ class _CartPageState extends State<CartPage> {
   Widget _buidBottomNavBar() {
     return Observer(builder: (_) {
       List<ProductModel> productList = _cartDataSource.customerCart;
-
       num subTotal = 0;
 
       for (ProductModel item in productList) {
-        subTotal += item.price * item.qty;
+        if (item.hasSize || item.hasVol || item.hasWeight) {
+          var key;
+          item.selectedItem.keys.map((k) => key = k).toList();
+          subTotal += item.selectedItem[key] * item.qty;
+        } else {
+          subTotal += item.price * item.qty;
+        }
       }
 
       num total = subTotal + 350;
@@ -204,6 +204,10 @@ class _CartPageState extends State<CartPage> {
     num price,
     ProductModel productModel,
   ) {
+    String key;
+    if (productModel.hasSize || productModel.hasVol || productModel.hasWeight) {
+      productModel.selectedItem.keys.map((k) => key = k).toList();
+    }
     return Container(
       height: 70.0,
       padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -223,7 +227,11 @@ class _CartPageState extends State<CartPage> {
                     showItemPrice: false),
               ),
               Text(
-                '${NumberFormatter.instance.numToString(price * productModel.qty)} MT',
+                productModel.hasSize ||
+                        productModel.hasVol ||
+                        productModel.hasWeight
+                    ? '${NumberFormatter.instance.numToString(productModel.selectedItem[key] * productModel.qty)} MT'
+                    : '${NumberFormatter.instance.numToString(price * productModel.qty)} MT',
                 style: TextStyle(fontSize: 11.0, color: Colors.red[300]),
               ),
             ],

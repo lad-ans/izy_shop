@@ -5,16 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:izy_shop/app/modules/auth/presentation/stores/sign_in_store.dart';
-import 'package:izy_shop/app/modules/auth/presentation/stores/sign_in_with_facebook_store.dart';
-import 'package:izy_shop/app/modules/auth/presentation/stores/sign_in_with_google_store.dart';
-import 'package:izy_shop/app/modules/customer/data/models/customer_model.dart';
-import 'package:izy_shop/app/modules/customer/domain/entities/logged_user.dart';
 
 import '../../../../app_controller.dart';
 import '../../../../core/domain/configs/core_config.dart';
 import '../../../../core/domain/consts/img.dart';
 import '../../../../core/presentation/widgets/rounded_button.dart';
+import '../../../customer/data/models/customer_model.dart';
+import '../../../customer/domain/entities/logged_user.dart';
+import '../stores/sign_in_store.dart';
+import '../stores/sign_in_with_facebook_store.dart';
+import '../stores/sign_in_with_google_store.dart';
 import '../widgets/custom_text.dart';
 import '../widgets/custom_textfield.dart';
 

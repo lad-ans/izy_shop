@@ -11,11 +11,22 @@ abstract class _GetPriceByKeyStoreBase with Store {
   num customPrice = 0;
 
   @observable
-  String isSelected = '';
+  String keyReceiver = '';
+
+  @observable
+  String selectedCustomPriceKey;
+
+  @observable
+  num selectedCustomPriceValue;
 
   @action
   selectKey(String key, Map<String, dynamic> map) {
-    this.isSelected = key;
+    this.keyReceiver = key;
+
+    this.selectedCustomPriceKey = key;
+    this.selectedCustomPriceValue = map[key];
+
+    /// set custom price
     this.customPrice = map[key];
   }
 }

@@ -61,8 +61,6 @@ class _MapsPageState extends State<MapsPage> {
                   color: Colors.white,
                   icon: Icon(FontAwesomeIcons.check, size: 30.0),
                   onPressed: () {
-                    print(selectedPlace.geometry.location.lat);
-                    print(selectedPlace.geometry.location.lng);
                     widget._routeEntity.addressController.text =
                         selectedPlace.formattedAddress;
                     widget._routeEntity.orderModel.latitude =

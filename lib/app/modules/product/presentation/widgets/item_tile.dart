@@ -4,14 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:izy_shop/app/modules/cart/data/datasources/cart_data_source.dart';
-import 'package:izy_shop/app/modules/product/presentation/stores/get_price_by_key_store.dart';
 
 import '../../../../core/domain/entities/route_entity.dart';
 import '../../../../core/domain/utils/number_formatter.dart';
-import '../../../cart/presentation/stores/add_to_cart_store.dart';
+import '../../../cart/data/datasources/cart_data_source.dart';
 import '../../../customer/domain/entities/logged_user.dart';
 import '../../data/models/product_model.dart';
+import '../stores/get_price_by_key_store.dart';
 import 'cart_product_dialog.dart';
 import 'description_dialog.dart';
 import 'on_buy_dialog.dart';
@@ -134,19 +133,33 @@ class ItemTile extends StatelessWidget {
             tempList.addAll(
                 cartList?.where((e) => e.id == productModel.id)?.toList());
             if (LoggedUser.instance.loggedUserUid != null) {
-              if (tempList.length == 0) {
-                /// adding to cart
-                _cartDataSource.addToCart(productModel);
-              } else {
+              if (productModel.hasSize ||
+                  productModel.hasVol ||
+                  productModel.hasWeight) {
                 EdgeAlert.show(
                   context,
-                  title: 'Product exists',
-                  description: 'This product already exists on your cart!',
+                  title: 'Select price',
+                  description: 'Please open the product to select price!',
                   gravity: EdgeAlert.TOP,
                   icon: Icons.info,
-                  backgroundColor: Colors.amber.withOpacity(0.8),
-                  duration: EdgeAlert.LENGTH_SHORT,
+                  backgroundColor: Colors.amber.withOpacity(0.9),
+                  duration: EdgeAlert.LENGTH_VERY_LONG,
                 );
+              } else {
+                if (tempList.length == 0) {
+                  /// adding to cart
+                  _cartDataSource.addToCart(productModel);
+                } else {
+                  EdgeAlert.show(
+                    context,
+                    title: 'Product exists',
+                    description: 'This product already exists on your cart!',
+                    gravity: EdgeAlert.TOP,
+                    icon: Icons.info,
+                    backgroundColor: Colors.amber.withOpacity(0.9),
+                    duration: EdgeAlert.LENGTH_VERY_LONG,
+                  );
+                }
               }
             } else {
               EdgeAlert.show(
@@ -175,18 +188,18 @@ class ItemTile extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Observer(builder: (_) {
-              return Text(
-                _getPriceByKeyStore.customPrice == 0
-                    ? '${NumberFormatter.instance.numToString(productModel?.price)} MT'
-                    : '${NumberFormatter.instance.numToString(_getPriceByKeyStore.customPrice).toString()} MT',
-                style: TextStyle(
-                  color: Colors.red[200],
-                  fontSize: 10.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              );
-            }),
+            Text(
+              (productModel.hasSize ||
+                      productModel.hasVol ||
+                      productModel.hasWeight)
+                  ? 'custom prices'
+                  : '${NumberFormatter.instance.numToString(productModel?.price)} MT',
+              style: TextStyle(
+                color: Colors.red[200],
+                fontSize: 10.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
       ),

@@ -39,7 +39,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.routeEntity.storeId);
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: _buildBody(),

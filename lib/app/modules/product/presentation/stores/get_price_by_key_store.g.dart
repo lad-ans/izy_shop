@@ -34,18 +34,52 @@ mixin _$GetPriceByKeyStore on _GetPriceByKeyStoreBase, Store {
     });
   }
 
-  final _$isSelectedAtom = Atom(name: '_GetPriceByKeyStoreBase.isSelected');
+  final _$keyReceiverAtom = Atom(name: '_GetPriceByKeyStoreBase.keyReceiver');
 
   @override
-  String get isSelected {
-    _$isSelectedAtom.reportRead();
-    return super.isSelected;
+  String get keyReceiver {
+    _$keyReceiverAtom.reportRead();
+    return super.keyReceiver;
   }
 
   @override
-  set isSelected(String value) {
-    _$isSelectedAtom.reportWrite(value, super.isSelected, () {
-      super.isSelected = value;
+  set keyReceiver(String value) {
+    _$keyReceiverAtom.reportWrite(value, super.keyReceiver, () {
+      super.keyReceiver = value;
+    });
+  }
+
+  final _$selectedCustomPriceKeyAtom =
+      Atom(name: '_GetPriceByKeyStoreBase.selectedCustomPriceKey');
+
+  @override
+  String get selectedCustomPriceKey {
+    _$selectedCustomPriceKeyAtom.reportRead();
+    return super.selectedCustomPriceKey;
+  }
+
+  @override
+  set selectedCustomPriceKey(String value) {
+    _$selectedCustomPriceKeyAtom
+        .reportWrite(value, super.selectedCustomPriceKey, () {
+      super.selectedCustomPriceKey = value;
+    });
+  }
+
+  final _$selectedCustomPriceValueAtom =
+      Atom(name: '_GetPriceByKeyStoreBase.selectedCustomPriceValue');
+
+  @override
+  num get selectedCustomPriceValue {
+    _$selectedCustomPriceValueAtom.reportRead();
+    return super.selectedCustomPriceValue;
+  }
+
+  @override
+  set selectedCustomPriceValue(num value) {
+    _$selectedCustomPriceValueAtom
+        .reportWrite(value, super.selectedCustomPriceValue, () {
+      super.selectedCustomPriceValue = value;
     });
   }
 
@@ -67,7 +101,9 @@ mixin _$GetPriceByKeyStore on _GetPriceByKeyStoreBase, Store {
   String toString() {
     return '''
 customPrice: ${customPrice},
-isSelected: ${isSelected}
+keyReceiver: ${keyReceiver},
+selectedCustomPriceKey: ${selectedCustomPriceKey},
+selectedCustomPriceValue: ${selectedCustomPriceValue}
     ''';
   }
 }

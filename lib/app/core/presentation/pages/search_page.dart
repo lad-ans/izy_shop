@@ -7,14 +7,13 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-import 'package:izy_shop/app/core/domain/entities/route_entity.dart';
-import 'package:izy_shop/app/core/domain/utils/number_formatter.dart';
-import 'package:izy_shop/app/modules/product/data/models/product_model.dart';
-import 'package:izy_shop/app/modules/product/presentation/stores/get_product_store.dart';
-import 'package:izy_shop/app/modules/product/presentation/widgets/on_buy_dialog.dart';
-
+import '../../../modules/product/data/models/product_model.dart';
+import '../../../modules/product/presentation/stores/get_product_store.dart';
+import '../../../modules/product/presentation/widgets/on_buy_dialog.dart';
 import '../../domain/configs/core_config.dart';
 import '../../domain/consts/img.dart';
+import '../../domain/entities/route_entity.dart';
+import '../../domain/utils/number_formatter.dart';
 
 class SearchPage extends StatelessWidget {
   final RouteEntity _routeEntity;
@@ -100,7 +99,9 @@ class SearchPage extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          '${NumberFormatter.instance.numToString(price)} MT',
+          productModel.hasSize || productModel.hasVol || productModel.hasWeight
+              ? 'custom price'
+              : '${NumberFormatter.instance.numToString(price)} MT',
           style: TextStyle(color: Colors.white60),
         ),
         trailing: ClipRRect(
@@ -125,10 +126,7 @@ class SearchPage extends StatelessWidget {
           return Container(
               alignment: Alignment.center,
               height: 20.0,
-              child: SpinKitFadingCircle(
-                size: 30.0,
-                color: Colors.white
-              ));
+              child: SpinKitFadingCircle(size: 30.0, color: Colors.white));
         }
         return ListView.builder(
           itemCount: productList

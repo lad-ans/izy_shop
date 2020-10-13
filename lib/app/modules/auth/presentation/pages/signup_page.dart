@@ -1,18 +1,17 @@
 import 'dart:ui';
 
-import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:izy_shop/app/modules/customer/data/datasources/local_storage.dart';
-import 'package:izy_shop/app/modules/customer/domain/entities/logged_user.dart';
 
 import '../../../../app_controller.dart';
 import '../../../../core/domain/configs/core_config.dart';
 import '../../../../core/domain/consts/img.dart';
 import '../../../../core/presentation/widgets/rounded_button.dart';
+import '../../../customer/data/datasources/local_storage.dart';
 import '../../../customer/data/models/customer_model.dart';
+import '../../../customer/domain/entities/logged_user.dart';
 import '../stores/sign_up_store.dart';
 import '../widgets/custom_textfield.dart';
 import '../widgets/on_register_dialog.dart';

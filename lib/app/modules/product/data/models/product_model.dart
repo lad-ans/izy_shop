@@ -7,13 +7,13 @@ class ProductModel {
   String category;
   String description;
   num price;
-  String size;
   int qty;
   num deliveryPrice;
   bool hasWeight;
   bool hasVol;
   bool hasSize;
   Map<String, dynamic> customPrice;
+  Map<String, dynamic> selectedItem;
   DocumentReference reference;
   String storeCategory;
   String storeName;
@@ -24,13 +24,13 @@ class ProductModel {
     this.category,
     this.description,
     this.price,
-    this.size,
     this.qty,
     this.deliveryPrice,
     this.hasWeight,
     this.hasVol,
     this.hasSize,
     this.customPrice,
+    this.selectedItem,
     this.reference,
     this.storeCategory,
     this.storeName,
@@ -42,7 +42,6 @@ class ProductModel {
       img: doc.data()['logo'],
       description: doc.data()['description'],
       price: doc.data()['price'],
-      size: doc.data()['size'],
       category: doc.data()['category'],
       qty: doc.data()['qty'],
       id: doc.data()['id'],
@@ -64,7 +63,6 @@ class ProductModel {
       "description": this.description,
       "logo": this.img,
       "price": this.price,
-      "size": this.size,
       'qty': this.qty,
       'id': this.id,
       'hasVol': this.hasVol,
@@ -72,11 +70,12 @@ class ProductModel {
       'hasSize': this.hasSize,
       'storeCategory': this.storeCategory,
       'storeName': this.storeName,
+      'selectedItem': this.selectedItem,
     };
   }
 
   @override
   String toString() {
-    return '${this.name}, ${this.name}, ${this.description}, ${this.img}, ${this.price}, ${this.category}, ${this.size}, has size: ${this.hasSize}, has volume: ${this.hasVol}, has size: ${this.hasSize}, Store cat $storeCategory, Store name $storeName';
+    return '${this.name}, ${this.name}, ${this.description}, ${this.img}, ${this.price}, ${this.category}, has size: ${this.hasSize}, has volume: ${this.hasVol}, has size: ${this.hasSize}, Store cat $storeCategory, Store name $storeName, custom price $selectedItem';
   }
 }
