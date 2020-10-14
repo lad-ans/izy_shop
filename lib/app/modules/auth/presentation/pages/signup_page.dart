@@ -152,7 +152,7 @@ class SignUpPage extends StatelessWidget {
                 CUSTOMER,
                 customerModel.name + ' ' + customerModel.surname,
               );
-              await _signUpStore.executeSignUp(customerModel);
+              await _signUpStore.executeSignUp(customerModel, context);
               if (LoggedUser.instance.loggedUserUid != null) {
                 showDialog(
                   context: context,

@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -12,6 +11,7 @@ import '../../domain/configs/core_config.dart';
 import '../../domain/consts/img.dart';
 import '../../domain/entities/route_entity.dart';
 import 'help_dialog.dart';
+import 'login_dialog.dart';
 
 class ShoppingAppBar extends StatefulWidget {
   final bool fullAppBar;
@@ -138,96 +138,15 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
                 await Modular.to.pushNamed('/customer');
                 if (widget.onNavigate) setLandscapeOrientation();
               } else {
-                EdgeAlert.show(
-                  context,
-                  title: 'No user found',
-                  description: 'Login to show user info',
-                  gravity: EdgeAlert.BOTTOM,
-                  icon: Icons.info,
-                  backgroundColor: Colors.redAccent,
-                  duration: EdgeAlert.LENGTH_SHORT,
-                );
                 showDialog(
                   barrierDismissible: false,
                   context: context,
-                  builder: (context) => _buildAlertDialog(),
+                  builder: (context) => LoginDialog(),
                 );
               }
             },
           ),
         ],
-      ),
-    );
-  }
-
-  _buildAlertDialog() {
-    return AlertDialog(
-      elevation: 0.0,
-      backgroundColor: Colors.transparent,
-      title: Stack(
-        children: [
-          Container(
-            height: 50.0,
-            child: RaisedButton.icon(
-              elevation: 5.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              color: Colors.green,
-              onPressed: () async {
-                setAllOrientations();
-                await Modular.to.pushNamed('/auth');
-                setLandscapeOrientation();
-              },
-              icon: Icon(
-                Ionicons.ios_log_in,
-                color: Colors.white,
-              ),
-              label: Text(
-                'Login',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 0.0,
-            right: 0.0,
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: _buildDialogButton(
-                height: 40.0,
-                width: 40.0,
-                color: Colors.black38,
-                icon: Icons.close,
-                onTap: () => Modular.to.pop(),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  GestureDetector _buildDialogButton(
-      {double height,
-      double width,
-      Color color,
-      IconData icon,
-      VoidCallback onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Material(
-        elevation: 2.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50.0),
-        ),
-        child: Container(
-          height: height,
-          width: width,
-          decoration: BoxDecoration(
-              color: color, borderRadius: BorderRadius.circular(50.0)),
-          child: Icon(icon, color: Colors.white70, size: 30),
-        ),
       ),
     );
   }
@@ -301,39 +220,6 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
       ),
     );
   }
-
-  // Column _buildGold() {
-  //   return Column(
-  //     mainAxisAlignment: MainAxisAlignment.center,
-  //     children: [
-  //       Text(
-  //         'gold'.toUpperCase(),
-  //         style: TextStyle(
-  //           color: Colors.amber,
-  //           fontSize: !widget.fullAppBar ? 18 : 25.0,
-  //           fontWeight: FontWeight.bold,
-  //         ),
-  //       ),
-  //       Row(
-  //         children: [
-  //           _buildStar(),
-  //           _buildStar(),
-  //           _buildStar(),
-  //           _buildStar(),
-  //           _buildStar(),
-  //         ],
-  //       )
-  //     ],
-  //   );
-  // }
-
-  // Icon _buildStar() {
-  //   return Icon(
-  //     Ionicons.ios_star,
-  //     size: !widget.fullAppBar ? 10.0 : 14.0,
-  //     color: Colors.amber,
-  //   );
-  // }
 
   _buildRoundedButtonLabel(String label, {bool isFilter = false}) => Container(
         width: !widget.fullAppBar ? 30.0 : 45,

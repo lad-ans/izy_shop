@@ -58,7 +58,7 @@ class CheckoutDialog extends StatelessWidget {
             onTap: () {
               _controller.select(9);
               _cartDataSource.removeAll();
-              Modular.to.pushReplacementNamed('/home');
+              Modular.to.pop();
             },
             index: 9,
           ),

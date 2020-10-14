@@ -4,6 +4,7 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:izy_shop/app/core/presentation/widgets/loading_dialog.dart';
 
 import '../../../../app_controller.dart';
 import '../../../../core/domain/configs/core_config.dart';
@@ -140,7 +141,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
                             orderModel.customerName =
                                 LoggedUser.instance.loggedUsername;
                             _formKey.currentState.save();
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (context) => LoadingDialog(),
+                            );
                             await setOrderStore.execute(orderModel);
+                            Modular.to.pushReplacementNamed('/home');
                             showDialog(
                               barrierDismissible: false,
                               context: context,
@@ -326,7 +333,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               onSaved: onSaved,
               validator: (value) {
                 if (value.trim().isEmpty) return '*required field';
-                if (value.trim().length < 4) return '*Address too short';
+                if (value.trim().length < 4) return '*phone number too short';
                 return null;
               },
               builder: (FormFieldState<String> state) {

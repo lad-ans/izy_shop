@@ -7,6 +7,7 @@ import '../../../../core/domain/configs/core_config.dart';
 import '../../../../core/domain/consts/img.dart';
 import '../../../../core/domain/entities/route_entity.dart';
 import '../../../../core/presentation/widgets/custom_statusbar.dart';
+import '../../../../core/presentation/widgets/login_dialog.dart';
 import '../../../../core/presentation/widgets/shopping_appbar.dart';
 import '../../../cart/data/datasources/cart_data_source.dart';
 import '../../../cart/presentation/stores/add_to_cart_store.dart';
@@ -15,31 +16,23 @@ import '../../../product/data/models/product_model.dart';
 import '../../../product/presentation/widgets/item_tile.dart';
 import '../../../product/presentation/widgets/product_list.dart';
 
-class ShoppingPage extends StatefulWidget {
+class ShoppingPage extends StatelessWidget {
   final RouteEntity routeEntity;
-  const ShoppingPage(this.routeEntity);
-  @override
-  _ShoppingPageState createState() => _ShoppingPageState();
-}
-
-class _ShoppingPageState extends State<ShoppingPage> {
-  final _cartDataSource = Modular.get<CartDataSource>();
-
-  @override
-  void initState() {
+  ShoppingPage(this.routeEntity) {
     setLandscapeOrientation();
-    super.initState();
   }
+
+  final _cartDataSource = Modular.get<CartDataSource>();
 
   @override
   build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: _buildBody(),
+      body: _buildBody(context),
     );
   }
 
-  _buildBody() {
+  _buildBody(BuildContext context) {
     return Container(
       height: getHeight(context),
       child: Stack(
@@ -49,10 +42,10 @@ class _ShoppingPageState extends State<ShoppingPage> {
             child: Padding(
               padding: EdgeInsets.only(top: 75 + getStatusBar(context)),
               child: Column(
-                  children: widget?.routeEntity?.productCategories?.map(
+                  children: routeEntity?.productCategories?.map(
                         (productCategory) {
                           return ProductList(
-                            routeEntity: widget.routeEntity,
+                            routeEntity: routeEntity,
                             listTitle: productCategory,
                           );
                         },
@@ -66,7 +59,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
               child: ShoppingAppBar(
                 onBack: true,
                 onNavigate: true,
-                routeEntity: widget.routeEntity,
+                routeEntity: routeEntity,
               )),
           Positioned(bottom: 0.0, child: _buildBottomNavBar(context))
         ],
@@ -119,8 +112,8 @@ class _ShoppingPageState extends State<ShoppingPage> {
               await Modular.to.pushNamed(
                 '/cart',
                 arguments: RouteEntity(
-                  storeId: widget.routeEntity.storeId,
-                  storeImg: widget.routeEntity.storeImg,
+                  storeId: routeEntity.storeId,
+                  storeImg: routeEntity.storeImg,
                 ),
               );
               setLandscapeOrientation();
@@ -191,7 +184,12 @@ class _ShoppingPageState extends State<ShoppingPage> {
               gravity: EdgeAlert.BOTTOM,
               icon: Icons.info,
               backgroundColor: Colors.redAccent,
-              duration: EdgeAlert.LENGTH_SHORT,
+              duration: EdgeAlert.LENGTH_VERY_LONG,
+            );
+            return showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (context) => LoginDialog(),
             );
           }
         },
@@ -251,11 +249,5 @@ class _ShoppingPageState extends State<ShoppingPage> {
         );
       }),
     );
-  }
-
-  @override
-  void dispose() {
-    setAllOrientations();
-    super.dispose();
   }
 }

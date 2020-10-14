@@ -101,6 +101,7 @@ class StorePage extends StatelessWidget {
                             storeCategory: _routeEntity.storeCategory,
                             storeRef: store.reference),
                       );
+                      setAllOrientations();
                       _controller.select(900);
                     },
                     index: index,

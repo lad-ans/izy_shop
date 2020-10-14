@@ -30,6 +30,7 @@ class AuthRepositoryImpl implements AuthRepository {
         password: customerModel.password,
       );
     } on FirebaseAuthException catch (e) {
+      Modular.to.pop();
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
         return GlobalScaffold.instance.showSnackBar(
@@ -73,7 +74,9 @@ class AuthRepositoryImpl implements AuthRepository {
           ),
         );
       }
-    } catch (e) {}
+    } catch (e) {
+      Modular.to.pop();
+    }
   }
 
   /// email pssword signup
@@ -91,6 +94,7 @@ class AuthRepositoryImpl implements AuthRepository {
             customerModel.toMap(userCredential.user),
           );
     } on FirebaseAuthException catch (e) {
+      Modular.to.pop();
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
         return GlobalScaffold.instance.showSnackBar(
@@ -135,6 +139,7 @@ class AuthRepositoryImpl implements AuthRepository {
         );
       }
     } catch (e) {
+      Modular.to.pop();
       print(e.toString());
     }
   }
@@ -162,6 +167,7 @@ class AuthRepositoryImpl implements AuthRepository {
           .doc(userCredential.user.uid)
           .set(customerModel.socialToMap(userCredential.user));
     } catch (e) {
+      Modular.to.pop();
       print(e.toString());
       return e;
     }
@@ -186,6 +192,7 @@ class AuthRepositoryImpl implements AuthRepository {
           .doc(userCredential.user.uid)
           .set(customerModel.socialToMap(userCredential.user));
     } catch (e) {
+      Modular.to.pop();
       print(e.toString());
       return e;
     }

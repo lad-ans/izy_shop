@@ -7,6 +7,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../../core/domain/entities/route_entity.dart';
 import '../../../../core/domain/utils/number_formatter.dart';
+import '../../../../core/presentation/widgets/login_dialog.dart';
 import '../../../cart/data/datasources/cart_data_source.dart';
 import '../../../customer/domain/entities/logged_user.dart';
 import '../../data/models/product_model.dart';
@@ -167,7 +168,12 @@ class ItemTile extends StatelessWidget {
                 gravity: EdgeAlert.BOTTOM,
                 icon: Icons.info,
                 backgroundColor: Colors.redAccent,
-                duration: EdgeAlert.LENGTH_SHORT,
+                duration: EdgeAlert.LENGTH_VERY_LONG,
+              );
+              return showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (context) => LoginDialog(),
               );
             }
           },
