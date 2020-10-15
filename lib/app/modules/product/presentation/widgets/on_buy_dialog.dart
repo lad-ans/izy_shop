@@ -117,20 +117,27 @@ class OnBuyDialog extends StatelessWidget {
                         if (tempList?.length == 0) {
                           /// set selected item
                           productModel.selectedItem = _selectedItem;
-                          if (productModel.selectedItem.values.first == null) {
-                            EdgeAlert.show(
-                              context,
-                              title: 'Select price',
-                              description: 'Please select price!',
-                              gravity: EdgeAlert.TOP,
-                              icon: Icons.info,
-                              backgroundColor: Colors.amber.withOpacity(0.9),
-                              duration: EdgeAlert.LENGTH_VERY_LONG,
-                            );
+                          if (productModel.hasSize ||
+                              productModel.hasVol ||
+                              productModel.hasWeight) {
+                            if (productModel.selectedItem.values.first ==
+                                null) {
+                              print(productModel.price);
+                              EdgeAlert.show(
+                                context,
+                                title: 'Select price',
+                                description: 'Please select price!',
+                                gravity: EdgeAlert.TOP,
+                                icon: Icons.info,
+                                backgroundColor: Colors.amber.withOpacity(0.9),
+                                duration: EdgeAlert.LENGTH_VERY_LONG,
+                              );
+                            }
+                            _cartDataSource.addToCart(productModel);
+                            // _getPriceByKeyStore.customPrice = 0;
                           } else {
                             _cartDataSource.addToCart(productModel);
-                            _getPriceByKeyStore.customPrice = 0;
-                            print(_cartDataSource.customerCart);
+                            // _getPriceByKeyStore.customPrice = 0;
                           }
                         } else {
                           EdgeAlert.show(

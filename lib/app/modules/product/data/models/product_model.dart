@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProductModel {
@@ -56,6 +58,24 @@ class ProductModel {
     );
   }
 
+  factory ProductModel.fromMap(Map<String, dynamic> map) {
+    return ProductModel(
+        name: map['name'],
+        img: map['logo'],
+        description: map['description'],
+        price: map['price'],
+        category: map['category'],
+        qty: map['qty'],
+        id: map['id'],
+        hasVol: map['hasVol'],
+        hasWeight: map['hasWeight'],
+        hasSize: map['hasSize'],
+        deliveryPrice: map['deliveryPrice'],
+        storeCategory: map['storeCategory'],
+        storeName: map['storeName'],
+        selectedItem: map['selectedItem']);
+  }
+
   Map<String, dynamic> toMap() {
     return {
       "name": this.name,
@@ -76,6 +96,6 @@ class ProductModel {
 
   @override
   String toString() {
-    return '${this.name}, ${this.name}, ${this.description}, ${this.img}, ${this.price}, ${this.category}, has size: ${this.hasSize}, has volume: ${this.hasVol}, has size: ${this.hasSize}, Store cat $storeCategory, Store name $storeName, custom price $selectedItem';
+    return '${this.name}, ${this.name}, ${this.description}, ${this.img}, ${this.price}, ${this.category}, has size: ${this.hasSize}, has volume: ${this.hasVol}, has size: ${this.hasSize}, Store cat $storeCategory, Store name $storeName, selected item $selectedItem';
   }
 }

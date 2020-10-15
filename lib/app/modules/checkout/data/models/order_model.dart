@@ -1,3 +1,9 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server/gmail.dart';
+
 import '../../../product/data/models/product_model.dart';
 
 class OrderModel {
@@ -33,8 +39,9 @@ class OrderModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'products':
-          List.from(this.products.map((productModel) => productModel.toMap())),
+      'products': List.from(
+        this.products.map((productModel) => productModel.toMap()),
+      ),
       'location': this.location,
       'road': this.road,
       'houseNo': this.houseNo,
@@ -48,6 +55,32 @@ class OrderModel {
       'longitude': this.longitude,
       'storeId': this.storeId
     };
+  }
+
+  Future<void> sendOrderReport(File orderReportFile) async {
+    String username = 'leevamz@gmail.com';
+    String password = '!leeva2020!';
+
+    final smtpServer = gmail(username, password);
+
+    final message = Message()
+      ..from = Address(username, 'Izy Shop Mobile App')
+      ..recipients.add('info@izyshop.co.mz')
+      // ..ccRecipients.addAll(['destCc1@example.com', 'destCc2@example.com'])
+      // ..bccRecipients.add(Address('bccAddress@example.com'))
+      ..subject = 'Relatório de encomenda'
+      ..text = 'Encomenda efectuada em ${DateTime.now().toString()}'
+      ..attachments.add(FileAttachment(orderReportFile));
+
+    try {
+      final sendReport = await send(message, smtpServer);
+      print('Message sent: ' + sendReport.toString());
+    } on MailerException catch (e) {
+      print('Message not sent. ${e.toString()}');
+      for (var p in e.problems) {
+        print('Problem: ${p.code}: ${p.msg}');
+      }
+    }
   }
 
   @override

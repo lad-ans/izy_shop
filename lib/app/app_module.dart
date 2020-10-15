@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:izy_shop/app/modules/checkout/presentation/pages/pdf_preview.dart';
 
 import 'app_controller.dart';
 import 'app_widget.dart';
@@ -71,6 +72,7 @@ class AppModule extends MainModule {
         ModularRouter('/search', child: (_, args) => SearchPage(args.data)),
         ModularRouter('/photo-view',
             child: (_, args) => PhotoViewPage(args.data)),
+        ModularRouter('/pdf-viewer', child: (_, args) => PDFPreview(args.data)),
       ];
 
   @override

@@ -4,7 +4,6 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:izy_shop/app/core/presentation/widgets/loading_dialog.dart';
 
 import '../../../../app_controller.dart';
 import '../../../../core/domain/configs/core_config.dart';
@@ -12,6 +11,7 @@ import '../../../../core/domain/entities/route_entity.dart';
 import '../../../../core/domain/utils/number_formatter.dart';
 import '../../../../core/presentation/widgets/amount_checkout_row.dart';
 import '../../../../core/presentation/widgets/custom_statusbar.dart';
+import '../../../../core/presentation/widgets/loading_dialog.dart';
 import '../../../../core/presentation/widgets/rounded_button.dart';
 import '../../../../core/presentation/widgets/shopping_appbar.dart';
 import '../../../customer/domain/entities/logged_user.dart';
@@ -20,7 +20,7 @@ import '../../data/datasources/payment_method.dart';
 import '../../data/models/order_model.dart';
 import '../stores/set_delivery_time_store.dart';
 import '../stores/set_order_store.dart';
-import '../widgets/checkout_dialog.dart';
+import '../widgets/ordered_dialog.dart';
 
 class CheckoutPage extends StatefulWidget {
   final RouteEntity routeEntity;
@@ -147,11 +147,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
                               builder: (context) => LoadingDialog(),
                             );
                             await setOrderStore.execute(orderModel);
+
                             Modular.to.pushReplacementNamed('/home');
                             showDialog(
                               barrierDismissible: false,
                               context: context,
-                              builder: (context) => CheckoutDialog(),
+                              builder: (context) => OrderedDialog(
+                                orderModel: orderModel,
+                              ),
                             );
                           }
                         },

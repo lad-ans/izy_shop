@@ -56,8 +56,14 @@ class _CartPageState extends State<CartPage> {
           subTotal += item.price * item.qty;
         }
       }
+      num deliveryPrice;
+      if (subTotal < 3999) {
+        deliveryPrice = 350;
+      } else {
+        deliveryPrice = 0;
+      }
 
-      num total = subTotal + 350;
+      num total = subTotal + deliveryPrice;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -65,7 +71,11 @@ class _CartPageState extends State<CartPage> {
           AmountCheckoutRow(
               title: 'SubTotal',
               amount: NumberFormatter.instance.numToString(subTotal)),
-          AmountCheckoutRow(title: 'Delivery', amount: '350,00'),
+          AmountCheckoutRow(
+            title: 'Delivery',
+            amount:
+                NumberFormatter.instance.numToString(deliveryPrice).toString(),
+          ),
           AmountCheckoutRow(
               title: 'Total Amount',
               amount: NumberFormatter.instance.numToString(total)),
