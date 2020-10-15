@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -15,15 +15,24 @@ import '../../domain/consts/img.dart';
 import '../../domain/entities/route_entity.dart';
 import '../../domain/utils/number_formatter.dart';
 
-class SearchPage extends StatelessWidget {
+class SearchPage extends StatefulWidget {
   final RouteEntity _routeEntity;
   SearchPage(
     this._routeEntity,
-  ) {
-    getProductStore.execute(_routeEntity.storeRef);
-  }
+  );
 
+  @override
+  _SearchPageState createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<SearchPage> {
   String searchParam = '';
+
+  @override
+  void initState() {
+    getProductStore.execute(widget._routeEntity.storeRef);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +42,7 @@ class SearchPage extends StatelessWidget {
   }
 
   final getProductStore = Modular.get<GetProductStore>();
+
   Widget _buildBody(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(20.0, getStatusBar(context), 20.0, 20.0),
@@ -44,10 +54,13 @@ class SearchPage extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
         child: Stack(
           children: [
-            Padding(
-              padding:
-                  EdgeInsets.only(top: getStatusBar(context) + 60.0 + 60.0),
-              child: _buildListView(),
+            Visibility(
+              visible: searchParam.isNotEmpty,
+              child: Padding(
+                padding:
+                    EdgeInsets.only(top: getStatusBar(context) + 60.0 + 60.0),
+                child: _buildListView(),
+              ),
             ),
             _buildCloseButton(),
             Padding(
@@ -86,7 +99,7 @@ class SearchPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(12.0),
               image: DecorationImage(
                 fit: BoxFit.cover,
-                image: CachedNetworkImageProvider(product),
+                image: FirebaseImage(product),
               ),
             ),
           ),
@@ -106,7 +119,7 @@ class SearchPage extends StatelessWidget {
         ),
         trailing: ClipRRect(
             borderRadius: BorderRadius.circular(12.0),
-            child: CachedNetworkImage(imageUrl: vendor, width: 100.0)),
+            child: Image(image: FirebaseImage(vendor), width: 100.0)),
       ),
     );
   }
@@ -141,13 +154,16 @@ class SearchPage extends StatelessWidget {
                       searchParam.toLowerCase(),
                     ))
                 .toList()[index];
-            return _buildItemTile(
-              context: context,
-              productModel: productModel,
-              product: productModel.img,
-              title: productModel.name,
-              price: productModel.price,
-              vendor: _routeEntity.storeImg,
+            return Visibility(
+              visible: searchParam.isNotEmpty,
+              child: _buildItemTile(
+                context: context,
+                productModel: productModel,
+                product: productModel.img,
+                title: productModel.name,
+                price: productModel.price,
+                vendor: widget._routeEntity.storeImg,
+              ),
             );
           },
         );
@@ -159,7 +175,9 @@ class SearchPage extends StatelessWidget {
     return TextField(
       style: TextStyle(color: Colors.black54, fontSize: 18.0),
       onChanged: (value) {
-        this.searchParam = value;
+        setState(() {
+          this.searchParam = value;
+        });
       },
       decoration: InputDecoration(
         hintText: 'Search...',

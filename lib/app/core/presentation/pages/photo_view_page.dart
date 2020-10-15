@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 
@@ -19,7 +19,7 @@ class PhotoViewPage extends StatelessWidget {
             width: getWidth(context),
             height: getHeight(context),
             child: PhotoView(
-              imageProvider: CachedNetworkImageProvider(
+              imageProvider: FirebaseImage(
                 _routeEntity.productModel.img,
               ),
             ),

@@ -1,5 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:edge_alert/edge_alert.dart';
+import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -101,10 +101,12 @@ class ItemTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(8.0),
           ),
           child: ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
-              child: CachedNetworkImage(
-                  imageUrl: isOnCart ? productImg : productModel?.img,
-                  fit: BoxFit.contain)),
+            borderRadius: BorderRadius.circular(8.0),
+            child: Image(
+              image: FirebaseImage(isOnCart ? productImg : productModel?.img),
+              fit: BoxFit.contain,
+            ),
+          ),
         ),
       ),
     );

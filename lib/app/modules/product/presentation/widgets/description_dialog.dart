@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -143,8 +143,8 @@ class DescriptionDialog extends StatelessWidget {
               'photo-view',
               arguments: RouteEntity(productModel: productModel),
             ),
-            child: CachedNetworkImage(
-              imageUrl: productModel.img,
+            child: Image(
+              image: FirebaseImage(productModel.img),
               width: 150.0,
               height: 150.0,
               fit: BoxFit.cover,

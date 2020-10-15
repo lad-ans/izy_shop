@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -92,10 +92,13 @@ class _ShoppingAppBarState extends State<ShoppingAppBar> {
               visible: widget.fullAppBar,
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
-                  child: CachedNetworkImage(
-                          imageUrl: widget.routeEntity.storeImg,
-                          height: widget.fullAppBar ? 30.0 : 55.0) ??
-                      Image.asset(APPLES))),
+                  child: Image(
+                    height: widget.fullAppBar ? 30.0 : 55.0,
+                    image: FirebaseImage(
+                          widget.routeEntity.storeImg,
+                        ) ??
+                        AssetImage(APPLES),
+                  ))),
           SizedBox(width: 2.0),
           Visibility(visible: widget.fullAppBar, child: _buildNavigationText()),
           Expanded(child: SizedBox()),

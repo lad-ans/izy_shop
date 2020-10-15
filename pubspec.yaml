@@ -21,6 +21,7 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
+  firebase_image: ^0.2.0
   mailer: ^3.2.1
   flutter_full_pdf_viewer: ^1.0.6
   path_provider: ^1.6.18

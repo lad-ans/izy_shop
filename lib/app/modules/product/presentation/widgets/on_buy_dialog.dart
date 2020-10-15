@@ -1,5 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:edge_alert/edge_alert.dart';
+import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
@@ -250,9 +250,9 @@ class OnBuyDialog extends StatelessWidget {
               'photo-view',
               arguments: RouteEntity(productModel: productModel),
             ),
-            child: CachedNetworkImage(
+            child: Image(
+              image: FirebaseImage(productModel.img),
               fit: BoxFit.cover,
-              imageUrl: productModel.img,
               height: 150,
               width: 150,
             ),
@@ -406,9 +406,7 @@ class OnBuyDialog extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8.0),
                       image: DecorationImage(
                         fit: BoxFit.cover,
-                        image: CachedNetworkImageProvider(
-                          productModel.img,
-                        ),
+                        image: FirebaseImage(productModel.img),
                         colorFilter: _getPriceByKeyStore.keyReceiver == key
                             ? ColorFilter.mode(
                                 Colors.red[300].withOpacity(0.7),

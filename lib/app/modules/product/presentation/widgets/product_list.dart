@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -98,8 +98,7 @@ class ProductList extends StatelessWidget {
               color: currentColor,
               borderRadius: BorderRadius.circular(8.0),
               image: DecorationImage(
-                image: CachedNetworkImageProvider(
-                    productModel?.img ?? IMG_DEFAULT),
+                image: FirebaseImage(productModel?.img ?? IMG_DEFAULT),
                 fit: BoxFit.cover,
                 colorFilter: ColorFilter.mode(currentColor, BlendMode.color),
               ),

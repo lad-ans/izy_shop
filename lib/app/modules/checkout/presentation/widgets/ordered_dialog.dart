@@ -2,10 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:izy_shop/app/modules/product/data/models/product_model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -15,8 +13,8 @@ import '../../../../app_controller.dart';
 import '../../../../core/domain/utils/number_formatter.dart';
 import '../../../../core/presentation/widgets/rounded_button.dart';
 import '../../../cart/data/datasources/cart_data_source.dart';
+import '../../../product/data/models/product_model.dart';
 import '../../data/models/order_model.dart';
-import '../pages/pdf_preview.dart';
 
 class PDFEntity {
   String path;

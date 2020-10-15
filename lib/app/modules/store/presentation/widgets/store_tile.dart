@@ -1,3 +1,4 @@
+import 'package:firebase_image/firebase_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -74,7 +75,7 @@ class StoreTile extends StatelessWidget {
                       )
                     : null,
                 fit: BoxFit.cover,
-                image: NetworkImage(img),
+                image: FirebaseImage(img),
               ),
             ),
             child: _buildLabel(context),
