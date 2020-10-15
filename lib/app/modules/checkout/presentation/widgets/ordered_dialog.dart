@@ -78,12 +78,12 @@ class OrderedDialog extends StatelessWidget {
                   '$documentPath/izyshop_report_${DateTime.now().hour}_${DateTime.now().minute}_${DateTime.now().day}_${DateTime.now().month}_${DateTime.now().year}.pdf');
               orderModel.sendOrderReport(file);
               Modular.to.pop();
-              Modular.to.pushNamed(
-                '/pdf-viewer',
-                arguments: PdfRoute(
-                  '$documentPath/izyshop_report_${DateTime.now().hour}_${DateTime.now().minute}_${DateTime.now().day}_${DateTime.now().month}_${DateTime.now().year}.pdf',
-                ),
-              );
+              // Modular.to.pushNamed(
+              //   '/pdf-viewer',
+              //   arguments: PdfRoute(
+              //     '$documentPath/izyshop_report_${DateTime.now().hour}_${DateTime.now().minute}_${DateTime.now().day}_${DateTime.now().month}_${DateTime.now().year}.pdf',
+              //   ),
+              // );
             },
             index: 9,
           ),
