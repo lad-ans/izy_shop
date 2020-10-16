@@ -19,6 +19,9 @@ abstract class _GetPriceByKeyStoreBase with Store {
   @observable
   num selectedCustomPriceValue;
 
+  @observable
+  Map<String, dynamic> selectedItem;
+
   @action
   selectKey(String key, Map<String, dynamic> map) {
     this.keyReceiver = key;
@@ -28,5 +31,19 @@ abstract class _GetPriceByKeyStoreBase with Store {
 
     /// set custom price
     this.customPrice = map[key];
+  }
+
+  selectItem() {
+    this.selectedItem = {
+      this.selectedCustomPriceKey: this.selectedCustomPriceValue
+    };
+  }
+
+  @action
+  void resetSelectedItem() {
+    this.customPrice = 0;
+    this.keyReceiver = '';
+    this.selectedCustomPriceKey = 'empty';
+    this.selectedCustomPriceValue = null;
   }
 }

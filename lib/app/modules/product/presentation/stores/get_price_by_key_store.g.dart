@@ -83,6 +83,21 @@ mixin _$GetPriceByKeyStore on _GetPriceByKeyStoreBase, Store {
     });
   }
 
+  final _$selectedItemAtom = Atom(name: '_GetPriceByKeyStoreBase.selectedItem');
+
+  @override
+  Map<String, dynamic> get selectedItem {
+    _$selectedItemAtom.reportRead();
+    return super.selectedItem;
+  }
+
+  @override
+  set selectedItem(Map<String, dynamic> value) {
+    _$selectedItemAtom.reportWrite(value, super.selectedItem, () {
+      super.selectedItem = value;
+    });
+  }
+
   final _$_GetPriceByKeyStoreBaseActionController =
       ActionController(name: '_GetPriceByKeyStoreBase');
 
@@ -98,12 +113,24 @@ mixin _$GetPriceByKeyStore on _GetPriceByKeyStoreBase, Store {
   }
 
   @override
+  void resetSelectedItem() {
+    final _$actionInfo = _$_GetPriceByKeyStoreBaseActionController.startAction(
+        name: '_GetPriceByKeyStoreBase.resetSelectedItem');
+    try {
+      return super.resetSelectedItem();
+    } finally {
+      _$_GetPriceByKeyStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 customPrice: ${customPrice},
 keyReceiver: ${keyReceiver},
 selectedCustomPriceKey: ${selectedCustomPriceKey},
-selectedCustomPriceValue: ${selectedCustomPriceValue}
+selectedCustomPriceValue: ${selectedCustomPriceValue},
+selectedItem: ${selectedItem}
     ''';
   }
 }

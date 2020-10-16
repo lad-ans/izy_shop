@@ -1,17 +1,20 @@
 import 'dart:ui';
 
+import 'package:edge_alert/edge_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../app_controller.dart';
+import '../../../../core/data/datasources/local_storage.dart';
 import '../../../../core/domain/configs/core_config.dart';
 import '../../../../core/domain/consts/img.dart';
 import '../../../../core/presentation/widgets/rounded_button.dart';
-import '../../../customer/data/datasources/local_storage.dart';
 import '../../../customer/data/models/customer_model.dart';
 import '../../../customer/domain/entities/logged_user.dart';
+import '../stores/sign_in_with_facebook_store.dart';
+import '../stores/sign_in_with_google_store.dart';
 import '../stores/sign_up_store.dart';
 import '../widgets/custom_textfield.dart';
 import '../widgets/on_register_dialog.dart';
@@ -20,6 +23,13 @@ class SignUpPage extends StatelessWidget {
   final CustomerModel customerModel = CustomerModel();
 
   final TextEditingController _passwordController = TextEditingController();
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final AppController _controller = Modular.get<AppController>();
+
+  final SignUpStore _signUpStore = Modular.get<SignUpStore>();
+  final signInWithGoogleStore = Modular.get<SignInWithGoogleStore>();
+  final signInWithFacebookStore = Modular.get<SignInWithFacebookStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +55,6 @@ class SignUpPage extends StatelessWidget {
     );
   }
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final AppController _controller = Modular.get<AppController>();
-  final SignUpStore _signUpStore = Modular.get<SignUpStore>();
   Widget _buildListView(BuildContext context) {
     return Form(
       key: _formKey,
@@ -63,11 +70,32 @@ class SignUpPage extends StatelessWidget {
                 icon: Zocial.facebook,
                 text: 'Login With Facebook',
                 onTap: () async {
-                  _controller.select(10);
-                  Future.delayed(Duration(milliseconds: 500));
-                  _controller.select(600);
+                  _controller.select(-2);
+                  await signInWithFacebookStore.execute(context);
+                  if (LoggedUser.instance.loggedUserUid != null) {
+                    EdgeAlert.show(
+                      context,
+                      title: 'Logged in successfully',
+                      description: 'Great! You are logged with Google',
+                      gravity: EdgeAlert.TOP,
+                      icon: Icons.check,
+                      backgroundColor: Colors.green,
+                      duration: EdgeAlert.LENGTH_SHORT,
+                    );
+                    await Modular.to.pushReplacementNamed('/home/city');
+                  } else {
+                    EdgeAlert.show(
+                      context,
+                      title: 'Error on Facebook login',
+                      description: 'Some error occured on google login',
+                      gravity: EdgeAlert.TOP,
+                      icon: Icons.info,
+                      backgroundColor: Colors.redAccent,
+                      duration: EdgeAlert.LENGTH_SHORT,
+                    );
+                  }
                 },
-                index: 10,
+                index: -2,
               ),
               SizedBox(width: 20.0),
               RoundedButton(
@@ -75,11 +103,32 @@ class SignUpPage extends StatelessWidget {
                 icon: Zocial.google,
                 text: 'Login With Google',
                 onTap: () async {
-                  _controller.select(11);
-                  Future.delayed(Duration(milliseconds: 500));
-                  _controller.select(700);
+                  _controller.select(-3);
+                  await signInWithGoogleStore.execute(context);
+                  if (LoggedUser.instance.loggedUserUid != null) {
+                    EdgeAlert.show(
+                      context,
+                      title: 'Logged in successfully',
+                      description: 'Greate!! You are logged with Google',
+                      gravity: EdgeAlert.TOP,
+                      icon: Icons.check,
+                      backgroundColor: Colors.green,
+                      duration: EdgeAlert.LENGTH_SHORT,
+                    );
+                    await Modular.to.pushReplacementNamed('/home/city');
+                  } else {
+                    EdgeAlert.show(
+                      context,
+                      title: 'Error on Google login',
+                      description: 'Some error occured on google login',
+                      gravity: EdgeAlert.TOP,
+                      icon: Icons.info,
+                      backgroundColor: Colors.redAccent,
+                      duration: EdgeAlert.LENGTH_SHORT,
+                    );
+                  }
                 },
-                index: 11,
+                index: -3,
               ),
             ],
           ),
@@ -147,7 +196,7 @@ class SignUpPage extends StatelessWidget {
           _buildOnConfirm(context, onTap: () async {
             if (_formKey.currentState.validate()) {
               _formKey.currentState.save();
-              LocalStorage.instance.clearStorage();
+              LocalStorage.instance.removeData(CUSTOMER);
               LocalStorage.instance.setString(
                 CUSTOMER,
                 customerModel.name + ' ' + customerModel.surname,

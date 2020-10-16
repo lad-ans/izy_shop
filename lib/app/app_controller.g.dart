@@ -38,11 +38,11 @@ mixin _$AppController on _AppControllerBase, Store {
       ActionController(name: '_AppControllerBase');
 
   @override
-  dynamic select(int index) {
+  dynamic select(int index, {bool isFixed = false}) {
     final _$actionInfo = _$_AppControllerBaseActionController.startAction(
         name: '_AppControllerBase.select');
     try {
-      return super.select(index);
+      return super.select(index, isFixed: isFixed);
     } finally {
       _$_AppControllerBaseActionController.endAction(_$actionInfo);
     }

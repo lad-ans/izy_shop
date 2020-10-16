@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 
 import 'package:izy_shop/app/core/domain/entities/route_entity.dart';
 
-import '../../../../core/domain/consts/api.dart';
+import '../../../../core/domain/consts/credential.dart';
 
 class MapsPage extends StatefulWidget {
   final RouteEntity _routeEntity;
@@ -20,7 +21,7 @@ class MapsPage extends StatefulWidget {
 }
 
 class _MapsPageState extends State<MapsPage> {
-  _buildSelectedPlace(PickResult selectedPlace) {
+  _buildSelectedPlace(PickResult selectedPlace, SearchingState state) {
     return Material(
       elevation: 2.0,
       shape: RoundedRectangleBorder(
@@ -36,39 +37,40 @@ class _MapsPageState extends State<MapsPage> {
         child: Row(
           children: [
             Expanded(
-              child: Text(
-                selectedPlace.formattedAddress != null
-                    ? '${selectedPlace.formattedAddress}'
-                    : '',
-                style: TextStyle(
-                  fontSize: 20.0,
-                  color: Colors.black87,
-                ),
-                textAlign: TextAlign.center,
-              ),
+              child: state != SearchingState.Searching
+                  ? Text(
+                      selectedPlace.formattedAddress != null
+                          ? '${selectedPlace.formattedAddress}'
+                          : '',
+                      style: TextStyle(fontSize: 20.0, color: Colors.black87),
+                      textAlign: TextAlign.center)
+                  : SpinKitFadingCircle(color: Colors.red, size: 30),
             ),
-            Material(
-              color: Colors.green[300],
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(40.0),
-              ),
-              elevation: 5.0,
-              child: Container(
-                height: 50,
-                width: 50,
-                child: IconButton(
-                  padding: EdgeInsets.all(10.0),
-                  color: Colors.white,
-                  icon: Icon(FontAwesomeIcons.check, size: 30.0),
-                  onPressed: () {
-                    widget._routeEntity.addressController.text =
-                        selectedPlace.formattedAddress;
-                    widget._routeEntity.orderModel.latitude =
-                        selectedPlace.geometry.location.lat;
-                    widget._routeEntity.orderModel.longitude =
-                        selectedPlace.geometry.location.lng;
-                    Modular.to.pop();
-                  },
+            Visibility(
+              visible: state != SearchingState.Searching,
+              child: Material(
+                color: Colors.red[300],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(40.0),
+                ),
+                elevation: 2.0,
+                child: Container(
+                  height: 50,
+                  width: 50,
+                  child: IconButton(
+                    padding: EdgeInsets.all(10.0),
+                    color: Colors.white,
+                    icon: Icon(FontAwesomeIcons.check, size: 20.0),
+                    onPressed: () {
+                      widget._routeEntity.addressController.text =
+                          selectedPlace.formattedAddress;
+                      widget._routeEntity.orderModel.latitude =
+                          selectedPlace.geometry.location.lat;
+                      widget._routeEntity.orderModel.longitude =
+                          selectedPlace.geometry.location.lng;
+                      Modular.to.pop();
+                    },
+                  ),
                 ),
               ),
             ),
@@ -76,11 +78,6 @@ class _MapsPageState extends State<MapsPage> {
         ),
       ),
     );
-  }
-
-  _buildResultTile({PickResult selectedPlace, SearchingState state}) {
-    if (state != SearchingState.Searching)
-      return _buildSelectedPlace(selectedPlace);
   }
 
   _buildBody() {
@@ -102,10 +99,8 @@ class _MapsPageState extends State<MapsPage> {
                 right: 0.0,
                 bottom: 0.0,
                 child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: _buildResultTile(
-                      selectedPlace: selectedPlace, state: state),
-                ),
+                    padding: const EdgeInsets.all(15.0),
+                    child: _buildSelectedPlace(selectedPlace, state)),
               );
       },
       pinBuilder: (context, state) {

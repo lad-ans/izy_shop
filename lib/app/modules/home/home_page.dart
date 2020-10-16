@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:izy_shop/app/app_controller.dart';
-import 'package:izy_shop/app/core/domain/entities/route_entity.dart';
 
+import '../../app_controller.dart';
 import '../../core/domain/configs/core_config.dart';
 import '../../core/domain/consts/img.dart';
+import '../../core/domain/entities/route_entity.dart';
 import '../store/data/models/store_category_model.dart';
 import '../store/presentation/stores/get_market_store.dart';
 import '../store/presentation/widgets/store_tile.dart';
@@ -80,7 +80,6 @@ class HomePage extends StatelessWidget {
                             storeCategory: storeCategoryModel.name,
                           ),
                         );
-                        _controller.select(800);
                       },
                       index: index,
                     );

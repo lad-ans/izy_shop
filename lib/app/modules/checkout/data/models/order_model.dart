@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server/gmail.dart';
 
+import '../../../../core/domain/consts/credential.dart';
 import '../../../product/data/models/product_model.dart';
 
 class OrderModel {
@@ -17,6 +18,8 @@ class OrderModel {
   String paymentMethod;
   String customerName;
   num amount;
+  num deliveryAmount;
+  num subtotal;
   String onDeliveryPhone;
   double latitude;
   double longitude;
@@ -32,6 +35,8 @@ class OrderModel {
     this.paymentMethod,
     this.customerName,
     this.amount,
+    this.deliveryAmount,
+    this.subtotal,
     this.onDeliveryPhone,
     this.latitude,
     this.longitude,
@@ -46,6 +51,7 @@ class OrderModel {
       'road': this.road,
       'houseNo': this.houseNo,
       'instruction': this.instruction,
+      'deliveryAmount': this.deliveryAmount,
       'deliveryTime': this.deliveryTime,
       'paymentMethod': this.paymentMethod,
       'customerName': this.customerName,
@@ -58,16 +64,11 @@ class OrderModel {
   }
 
   Future<void> sendOrderReport(File orderReportFile) async {
-    String username = 'leevamz@gmail.com';
-    String password = '!leeva2020!';
-
-    final smtpServer = gmail(username, password);
+    final smtpServer = gmail(EMAIL_USERNAME, EMAIL_PASSWORD);
 
     final message = Message()
-      ..from = Address(username, 'Izy Shop Mobile App')
-      ..recipients.add('info@izyshop.co.mz')
-      // ..ccRecipients.addAll(['destCc1@example.com', 'destCc2@example.com'])
-      // ..bccRecipients.add(Address('bccAddress@example.com'))
+      ..from = Address(EMAIL_USERNAME, 'Izy Shop Mobile App')
+      ..recipients.add(EMAIL_RECIPIENT)
       ..subject = 'Relatório de encomenda'
       ..text = 'Encomenda efectuada em ${DateTime.now().toString()}'
       ..attachments.add(FileAttachment(orderReportFile));
@@ -85,6 +86,6 @@ class OrderModel {
 
   @override
   String toString() {
-    return '$products, $location, $instruction, $deliveryTime, $paymentMethod, $customerName, $amount, $onDeliveryPhone, $road, $houseNo';
+    return '$products, $location, $instruction, $deliveryTime, $paymentMethod, $customerName, $amount, $onDeliveryPhone, $road, $houseNo $deliveryAmount $subtotal';
   }
 }

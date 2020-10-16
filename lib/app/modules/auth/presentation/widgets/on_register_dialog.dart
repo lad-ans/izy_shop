@@ -38,12 +38,6 @@ class OnRegisterDetailsDialog extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            // RoundedButton(
-            //   iconColor: Colors.white,
-            //   icon: AntDesign.edit,
-            //   onTap: () => Modular.to.pop(),
-            // ),
-            // SizedBox(width: 20.0),
             RoundedButton(
               iconColor: Colors.white,
               icon: FontAwesomeIcons.check,
@@ -52,7 +46,7 @@ class OnRegisterDetailsDialog extends StatelessWidget {
                   context,
                   title: 'Logged in successfully',
                   description: 'Great!! You are logged in',
-                  gravity: EdgeAlert.BOTTOM,
+                  gravity: EdgeAlert.TOP,
                   icon: Icons.check,
                   backgroundColor: Colors.green,
                   duration: EdgeAlert.LENGTH_SHORT,

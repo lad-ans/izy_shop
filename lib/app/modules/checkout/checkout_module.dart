@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:izy_shop/app/modules/checkout/presentation/stores/pdf_store.dart';
 
 import 'data/repositories/checkout_repository_impl.dart';
 import 'domain/usecases/set_order.dart';
@@ -16,14 +17,14 @@ class CheckoutModule extends ChildModule {
         $CheckoutRepositoryImpl,
         $SetOrderStore,
         $SetDeliveryTimeStore,
+        $PDFStore
       ];
 
   @override
   List<ModularRouter> get routers => [
         ModularRouter(Modular.initialRoute,
             child: (_, args) => CheckoutPage(routeEntity: args.data)),
-        ModularRouter('/maps',
-            child: (_, args) => MapsPage(args.data)),
+        ModularRouter('/maps', child: (_, args) => MapsPage(args.data)),
       ];
 
   static Inject get to => Inject<CheckoutModule>.of();

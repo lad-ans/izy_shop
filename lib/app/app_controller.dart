@@ -1,5 +1,5 @@
-import 'package:mobx/mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mobx/mobx.dart';
 
 part 'app_controller.g.dart';
 
@@ -11,7 +11,12 @@ abstract class _AppControllerBase with Store {
   int selectedIndex;
 
   @action
-  select(int index) {
+  select(int index, {bool isFixed = false}) {
     this.selectedIndex = index;
+    if (!isFixed) {
+      Future.delayed(Duration(milliseconds: 500), () {
+        this.selectedIndex = -1;
+      });
+    }
   }
 }

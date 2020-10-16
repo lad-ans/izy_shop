@@ -91,6 +91,8 @@ class _CartPageState extends State<CartPage> {
                           storeId: widget.routeEntity.storeId,
                           cartList: productList,
                           totalAmount: total,
+                          deliveryPrice: deliveryPrice,
+                          subtotal: subTotal,
                           storeImg: widget.routeEntity.storeImg,
                           storeCategory: widget.routeEntity.storeCategory),
                     ),
@@ -193,15 +195,30 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
+  TextStyle get kStyle => TextStyle(
+      color: Colors.red[300],
+      fontWeight: FontWeight.w600,
+      fontFamily: 'Poppins');
+
   Container _buildHeader() {
     return Container(
-      padding: EdgeInsets.only(top: 10.0),
+      padding: EdgeInsets.only(top: 10.0, left: 20.0, right: 20.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text('Product', style: TextStyle(color: Colors.red[300])),
-          Text('Desc', style: TextStyle(color: Colors.red[300])),
-          Text('Qty', style: TextStyle(color: Colors.red[300])),
+          Container(
+              alignment: Alignment.center,
+              width: 80,
+              child: Text('Product', style: kStyle)),
+          Container(
+              alignment: Alignment.center,
+              width: 130,
+              child: Text('Description', style: kStyle)),
+          Container(
+              alignment: Alignment.center,
+              width: 130,
+              child: Text('Quantity', style: kStyle)),
         ],
       ),
     );
@@ -224,30 +241,34 @@ class _CartPageState extends State<CartPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            children: [
-              Expanded(
-                child: ItemTile(
-                    productModel: productModel,
-                    itemWidth: 70,
-                    isOnCart: true,
-                    elevation: 0.0,
-                    hPadd: 0.0,
-                    productImg: product,
-                    showItemPrice: false),
-              ),
-              Text(
-                productModel.hasSize ||
-                        productModel.hasVol ||
-                        productModel.hasWeight
-                    ? '${NumberFormatter.instance.numToString(productModel.selectedItem[key] * productModel.qty)} MT'
-                    : '${NumberFormatter.instance.numToString(price * productModel.qty)} MT',
-                style: TextStyle(fontSize: 11.0, color: Colors.red[300]),
-              ),
-            ],
+          Container(
+            width: 80,
+            child: Column(
+              children: [
+                Expanded(
+                  child: ItemTile(
+                      productModel: productModel,
+                      itemWidth: 70,
+                      isOnCart: true,
+                      elevation: 0.0,
+                      hPadd: 0.0,
+                      productImg: product,
+                      showItemPrice: false),
+                ),
+                Text(
+                  productModel.hasSize ||
+                          productModel.hasVol ||
+                          productModel.hasWeight
+                      ? '${NumberFormatter.instance.numToString(productModel.selectedItem[key] * productModel.qty)} MT'
+                      : '${NumberFormatter.instance.numToString(price * productModel.qty)} MT',
+                  style: TextStyle(fontSize: 11.0, color: Colors.red[300]),
+                ),
+              ],
+            ),
           ),
-          _buildItemDesc(itemDesc, itemDescDetail),
-          _buildItemInc(productModel),
+          Container(
+              width: 130, child: _buildItemDesc(itemDesc, itemDescDetail)),
+          Container(width: 130, child: _buildItemInc(productModel)),
         ],
       ),
     );
@@ -274,16 +295,18 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-  _buildItemInc(ProductModel productModel) {
+  Container _buildItemInc(ProductModel productModel) {
     return Container(
       alignment: Alignment.center,
       height: 40.0,
-      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
+      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 5.0),
       decoration: BoxDecoration(
+          color: Colors.yellow[200],
           border: Border.all(color: Colors.yellow[200], width: 1.0),
           borderRadius: BorderRadius.circular(40.0)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           InkWell(
             borderRadius: BorderRadius.circular(40.0),

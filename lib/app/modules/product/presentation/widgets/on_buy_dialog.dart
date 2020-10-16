@@ -28,159 +28,6 @@ class OnBuyDialog extends StatelessWidget {
   final _cartDataSource = Modular.get<CartDataSource>();
   final _getPriceByKeyStore = Modular.get<GetPriceByKeyStore>();
 
-  @override
-  Widget build(BuildContext context) {
-    return SimpleDialog(
-      contentPadding: EdgeInsets.all(0.0),
-      backgroundColor: Colors.white.withOpacity(0.85),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      children: [
-        Stack(
-          overflow: Overflow.visible,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: _buildContentRow(),
-            ),
-            Positioned(
-              bottom: 0.0,
-              left: 0.0,
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: _buildDialogButton(
-                  height: 40.0,
-                  width: 40.0,
-                  color: Colors.red[200],
-                  icon: AntDesign.info,
-                  onTap: () {
-                    Modular.to.pop();
-                    showDialog(
-                      context: context,
-                      builder: (context) => DescriptionDialog(
-                        shoRemovalButton: false,
-                        productModel: productModel,
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-            Positioned(
-              top: 0.0,
-              right: 0.0,
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: _buildDialogButton(
-                  height: 40.0,
-                  width: 40.0,
-                  color: Colors.black38,
-                  icon: Icons.close,
-                  onTap: () => Modular.to.pop(),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 0.0,
-              right: 0.0,
-              child: GestureDetector(
-                onTap: () => Modular.to.pop(),
-                child: Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: _buildDialogButton(
-                    height: 50.0,
-                    width: 50.0,
-                    color: Colors.green,
-                    icon: Icons.add_shopping_cart,
-                    onTap: () {
-                      Map<String, dynamic> _selectedItem = {
-                        _getPriceByKeyStore.selectedCustomPriceKey:
-                            _getPriceByKeyStore.selectedCustomPriceValue
-                      };
-                      List<ProductModel> cartList =
-                          _cartDataSource.customerCart;
-
-                      /// setup temp list
-                      List<ProductModel> tempList = cartList?.where((item) {
-                        if (productModel.hasSize ||
-                            productModel.hasVol ||
-                            productModel.hasWeight) {
-                          return mapEquals(item.selectedItem, _selectedItem);
-                        } else {
-                          return item.id == productModel.id;
-                        }
-                      })?.toList();
-
-                      if (LoggedUser.instance.loggedUserUid != null) {
-                        /// condition to add to cart
-                        if (tempList?.length == 0) {
-                          /// set selected item
-                          productModel.selectedItem = _selectedItem;
-                          if (productModel.hasSize ||
-                              productModel.hasVol ||
-                              productModel.hasWeight) {
-                            if (productModel.selectedItem.values.first ==
-                                null) {
-                              print(productModel.price);
-                              EdgeAlert.show(
-                                context,
-                                title: 'Select price',
-                                description: 'Please select price!',
-                                gravity: EdgeAlert.TOP,
-                                icon: Icons.info,
-                                backgroundColor: Colors.amber.withOpacity(0.9),
-                                duration: EdgeAlert.LENGTH_VERY_LONG,
-                              );
-                            }
-                            _cartDataSource.addToCart(productModel);
-                            // _getPriceByKeyStore.customPrice = 0;
-                          } else {
-                            _cartDataSource.addToCart(productModel);
-                            // _getPriceByKeyStore.customPrice = 0;
-                          }
-                        } else {
-                          EdgeAlert.show(
-                            context,
-                            title: 'Product exists',
-                            description:
-                                'This product already exists on your cart!',
-                            gravity: EdgeAlert.TOP,
-                            icon: Icons.info,
-                            backgroundColor: Colors.amber.withOpacity(0.8),
-                            duration: EdgeAlert.LENGTH_SHORT,
-                          );
-                        }
-                      } else {
-                        Modular.to.pop();
-                        EdgeAlert.show(
-                          context,
-                          title: 'No user found',
-                          description: 'Login to buy item',
-                          gravity: EdgeAlert.BOTTOM,
-                          icon: Icons.info,
-                          backgroundColor: Colors.redAccent,
-                          duration: EdgeAlert.LENGTH_VERY_LONG,
-                        );
-                        return showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (context) => LoginDialog(),
-                        );
-                      }
-
-                      Modular.to.pop();
-                    },
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
   _buildDialogButton(
       {double height,
       double width,
@@ -431,5 +278,173 @@ class OnBuyDialog extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  _buildBody(BuildContext context) {
+    return SimpleDialog(
+      contentPadding: EdgeInsets.all(0.0),
+      backgroundColor: Colors.white.withOpacity(0.85),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      children: [
+        Stack(
+          overflow: Overflow.visible,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: _buildContentRow(),
+            ),
+            Positioned(
+              bottom: 0.0,
+              left: 0.0,
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: _buildDialogButton(
+                  height: 40.0,
+                  width: 40.0,
+                  color: Colors.red[200],
+                  icon: AntDesign.info,
+                  onTap: () {
+                    Modular.to.pop();
+                    showDialog(
+                      context: context,
+                      builder: (context) => DescriptionDialog(
+                        shoRemovalButton: false,
+                        productModel: productModel,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            Positioned(
+              top: 0.0,
+              right: 0.0,
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: _buildDialogButton(
+                  height: 40.0,
+                  width: 40.0,
+                  color: Colors.black38,
+                  icon: Icons.close,
+                  onTap: () => Modular.to.pop(),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 0.0,
+              right: 0.0,
+              child: GestureDetector(
+                onTap: () => Modular.to.pop(),
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: _buildDialogButton(
+                    height: 50.0,
+                    width: 50.0,
+                    color: Colors.green,
+                    icon: Icons.add_shopping_cart,
+                    onTap: () {
+                      List<ProductModel> cartList =
+                          _cartDataSource.customerCart;
+                      _getPriceByKeyStore.selectItem();
+
+                      /// setuping tempList
+                      List<ProductModel> tempList = cartList?.where((item) {
+                        if (productModel.hasSize ||
+                            productModel.hasVol ||
+                            productModel.hasWeight) {
+                          return mapEquals(item.selectedItem,
+                              _getPriceByKeyStore.selectedItem);
+                        } else {
+                          return item.id == productModel.id;
+                        }
+                      })?.toList();
+
+                      if (LoggedUser.instance.loggedUserUid != null) {
+                        /// condition to add to cart
+                        if (tempList.length == 0) {
+                          /// set selected item
+                          productModel.selectedItem =
+                              _getPriceByKeyStore.selectedItem;
+                          if ((productModel.hasSize ||
+                                  productModel.hasVol ||
+                                  productModel.hasWeight) &&
+                              productModel.selectedItem.values.first == null) {
+                            EdgeAlert.show(
+                              context,
+                              title: 'Select price',
+                              description: 'Please select price!',
+                              gravity: EdgeAlert.TOP,
+                              icon: Icons.info,
+                              backgroundColor: Colors.amber.withOpacity(0.9),
+                              duration: EdgeAlert.LENGTH_SHORT,
+                            );
+                            _getPriceByKeyStore.resetSelectedItem();
+                          } else if ((productModel.hasSize ||
+                                  productModel.hasVol ||
+                                  productModel.hasWeight) &&
+                              productModel.selectedItem.values.first != null) {
+                            _cartDataSource.addToCart(productModel);
+                            _getPriceByKeyStore.resetSelectedItem();
+                          } else {
+                            _cartDataSource.addToCart(productModel);
+                            _getPriceByKeyStore.resetSelectedItem();
+                          }
+                        } else if (_getPriceByKeyStore.customPrice == 0) {
+                          EdgeAlert.show(
+                            context,
+                            title: 'Select price',
+                            description: 'Please select price!',
+                            gravity: EdgeAlert.TOP,
+                            icon: Icons.info,
+                            backgroundColor: Colors.amber.withOpacity(0.9),
+                            duration: EdgeAlert.LENGTH_SHORT,
+                          );
+                        } else {
+                          EdgeAlert.show(
+                            context,
+                            title: 'Product exists',
+                            description:
+                                'This product already exists on your cart!',
+                            gravity: EdgeAlert.TOP,
+                            icon: Icons.info,
+                            backgroundColor: Colors.amber.withOpacity(0.8),
+                            duration: EdgeAlert.LENGTH_SHORT,
+                          );
+                          _getPriceByKeyStore.resetSelectedItem();
+                        }
+                      } else {
+                        Modular.to.pop();
+                        EdgeAlert.show(
+                          context,
+                          title: 'No user found',
+                          description: 'Login to buy item',
+                          gravity: EdgeAlert.BOTTOM,
+                          icon: Icons.info,
+                          backgroundColor: Colors.redAccent,
+                          duration: EdgeAlert.LENGTH_VERY_LONG,
+                        );
+                        return showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (context) => LoginDialog(),
+                        );
+                      }
+                      Modular.to.pop();
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildBody(context);
   }
 }

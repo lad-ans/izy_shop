@@ -2,19 +2,19 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../app_controller.dart';
+import '../../../../core/data/datasources/local_storage.dart';
 import '../../../../core/domain/utils/number_formatter.dart';
 import '../../../../core/presentation/widgets/rounded_button.dart';
 import '../../../cart/data/datasources/cart_data_source.dart';
 import '../../../product/data/models/product_model.dart';
 import '../../data/models/order_model.dart';
+import '../../domain/consts/string.dart';
+import '../stores/pdf_store.dart';
 
 class PDFEntity {
   String path;
@@ -26,73 +26,21 @@ class PDFEntity {
 class OrderedDialog extends StatelessWidget {
   final OrderModel orderModel;
   OrderedDialog({
-    Key key,
     this.orderModel,
   }) {
-    saveProducts();
+    _pdfStore.saveProducts(orderModel);
   }
   final _controller = Modular.get<AppController>();
   final _cartDataSource = Modular.get<CartDataSource>();
+  final _pdfStore = Modular.get<PDFStore>();
   final pdf = pw.Document();
-
-  saveProducts() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.clear();
-    List<String> data =
-        orderModel.products.map((item) => json.encode(item.toMap())).toList();
-    preferences.setStringList('products', data);
-  }
-
-  _buildContentRow(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      padding: const EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 0.0),
-      height: 250.0,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'ORDER COMPLETE \nThank You!',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.black87, fontSize: 22.0),
-          ),
-          Expanded(child: SizedBox()),
-          RoundedButton(
-            icon: AntDesign.search1,
-            iconColor: Colors.white70,
-            text: 'Search Products',
-            textColor: Colors.black54,
-            onTap: () async {
-              _controller.select(9);
-              _cartDataSource.removeAll();
-
-              /// sendind report to email
-              writeOnPdf();
-              await savePdf();
-              Directory documentDirectory =
-                  await getApplicationDocumentsDirectory();
-              String documentPath = documentDirectory.path;
-              File file = File(
-                  '$documentPath/izyshop_report_${DateTime.now().hour}_${DateTime.now().minute}_${DateTime.now().day}_${DateTime.now().month}_${DateTime.now().year}.pdf');
-              orderModel.sendOrderReport(file);
-              Modular.to.pop();
-              // Modular.to.pushNamed(
-              //   '/pdf-viewer',
-              //   arguments: PdfRoute(
-              //     '$documentPath/izyshop_report_${DateTime.now().hour}_${DateTime.now().minute}_${DateTime.now().day}_${DateTime.now().month}_${DateTime.now().year}.pdf',
-              //   ),
-              // );
-            },
-            index: 9,
-          ),
-        ],
-      ),
-    );
-  }
+  String pdfPath;
 
   writeOnPdf() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    List<String> products = preferences.getStringList('products');
+    List<String> products;
+    await LocalStorage.instance
+        .getStringList(PRODUCTS)
+        .then((value) => products = value);
 
     pdf.addPage(
       pw.MultiPage(
@@ -101,6 +49,24 @@ class OrderedDialog extends StatelessWidget {
 
         /// writing pdf
         build: (pw.Context context) {
+          _buildHeaderCustomerInfo(String title, String data) {
+            return pw.Row(
+              crossAxisAlignment: pw.CrossAxisAlignment.center,
+              mainAxisAlignment: pw.MainAxisAlignment.start,
+              children: [
+                pw.Container(
+                    width: 100.0,
+                    child: pw.Text('$title:',
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
+                pw.SizedBox(width: 3.0),
+                pw.Container(
+                    padding: pw.EdgeInsets.only(right: 32.0),
+                    width: 150,
+                    child: pw.Text(data)),
+              ],
+            );
+          }
+
           return <pw.Widget>[
             pw.Header(
               padding: pw.EdgeInsets.symmetric(vertical: 10.0),
@@ -133,53 +99,21 @@ class OrderedDialog extends StatelessWidget {
                           child: pw.Column(
                             crossAxisAlignment: pw.CrossAxisAlignment.start,
                             children: [
-                              pw.RichText(
-                                text: pw.TextSpan(children: [
-                                  pw.TextSpan(
-                                    text: 'Data de entrega: ',
-                                    style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold),
-                                  ),
-                                  pw.TextSpan(
-                                    text: '${orderModel.deliveryTime}',
-                                  ),
-                                ]),
+                              _buildHeaderCustomerInfo(
+                                'Entrega',
+                                orderModel.deliveryTime,
                               ),
-                              pw.RichText(
-                                text: pw.TextSpan(children: [
-                                  pw.TextSpan(
-                                    text: 'Exmo(a) Sr(a): ',
-                                    style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold),
-                                  ),
-                                  pw.TextSpan(
-                                    text: '${orderModel.customerName}',
-                                  ),
-                                ]),
+                              _buildHeaderCustomerInfo(
+                                'Exmo(a) Sr(a)',
+                                orderModel.customerName,
                               ),
-                              pw.RichText(
-                                text: pw.TextSpan(children: [
-                                  pw.TextSpan(
-                                    text: 'Endereço: ',
-                                    style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold),
-                                  ),
-                                  pw.TextSpan(
-                                    text: '${orderModel.location}',
-                                  ),
-                                ]),
+                              _buildHeaderCustomerInfo(
+                                'Endereço',
+                                orderModel.location,
                               ),
-                              pw.RichText(
-                                text: pw.TextSpan(children: [
-                                  pw.TextSpan(
-                                    text: 'Contacto: ',
-                                    style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold),
-                                  ),
-                                  pw.TextSpan(
-                                    text: '${orderModel.onDeliveryPhone}',
-                                  ),
-                                ]),
+                              _buildHeaderCustomerInfo(
+                                'Contacto',
+                                orderModel.onDeliveryPhone,
                               ),
                             ],
                           ),
@@ -224,7 +158,6 @@ class OrderedDialog extends StatelessWidget {
             pw.Column(
                 children: products.map((_item) {
               ProductModel item = ProductModel.fromMap(json.decode(_item));
-              print(item);
               String _key;
               if (item.hasSize || item.hasVol || item.hasWeight) {
                 item.selectedItem.keys.map((k) => _key = k).toList();
@@ -255,7 +188,9 @@ class OrderedDialog extends StatelessWidget {
             pw.Header(
               padding: pw.EdgeInsets.symmetric(vertical: 10.0),
               level: 1,
-              child: pw.Center(child: pw.Text('Processado pelo Aplicativo')),
+              child: pw.Center(
+                  child: pw.Text('Processado pelo Aplicativo',
+                      style: pw.TextStyle(fontStyle: pw.FontStyle.italic))),
             ),
             pw.Align(
               alignment: pw.Alignment.centerRight,
@@ -264,6 +199,30 @@ class OrderedDialog extends StatelessWidget {
                 child: pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
+                    pw.RichText(
+                      text: pw.TextSpan(children: [
+                        pw.TextSpan(
+                          text: 'Total Produtos: ',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                        ),
+                        pw.TextSpan(
+                          text:
+                              '${NumberFormatter.instance.numToString(orderModel.subtotal).toString()} MT',
+                        ),
+                      ]),
+                    ),
+                    pw.RichText(
+                      text: pw.TextSpan(children: [
+                        pw.TextSpan(
+                          text: 'Preço Entrega: ',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                        ),
+                        pw.TextSpan(
+                          text:
+                              '${NumberFormatter.instance.numToString(orderModel.deliveryAmount).toString()} MT',
+                        ),
+                      ]),
+                    ),
                     pw.RichText(
                       text: pw.TextSpan(children: [
                         pw.TextSpan(
@@ -365,23 +324,55 @@ class OrderedDialog extends StatelessWidget {
     );
   }
 
-  Future savePdf() async {
-    Directory documentDirectory = await getApplicationDocumentsDirectory();
+  _buildContentRow(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      padding: const EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 0.0),
+      height: 200.0,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'ORDER COMPLETE \nThank You!',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.black87, fontSize: 22.0),
+          ),
+          Expanded(child: SizedBox()),
+          RoundedButton(
+            isGreenColor: true,
+            btnWidth: 70.0,
+            btnHeight: 70.0,
+            iconSize: 30.0,
+            icon: Icons.check,
+            text: 'OK!',
+            textColor: Colors.black54,
+            onTap: () async {
+              await _pdfStore.pdfPath.then((path) => pdfPath = path);
+              _controller.select(9);
+              _cartDataSource.removeAll();
 
-    String documentPath = documentDirectory.path;
-
-    File file = File(
-        '$documentPath/izyshop_report_${DateTime.now().hour}_${DateTime.now().minute}_${DateTime.now().day}_${DateTime.now().month}_${DateTime.now().year}.pdf');
-
-    file.writeAsBytesSync(pdf.save());
+              /// sendind report to email
+              await writeOnPdf();
+              _pdfStore.savePdf(pdf, path: pdfPath);
+              File file = File(pdfPath);
+              orderModel.sendOrderReport(file);
+              Modular.to.pop();
+              // Modular.to.pushNamed('/pdf-viewer', arguments: PdfRoute(pdfPath));
+            },
+            index: 9,
+          ),
+        ],
+      ),
+    );
   }
 
-  @override
-  Widget build(BuildContext context) {
+  _buildBody(BuildContext context) {
     return SimpleDialog(
       contentPadding: EdgeInsets.all(0.0),
       backgroundColor: Colors.white.withOpacity(0.75),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+      ),
       children: [
         Stack(
           overflow: Overflow.visible,
@@ -394,5 +385,10 @@ class OrderedDialog extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildBody(context);
   }
 }

@@ -8,9 +8,11 @@ class PdfRoute {
 
 class PDFPreview extends StatelessWidget {
   final PdfRoute route;
-  const PDFPreview(
+  PDFPreview(
     this.route,
-  );
+  ) {
+    print(route.path);
+  }
   @override
   Widget build(BuildContext context) {
     return PDFViewerScaffold(

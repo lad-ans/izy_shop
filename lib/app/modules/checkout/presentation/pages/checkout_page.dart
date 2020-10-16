@@ -138,6 +138,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
                             orderModel.storeId = widget.routeEntity.storeId;
                             orderModel.products = widget.routeEntity.cartList;
                             orderModel.amount = widget.routeEntity.totalAmount;
+                            orderModel.deliveryAmount =
+                                widget.routeEntity.deliveryPrice;
+                            orderModel.subtotal =
+                                widget.routeEntity.subtotal;
                             orderModel.customerName =
                                 LoggedUser.instance.loggedUsername;
                             _formKey.currentState.save();
@@ -256,7 +260,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
               currentTime: DateTime.now(),
               locale: LocaleType.en,
             );
-            _controller.select(1200);
           },
         ),
         Expanded(
@@ -394,7 +397,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
               arguments: RouteEntity(
                   addressController: addressController, orderModel: orderModel),
             );
-            _controller.select(1100);
           },
           index: 14,
         ),
@@ -477,7 +479,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     iconSize: 35,
                     isCustomized: true,
                     onTap: () async {
-                      _controller.select(4);
+                      _controller.select(4, isFixed: true);
                       state.didChange(PaymentMethod.CASH_ON_DELIVERY);
                     },
                     paymentMethod: PaymentMethod.CASH_ON_DELIVERY,
@@ -517,7 +519,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     iconSize: 35,
                     isCustomized: true,
                     onTap: () async {
-                      _controller.select(1);
+                      _controller.select(1, isFixed: true);
                       state.didChange(PaymentMethod.BANK_TRANSFER);
                     },
                     paymentMethod: PaymentMethod.BANK_TRANSFER,

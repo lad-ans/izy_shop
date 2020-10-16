@@ -74,14 +74,14 @@ class LoginPage extends StatelessWidget {
                 icon: Zocial.facebook,
                 text: 'Login With Facebook',
                 onTap: () async {
-                  _controller.select(0);
+                  _controller.select(-2);
                   await signInWithFacebookStore.execute(context);
                   if (LoggedUser.instance.loggedUserUid != null) {
                     EdgeAlert.show(
                       context,
                       title: 'Logged in successfully',
                       description: 'Great! You are logged with Google',
-                      gravity: EdgeAlert.BOTTOM,
+                      gravity: EdgeAlert.TOP,
                       icon: Icons.check,
                       backgroundColor: Colors.green,
                       duration: EdgeAlert.LENGTH_SHORT,
@@ -92,15 +92,14 @@ class LoginPage extends StatelessWidget {
                       context,
                       title: 'Error on Facebook login',
                       description: 'Some error occured on google login',
-                      gravity: EdgeAlert.BOTTOM,
+                      gravity: EdgeAlert.TOP,
                       icon: Icons.info,
                       backgroundColor: Colors.redAccent,
                       duration: EdgeAlert.LENGTH_SHORT,
                     );
                   }
-                  _controller.select(1000);
                 },
-                index: 0,
+                index: -2,
               ),
               SizedBox(width: 20.0),
               RoundedButton(
@@ -108,14 +107,14 @@ class LoginPage extends StatelessWidget {
                 icon: Zocial.google,
                 text: 'Login With Google',
                 onTap: () async {
-                  _controller.select(1);
+                  _controller.select(-3);
                   await signInWithGoogleStore.execute(context);
                   if (LoggedUser.instance.loggedUserUid != null) {
                     EdgeAlert.show(
                       context,
                       title: 'Logged in successfully',
                       description: 'Greate!! You are logged with Google',
-                      gravity: EdgeAlert.BOTTOM,
+                      gravity: EdgeAlert.TOP,
                       icon: Icons.check,
                       backgroundColor: Colors.green,
                       duration: EdgeAlert.LENGTH_SHORT,
@@ -126,15 +125,14 @@ class LoginPage extends StatelessWidget {
                       context,
                       title: 'Error on Google login',
                       description: 'Some error occured on google login',
-                      gravity: EdgeAlert.BOTTOM,
+                      gravity: EdgeAlert.TOP,
                       icon: Icons.info,
                       backgroundColor: Colors.redAccent,
                       duration: EdgeAlert.LENGTH_SHORT,
                     );
                   }
-                  _controller.select(800);
                 },
-                index: 1,
+                index: -3,
               ),
             ],
           ),
@@ -172,7 +170,6 @@ class LoginPage extends StatelessWidget {
                 onTap: () async {
                   _controller.select(3);
                   await Modular.to.pushNamed('/auth/signup');
-                  _controller.select(400);
                 },
                 index: 3,
               ),
@@ -198,7 +195,6 @@ class LoginPage extends StatelessWidget {
                       Modular.to.pushReplacementNamed('/home/city');
                     }
                   }
-                  _controller.select(500);
                 },
                 index: 4,
               ),

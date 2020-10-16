@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:izy_shop/app/core/domain/consts/img.dart';
-import 'package:izy_shop/app/modules/customer/data/datasources/local_storage.dart';
+
+import '../../../../core/data/datasources/local_storage.dart';
+import '../../../../core/domain/consts/img.dart';
 
 class LoggedUser {
   static final LoggedUser instance = LoggedUser._internal();
