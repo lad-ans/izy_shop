@@ -1,4 +1,4 @@
-package com.example.izy_shop
+package com.leeva.izy_shop
 
 import io.flutter.embedding.android.FlutterActivity
 
