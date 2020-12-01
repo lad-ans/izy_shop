@@ -113,7 +113,7 @@ class LoginPage extends StatelessWidget {
                     EdgeAlert.show(
                       context,
                       title: 'Logged in successfully',
-                      description: 'Greate!! You are logged with Google',
+                      description: 'Great!! You are logged with Google',
                       gravity: EdgeAlert.TOP,
                       icon: Icons.check,
                       backgroundColor: Colors.green,
