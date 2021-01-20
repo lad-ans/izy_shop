@@ -7,6 +7,7 @@ import '../../../../app_controller.dart';
 import '../../../../core/domain/configs/core_config.dart';
 import '../../../../core/domain/consts/img.dart';
 
+/// ignore: must_be_immutable
 class StoreTile extends StatelessWidget {
   final String img;
   final String label;
@@ -41,12 +42,13 @@ class StoreTile extends StatelessWidget {
             ),
             BackdropFilter(
               filter: ui.ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
-              child: Text(label, style: TextStyle(
-                  fontFamily: 'SofiaPro',
-                  color: Colors.white.withOpacity(0.7),
-                  fontWeight: FontWeight.w200,
-                  fontSize: 35,
-                )),
+              child: Text(label,
+                  style: TextStyle(
+                    fontFamily: 'SofiaPro',
+                    color: Colors.white.withOpacity(0.7),
+                    fontWeight: FontWeight.w200,
+                    fontSize: 35,
+                  )),
             ),
           ],
         ),
@@ -75,7 +77,11 @@ class StoreTile extends StatelessWidget {
                       )
                     : null,
                 fit: BoxFit.cover,
-                image: FirebaseImage(img),
+                image: FirebaseImage(
+                  img,
+                  shouldCache: false,
+                  cacheRefreshStrategy: CacheRefreshStrategy.NEVER,
+                ),
               ),
             ),
             child: _buildLabel(context),

@@ -5,6 +5,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import '../../../app_controller.dart';
 import '../../../modules/auth/presentation/widgets/custom_text.dart';
 
+///ignore: must_be_immutable
 class RoundedButton extends StatelessWidget {
   final IconData icon;
   final String text;
@@ -76,7 +77,9 @@ class RoundedButton extends StatelessWidget {
                 borderRadius: BorderRadius.circular(80),
                 color: isSelected
                     ? Colors.white
-                    : isGreenColor ? Colors.green : color ?? Colors.black45,
+                    : isGreenColor
+                        ? Colors.green
+                        : color ?? Colors.black45,
               ),
               child: Icon(icon,
                   color: (isCustomized && isSelected)

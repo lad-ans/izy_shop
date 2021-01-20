@@ -23,6 +23,7 @@ class PDFEntity {
   );
 }
 
+///ignore: must_be_immutable
 class OrderedDialog extends StatelessWidget {
   final OrderModel orderModel;
   OrderedDialog({
